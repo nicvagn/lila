@@ -348,6 +348,23 @@ object Pref:
         case ALL     => "all"
         case _       => "no"
 
+  object CoordSize:
+    val STANDARD = 0
+    val LARGE    = 1
+    val LARGER   = 2
+
+    val choices = Seq(
+      STANDARD -> "Default coordinate size",
+      LARGE    -> "Large coordinate size",
+      LARGER   -> "Larger coordinate size"
+    )
+
+    def classOf(v: Int) =
+      v match
+        case LARGE  => "large-coords"
+        case LARGER => "larger-coords"
+        case _      => "default-coords"
+
   object Replay:
     val NEVER  = 0
     val SLOW   = 1

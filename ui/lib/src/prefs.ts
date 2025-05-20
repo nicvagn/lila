@@ -1,6 +1,13 @@
 // these used to be enums in index.d.ts, had to instantiate them because enum values
 // cannot be imported by isolated modules
 
+export const CoordSize = {
+  Standard: 0,
+  Large: 1,
+  Larger: 2,
+};
+export type CoordSize = (typeof CoordSize)[keyof typeof CoordSize];
+
 export const Coords = {
   Hidden: 0,
   Inside: 1,

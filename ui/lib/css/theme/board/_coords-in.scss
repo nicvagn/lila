@@ -1,3 +1,5 @@
+$coord-size: 30px;
+
 coords {
   @include fluid-size('font-size', 8px, 12px);
   @include prevent-select;
@@ -15,6 +17,12 @@ coords {
   .coords-no & {
     display: none;
   }
+
+  /* handle larger coords */
+  .coords-large coord {
+    scale: 4;
+  }
+
   &.ranks {
     flex-flow: column-reverse;
     top: 1px;
