@@ -1,5 +1,6 @@
 import { type VNode, h, type VNodeChildren } from 'snabbdom';
-import { defined, prop, type Prop } from 'lib';
+// import { defined, prop, type Prop } from 'lib';
+import { defined } from 'lib';
 import { text as xhrText } from 'lib/xhr';
 import type AnalyseController from '../ctrl';
 import { makeConfig as makeCgConfig } from '../ground';
@@ -33,7 +34,7 @@ import {
 import { renderSetting } from 'lib/nvui/setting';
 import { Notify } from 'lib/nvui/notify';
 import { commands, boardCommands, addBreaks } from 'lib/nvui/command';
-import { type LooseVNodes, type MaybeVNode,  bind, noTrans, onInsert } from 'lib/snabbdom'; //looseH as h,
+import { type LooseVNodes, type MaybeVNode, bind, noTrans, onInsert } from 'lib/snabbdom'; //looseH as h,
 import { throttle } from 'lib/async';
 import explorerView from '../explorer/explorerView';
 import { ops, path as treePath } from 'lib/tree/tree';
@@ -71,8 +72,7 @@ export function initModule(ctrl: AnalyseController): NvuiPlugin {
     pieceStyle = pieceSetting(),
     prefixStyle = prefixSetting(),
     positionStyle = positionSetting(),
-    boardStyle = boardSetting(),
-  analysisInProgress = prop(false);
+    boardStyle = boardSetting();
 
   pubsub.on('analysis.server.progress', (data: AnalyseData) => {
     if (data.analysis && !data.analysis.partial) notify.set('Server-side analysis complete');
@@ -162,6 +162,7 @@ export function initModule(ctrl: AnalyseController): NvuiPlugin {
             ],
           ),
           notify.render(),
+          h('h2', "Computer analysis"),
           renderComputerAnalysis(ctrl, notify),
 
           h('h2', 'Board'),
@@ -340,17 +341,38 @@ function renderCurrentLine(ctrl: AnalyseController, style: MoveStyle): VNodeChil
   }
 }
 
-function initLFYM(ctrl: AnalyseController): string {
+function renderToggleLFYMButton(ctrl: AnalyseController, notify: Notify): VNode {
+  // this can prob be done in a more concise mannor
   if (ctrl.hasFullComputerAnalysis()) {
-    if (!ctrl.retro) {
-      ctrl.toggleRetro();
-      return 'learn from your mistakes';
-    } else {
-      ctrl.toggleRetro();
-      return 'exited learn from your mistakes';
+    if (ctrl.retro) {
+      const retro = renderRetro(ctrl);
+      if (retro) { return retro; }
     }
-  }
-  return 'must have complete game analysis for learn from your mistakes';
+    return h('button', {
+      hook: onInsert((el: HTMLButtonElement) => {
+        const toggleLFYM = () => {
+          ctrl.toggleRetro();
+          notify.set("Learn from your mistakes toggled");
+          ctrl.redraw();
+        };
+        onInsertHandler(toggleLFYM, el);
+      }),
+    },
+      'toggle learn from your mistakes');
+  } // else
+
+  return h('button',
+    {
+      hook: onInsert((el: HTMLButtonElement) => {
+        const reqAnal = () => {
+          xhrText(`/${ctrl.data.game.id}/request-analysis`, { method: 'post' });
+          ctrl.redraw();
+        };
+        onInsertHandler(reqAnal, el);
+      }),
+    },
+    i18n.site.requestAComputerAnalysis,
+  );
 }
 
 function onSubmit(
@@ -379,7 +401,7 @@ function onSubmit(
   };
 }
 
-type Command = 'p' | 's' | 'eval' | 'learn' | 'best' | 'prev' | 'next' | 'prev line' | 'next line' | 'pocket';
+type Command = 'p' | 's' | 'eval' | 'best' | 'prev' | 'next' | 'prev line' | 'next line' | 'pocket';
 type InputCommand = {
   cmd: Command;
   help: VNode | string;
@@ -410,11 +432,6 @@ const inputCommands: InputCommand[] = [
     cmd: 'eval',
     help: noTrans("announce last move's computer evaluation"),
     cb: (ctrl, notify) => notify(renderEvalAndDepth(ctrl)),
-  },
-  {
-    cmd: 'learn',
-    help: noTrans('Learn from your mistakes'),
-    cb: (ctrl, notify) => notify(initLFYM(ctrl)),
   },
   {
     cmd: 'best',
@@ -475,19 +492,28 @@ function sendMove(uciOrDrop: string | DropMove, ctrl: AnalyseController) {
   else if (ctrl.crazyValid(uciOrDrop.role, uciOrDrop.key)) ctrl.sendNewPiece(uciOrDrop.role, uciOrDrop.key);
 }
 
+
+
 function renderComputerAnalysis(ctrl: AnalyseController, notify: Notify): LooseVNodes | VNode {
-  const retro = renderRetro(ctrl);
-  if (retro) {
-    return retro
-  }// else
-  if (ctrl.ongoing || ctrl.synthetic) {
-    notify.set('Server-side analysis in progress');
-    return h('h2', 'Server-side analysis in progress');
-  }// else
+
+  if (ctrl.hasFullComputerAnalysis()) {
+    if (ctrl.ongoing || ctrl.synthetic) {
+      notify.set('Server-side analysis in progress');
+      return h('h2', 'Server-side analysis in progress');
+    }
+    return renderToggleLFYMButton(ctrl, notify)
+  }
+
   return h(
     'button',
     {
-      hook: bind('click', _ => xhrText(`/${ctrl.data.game.id}/request-analysis`, { method: 'post' })),
+      hook: onInsert((el: HTMLButtonElement) => {
+        const reqAnal = () => {
+          xhrText(`/${ctrl.data.game.id}/request-analysis`, { method: 'post' });
+          ctrl.redraw();
+        };
+        onInsertHandler(reqAnal, el);
+      }),
     },
     i18n.site.requestAComputerAnalysis,
   );
