@@ -1,5 +1,4 @@
-import { type VNode, h, type VNodeChildren } from 'snabbdom';
-// import { defined, prop, type Prop } from 'lib';
+import { type VNodeChildren } from 'snabbdom';
 import { defined } from 'lib';
 import { text as xhrText } from 'lib/xhr';
 import type AnalyseController from '../ctrl';
@@ -34,7 +33,7 @@ import {
 import { renderSetting } from 'lib/nvui/setting';
 import { Notify } from 'lib/nvui/notify';
 import { commands, boardCommands, addBreaks } from 'lib/nvui/command';
-import { type LooseVNodes, type MaybeVNode, bind, noTrans, onInsert } from 'lib/snabbdom'; //looseH as h,
+import { type LooseVNodes, type MaybeVNode, looseH as h, bind, noTrans, onInsert, type VNode } from 'lib/snabbdom'; //looseH as h,
 import { throttle } from 'lib/async';
 import explorerView from '../explorer/explorerView';
 import { ops, path as treePath } from 'lib/tree/tree';
