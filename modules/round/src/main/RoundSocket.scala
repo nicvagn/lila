@@ -317,6 +317,11 @@ object RoundSocket:
           case _ => 1
       } / {
         if pov.player.hasUser then 1 else 2
+      } * {
+        import chess.variant.*
+        (pov.game.variant) match
+          case (Chess960) => 3
+          case _ => 1
       }
 
   object Protocol:
