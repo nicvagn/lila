@@ -46,7 +46,7 @@
   <string name="fidePlayerNotFound">S’u gjet lojtar FIDE</string>
   <string name="fideProfile">Profil FIDE</string>
   <string name="federation">Federim</string>
-  <string name="ageThisYear">Moshë këtë vit</string>
+  <string name="age">Moshë</string>
   <string name="unrated">Pa pikë</string>
   <string name="recentTournaments">Turne së fundi</string>
   <string name="openLichess">Hape në Lichess</string>
@@ -79,6 +79,24 @@
   <string name="sinceHideResults">Meqë zgjodhët të fshihen përfundimet, krejt tabelat e paraparjeve janë të zbrazëta, për të shmangur tregime.</string>
   <string name="communityBroadcast">Transmetim nga bashkësia</string>
   <string name="createdAndManagedBy">Krijuar dhe administruar nga %s.</string>
-  <string name="roundX" comment="%s is the number of the round.&#10;e.g. &quot;Round 2&quot;.&#10;&#10;If your language changes the word &quot;Round&quot; based on the number after it, consider using punctuation to get around the problem (e.g. &quot;Round: %s&quot;).&#10;&#10;This is the standard name for a round in a broadcast (https://lichess.org/broadcast), so it is translatable.&#10;&#10;Broadcasters may optionally override it. If they override the default name, it will be in a language and words of their choice e.g. &quot;Semifinals Tiebreak 1&quot; - no longer being translatable.">Raundi %s</string>
-  <string name="defaultRoundNameHelp" comment="This is help text for broadcast authors setting a round name. The default is &quot;Round %s&quot; (translatable separately).&#10;&#10;If broadcasters keep the round name to the default, it will be automatically translated.&#10;&#10;Broadcasters may optionally override it. If they override the default name, it will be in a language and words of their choice e.g. &quot;Semifinals Tiebreak 1&quot; - no longer being translatable.">Mbajtja e emrit parazgjedhje do ta përkthejë automatikisht në krejt gjuhët e tjera.</string>
+  <string name="matchPoints">Pikë Ndeshjeje</string>
+  <string name="gamePoints">Pikë Loje</string>
+  <string name="matches">Ndeshje</string>
+  <string name="matchHistory">Historik Ndeshjesh</string>
+  <string name="teamResults">Përfundime Ekipi</string>
+  <string name="termsAutomaticallyTranslated">Termi(at) vijues do të përkthehen automatikisht: %s.</string>
+  <string name="roundX">Raundi %s</string>
+  <string name="defaultRoundNameHelp">Mbajtja e emrit parazgjedhje do ta përkthejë automatikisht në krejt gjuhët e tjera.</string>
+  <string name="openTournament">I hapur</string>
+  <string name="womenTournament">Femra</string>
+  <string name="menTournament">Meshkuj</string>
+  <string name="girlsTournament">Vajza</string>
+  <string name="boysTournament">Djem</string>
+  <string name="openUnderXAgeTournament">I hapur për U%s</string>
+  <string name="girlsUnderXAgeTournament">Vajzat U%s</string>
+  <string name="boysUnderXAgeTournament">Djem U%s</string>
+  <string name="quarterfinals">Çerekfinale</string>
+  <string name="semifinals">Gjysmëfinale</string>
+  <string name="finals">Fiale</string>
+  <string name="gameX">Loja %s</string>
 </resources>

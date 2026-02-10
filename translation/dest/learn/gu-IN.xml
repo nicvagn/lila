@@ -6,7 +6,7 @@
   <string name="progressX">પ્રગતિ: %s</string>
   <string name="resetMyProgress">મારી પ્રગતિ રીસેટ કરો</string>
   <string name="youWillLoseAllYourProgress">તમે તમારી બધી જ પ્રગતિ ખોઇ દેશો!</string>
-  <string name="play" comment="play&#10;&#10;A small ribbon that appears on your current chapter in the Chess Basics course. Please keep this string short.">ચાલો!</string>
+  <string name="play">ચાલો!</string>
   <string name="chessPieces">ચેસના ટુકડાઓ</string>
   <string name="theRook">હાથી</string>
   <string name="itMovesInStraightLines">તે સીધી રેખામાં ચાલે છે</string>
@@ -141,7 +141,6 @@
   <string name="findAWayToCastleKingSide">રાજા-કિલ્લાનો રસ્તો શોધો!</string>
   <string name="findAWayToCastleQueenSide">રાણી-બાજુ કિલ્લાનો રસ્તો શોધો!</string>
   <string name="castlingComplete">અભિનંદન! તમારે લગભગ હંમેશા રમતમાં જોડાવું જોઈએ.</string>
-  <string name="enPassant">એન પાસન્ટ</string>
   <string name="theSpecialPawnMove">ખાસ પ્યાદા ચાલ</string>
   <string name="enPassantIntro">જ્યારે વિરોધી પ્યાદુ બે ચોરસથી આગળ વધે છે, ત્યારે તમે તેને એક ચોરસથી આગળ વધે છે તેવું લઈ શકો છો.</string>
   <string name="blackJustMovedThePawnByTwoSquares">કળા એ હમણાં જ પ્યાદાને બે ચોરસ ખસેડી!
@@ -200,9 +199,21 @@
   <string name="playMachine">મશીન સાથે રમો</string>
   <string name="testYourSkillsWithTheComputer">કમ્પ્યુટર સાથે તમારી કુશળતાનું પરીક્ષણ કરો</string>
   <string name="letsGo">ચાલો જઈએ!</string>
+  <string name="stageX">સ્ટેજ %s</string>
+  <string name="awesome">અદ્ભુત!</string>
+  <string name="excellent">ઉત્તમ</string>
   <string name="greatJob">સરસ!</string>
+  <string name="perfect">પરફેક્ટ!</string>
+  <string name="outstanding">ઉત્કૃષ્ટ!</string>
+  <string name="wayToGo">અદ્ભુત!</string>
   <string name="yesYesYes">હા!</string>
+  <string name="youreGoodAtThis">તમે આમાં સારો છે!</string>
+  <string name="nailedIt">ખૂબ જ સારી રીતે કરી.</string>
+  <string name="rightOn">બરાબર!</string>
+  <string name="stageXComplete">સ્ટેજ %s પૂર્ણ</string>
   <string name="next">આગલુ</string>
+  <string name="nextX">આગળ: %s</string>
+  <string name="backToMenu">મેનુ પર પાછા જાઓ</string>
   <string name="puzzleFailed">કોયડાનો ખોટો જવાબ!</string>
   <string name="retry">ફરી પ્રયાસ કરો</string>
 </resources>

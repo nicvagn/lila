@@ -4,12 +4,13 @@
   <string name="challengeAFriend" comment="be mindful how 'friend' translates in gendered languages. look for a more neutral term if there's an issue, or base your translation on a different phrase like 'invite to a game'. keep it short and convey the button's meaning without offense.">Thách đấu một người bạn</string>
   <string name="playAgainstComputer">Chơi với máy</string>
   <string name="gameMode">Chế độ chơi</string>
-  <string name="createLobbyGame">Tạo sảnh ván đấu</string>
-  <string name="youPlayAs">Bạn cầm quân</string>
+  <string name="createLobbyGame">Tạo ván đấu tại sảnh</string>
   <string name="toInviteSomeoneToPlayGiveThisUrl">Để mời ai đó chơi, hãy gửi đường dẫn này</string>
   <string name="gameOver">Ván cờ kết thúc</string>
   <string name="waitingForOpponent">Đang chờ đối thủ</string>
   <string name="orLetYourOpponentScanQrCode">Hoặc để đối thủ của bạn quét mã QR này</string>
+  <string name="reusableChallengeUrl">URL thách đấu có thể tái sử dụng</string>
+  <string name="permanentLinkForAnyoneToChallengeYou">Một liên kết cố định để bất kỳ ai cũng có thể thách đấu bạn với chính xác các theo các thiết lập này.</string>
   <string name="waiting">Đang chờ</string>
   <string name="yourTurn">Đến lượt bạn</string>
   <string name="aiNameLevelAiLevel">%1$s cấp độ %2$s</string>
@@ -124,6 +125,10 @@
   <string name="bestMoveArrow">Mũi tên chỉ nước đi tốt nhất</string>
   <string name="showVariationArrows">Hiển thị mũi tên biến</string>
   <string name="evaluationGauge">Thang đo lợi thế</string>
+  <string name="visualMotifs">Họa tiết thị giác</string>
+  <string name="undefendedPieces">Các quân cờ không được bảo vệ</string>
+  <string name="pinnedPieces">Quân cờ bị ghim</string>
+  <string name="checkableKing">Có thể chiếu tướng</string>
   <string name="multipleLines">Số hàng phân tích</string>
   <string name="cpus">CPU</string>
   <string name="memory">Bộ nhớ</string>
@@ -193,6 +198,7 @@
   <string name="minutesPerSide">Số phút cho mỗi bên</string>
   <string name="variant">Biến thể</string>
   <string name="variants">Biến thể</string>
+  <string name="variantsDescription">Nhiều cách chơi hơn</string>
   <string name="timeControl">Kiểu thời gian</string>
   <string name="realTime">Thời gian thực</string>
   <string name="correspondence">Cờ qua thư</string>
@@ -254,7 +260,7 @@
     <item quantity="other">Thứ hạng được cập nhật mỗi %s phút</item>
   </plurals>
   <plurals name="nbPuzzles">
-    <item quantity="other">%s cấu đố</item>
+    <item quantity="other">%s câu đố</item>
   </plurals>
   <string name="gamesPlayed">Số ván đã chơi</string>
   <plurals name="nbGamesWithYou">
@@ -281,6 +287,7 @@
   <string name="standard">Tiêu chuẩn</string>
   <string name="customPosition">Thế trận tùy chỉnh</string>
   <string name="unlimited">Vô hạn</string>
+  <string name="unlimitedDescription">Hãy dành tất cả thời gian bạn cần</string>
   <string name="mode">Chế độ</string>
   <string name="casual">Không xếp hạng</string>
   <string name="rated">Có xếp hạng</string>
@@ -393,10 +400,11 @@
   <string name="leaderboard">Bảng dẫn đầu</string>
   <string name="screenshotCurrentPosition">Chụp màn hình thế cờ hiện tại</string>
   <string name="gameAsGIF">Ván cờ dưới dạng ảnh GIF</string>
+  <string name="playerNames">Tên người chơi</string>
+  <string name="moveAnnotations">Chú thích nước đi</string>
   <string name="pasteTheFenStringHere">Dán chuỗi FEN vào đây</string>
   <string name="pasteThePgnStringHere">Dán chuỗi PGN vào đây</string>
   <string name="orUploadPgnFile">Hoặc tải lên tệp PGN</string>
-  <string name="fromPosition">Từ thế cờ</string>
   <string name="continueFromHere">Tiếp tục từ đây</string>
   <string name="toStudy">Nghiên cứu</string>
   <string name="importGame">Nhập ván cờ</string>
@@ -440,9 +448,6 @@ trò chuyện trong ván đấu và có một URL có thể chia sẻ công khai
   <string name="player">Người chơi</string>
   <string name="list">Danh sách</string>
   <string name="graph">Biểu đồ</string>
-  <plurals name="lessThanNbMinutes">
-    <item quantity="other">Ít hơn %s phút</item>
-  </plurals>
   <string name="required">Bắt buộc.</string>
   <string name="openTournaments">Các giải đấu mở</string>
   <string name="duration">Thời lượng</string>
@@ -689,6 +694,7 @@ trò chuyện trong ván đấu và có một URL có thể chia sẻ công khai
   <string name="cyclePreviousOrNextVariation">Chu kì của biến trước/tiếp theo</string>
   <string name="toggleGlyphAnnotations">Đổi chú thích nước cờ</string>
   <string name="togglePositionAnnotations">Chuyển đổi chú thích thế cờ</string>
+  <string name="toggleObservationAnnotations">Chuyển đổi chú thích quan sát</string>
   <string name="variationArrowsInfo">Mũi tên của biến cho phép bạn điều hướng mà không cần sử dụng danh sách nước đi.</string>
   <string name="playSelectedMove">chơi nước đi đã chọn</string>
   <string name="newTournament">Giải đấu mới</string>
@@ -772,6 +778,7 @@ trò chuyện trong ván đấu và có một URL có thể chia sẻ công khai
   <string name="size">Kích cỡ</string>
   <string name="opacity">Độ trong suốt</string>
   <string name="brightness">Độ sáng</string>
+  <string name="contrast">Độ tương phản</string>
   <string name="hue">Màu gốc</string>
   <string name="boardReset">Đặt lại màu về mặc định</string>
   <string name="pieceSet">Bộ cờ</string>
@@ -867,6 +874,7 @@ trò chuyện trong ván đấu và có một URL có thể chia sẻ công khai
   <string name="agreementPolicy">Tôi đồng ý rằng, tôi sẽ luôn tuân thủ các chính sách của Lichess.</string>
   <string name="searchOrStartNewDiscussion">Tìm hoặc bắt đầu một cuộc trò chuyện</string>
   <string name="edit">Chỉnh sửa</string>
+  <string name="ultraBullet" comment="Probably best left untranslated. Leave it as 'UltraBullet' unless your language has a better word for it.">Cờ siêu đạn</string>
   <string name="bullet" comment="Probably best left untranslated. Leave it as 'Bullet' unless your language has a better word for it.">Cờ đạn</string>
   <string name="blitz" comment="Probably best left untranslated. Leave it as 'Blitz' unless your language has a better word for it.">Cờ chớp</string>
   <string name="rapid">Cờ nhanh</string>
@@ -976,4 +984,5 @@ Mọi chi phí vận hành, phát triển, và nội dung được tài trợ b�
   <string name="search">Tìm kiếm</string>
   <string name="clearSearch">Xóa nội dung tìm kiếm</string>
   <string name="tags">Thẻ</string>
+  <string name="enPassant">Bắt tốt qua đường</string>
 </resources>

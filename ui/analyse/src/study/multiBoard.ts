@@ -2,23 +2,25 @@ import * as licon from 'lib/licon';
 import { otbClockIsRunning, formatMs } from 'lib/game/clock/clockWidget';
 import { fenColor } from 'lib/game/chess';
 import { type MaybeVNode, type VNode, bind, dataIcon, onInsert } from 'lib/view';
+import { cmnToggleWrapProp } from 'lib/view/cmn-toggle';
 import { opposite as cgOpposite, uciToMove } from '@lichess-org/chessground/util';
 import type { ChapterId, ChapterPreview, StudyPlayer } from './interfaces';
 import type StudyCtrl from './studyCtrl';
-import { type CloudEval, type MultiCloudEval, renderEvalToggle, renderScore } from './multiCloudEval';
+import { type CloudEval, type MultiCloudEval, renderScore } from './multiCloudEval';
 import { type Prop, type Toggle, defined, notNull, prop, toggle } from 'lib';
 import type { Color } from 'chessops';
 import { type StudyChapters, gameLinkAttrs, gameLinksListener } from './studyChapters';
-import { playerFed } from './playerBars';
+import { playerFedFlag } from './playerBars';
 import { userTitle } from 'lib/view/userLink';
 import { h } from 'snabbdom';
 import { storage, storedBooleanProp } from 'lib/storage';
 import { Chessground as makeChessground } from '@lichess-org/chessground';
 import { EMPTY_BOARD_FEN } from 'chessops/fen';
-import { resultTag } from './studyView';
+import { playerColoredResult } from './relay/customScoreStatus';
+import type { RelayRound } from './relay/interfaces';
 
 export class MultiBoardCtrl {
-  playing: Toggle;
+  playing: Toggle = toggle(false);
   showResults: Prop<boolean>;
   teamSelect: Prop<string> = prop('');
   page: number = 1;
@@ -28,9 +30,8 @@ export class MultiBoardCtrl {
     readonly chapters: StudyChapters,
     readonly isRelay: boolean,
     readonly multiCloudEval: MultiCloudEval | undefined,
-    readonly redraw: () => void,
+    readonly redraw: Redraw,
   ) {
-    this.playing = toggle(false, this.redraw);
     this.showResults = this.isRelay ? storedBooleanProp('study.showResults', true) : toggle(true);
   }
 
@@ -96,9 +97,25 @@ export function view(ctrl: MultiBoardCtrl, study: StudyCtrl): MaybeVNode {
       renderPagerNav(pager, ctrl),
       h('div.study__multiboard__options', [
         ctrl.multiCloudEval &&
-          h('label.eval', [renderEvalToggle(ctrl.multiCloudEval), i18n.study.showEvalBar]),
-        ctrl.isRelay ? renderPlayingToggle(ctrl) : undefined,
-        ctrl.isRelay ? renderShowResultsToggle(ctrl) : undefined,
+          cmnToggleWrapProp({
+            id: 'multiboard-eval',
+            name: i18n.study.showEvalBar,
+            prop: ctrl.multiCloudEval.showEval,
+          }),
+        ctrl.isRelay &&
+          cmnToggleWrapProp({
+            id: 'multiboard-playing',
+            name: i18n.study.playing,
+            prop: ctrl.playing,
+            redraw: ctrl.redraw,
+          }),
+        ctrl.isRelay &&
+          cmnToggleWrapProp({
+            id: 'multiboard-results',
+            name: i18n.study.showResults,
+            prop: ctrl.showResults,
+            redraw: ctrl.redraw,
+          }),
       ]),
     ]),
     !ctrl.showResults()
@@ -115,7 +132,9 @@ export function view(ctrl: MultiBoardCtrl, study: StudyCtrl): MaybeVNode {
           insert: gameLinksListener(study.chapterSelect),
         },
       },
-      pager.currentPageResults.map(makePreview(baseUrl, study.vm.chapterId, cloudEval, ctrl.showResults())),
+      pager.currentPageResults.map(
+        makePreview(baseUrl, study.vm.chapterId, cloudEval, ctrl.showResults(), study.relay?.round),
+      ),
     ),
   ]);
 }
@@ -165,24 +184,6 @@ function pagerButton(icon: string, click: () => void, enable: boolean, ctrl: Mul
   });
 }
 
-const renderPlayingToggle = (ctrl: MultiBoardCtrl): MaybeVNode =>
-  h('label.playing', [
-    h('input', {
-      attrs: { type: 'checkbox', checked: ctrl.playing() },
-      hook: bind('change', e => ctrl.playing((e.target as HTMLInputElement).checked)),
-    }),
-    i18n.study.playing,
-  ]);
-
-const renderShowResultsToggle = (ctrl: MultiBoardCtrl): MaybeVNode =>
-  h('label.results', [
-    h('input', {
-      attrs: { type: 'checkbox', checked: ctrl.showResults() },
-      hook: bind('change', e => ctrl.showResults((e.target as HTMLInputElement).checked), ctrl.redraw),
-    }),
-    i18n.study.showResults,
-  ]);
-
 const previewToCgConfig = (cp: ChapterPreview): CgConfig => ({
   fen: cp.fen,
   lastMove: uciToMove(cp.lastMove),
@@ -191,7 +192,13 @@ const previewToCgConfig = (cp: ChapterPreview): CgConfig => ({
 });
 
 const makePreview =
-  (roundPath: string, current: ChapterId, cloudEval?: MultiCloudEval, showResults?: boolean) =>
+  (
+    roundPath: string,
+    current: ChapterId,
+    cloudEval?: MultiCloudEval,
+    showResults?: boolean,
+    round?: RelayRound,
+  ) =>
   (preview: ChapterPreview) => {
     const orientation = preview.orientation || 'white';
     return h(
@@ -201,7 +208,7 @@ const makePreview =
         attrs: gameLinkAttrs(roundPath, preview),
       },
       [
-        boardPlayer(preview, cgOpposite(orientation), showResults),
+        boardPlayer(preview, cgOpposite(orientation), showResults, round),
         h('span.cg-gauge', [
           showResults ? cloudEval && verticalEvalGauge(preview, cloudEval) : undefined,
           h(
@@ -229,7 +236,7 @@ const makePreview =
             }),
           ),
         ]),
-        boardPlayer(preview, orientation, showResults),
+        boardPlayer(preview, orientation, showResults, round),
       ],
     );
   };
@@ -274,7 +281,7 @@ export const verticalEvalGauge = (chap: ChapterPreview, cloudEval: MultiCloudEva
 
 const renderUser = (player: StudyPlayer): VNode =>
   h('span.mini-game__user', [
-    playerFed(player.fed),
+    playerFedFlag(player.fed),
     h('span.name', [userTitle(player), player.name || '?']),
     player.rating ? h('span.rating', player.rating.toString()) : undefined,
   ]);
@@ -302,15 +309,15 @@ const computeTimeLeft = (preview: ChapterPreview, color: Color): number | undefi
   } else return;
 };
 
-const boardPlayer = (preview: ChapterPreview, color: Color, showResults?: boolean) => {
-  const outcome = preview.status && preview.status !== '*' ? preview.status : undefined,
-    player = preview.players?.[color],
-    score = outcome?.split('-')[color === 'white' ? 0 : 1];
+const boardPlayer = (preview: ChapterPreview, color: Color, showResults?: boolean, round?: RelayRound) => {
+  const player = preview.players?.[color];
+  const coloredResult =
+    preview.status && preview.status !== '*' && playerColoredResult(preview.status, color, round);
   return h('span.mini-game__player', [
     player && renderUser(player),
     showResults
-      ? score
-        ? h(`${resultTag(score)}.mini-game__result`, score)
+      ? coloredResult
+        ? h(`${coloredResult.tag}.mini-game__result`, coloredResult.points)
         : renderClock(preview, color)
       : undefined,
   ]);

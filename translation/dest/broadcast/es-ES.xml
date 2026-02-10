@@ -47,7 +47,7 @@
   <string name="fidePlayerNotFound">Jugador FIDE no encontrado</string>
   <string name="fideProfile">Perfil FIDE</string>
   <string name="federation">Federación</string>
-  <string name="ageThisYear">Edad</string>
+  <string name="age">Edad</string>
   <string name="unrated">Sin puntuación</string>
   <string name="recentTournaments">Torneos recientes</string>
   <string name="openLichess">Abrir en Lichess</string>
@@ -69,6 +69,7 @@
   <string name="ratingDiff">Diferencia de puntuación</string>
   <string name="gamesThisTournament">Partidas en este torneo</string>
   <string name="score">Resultado</string>
+  <string name="standingsDisclaimer">Las clasificaciones se calculan con partidas retransmitidas y pueden ser distintas a las oficiales.</string>
   <string name="allTeams">Todos los equipos</string>
   <string name="tournamentFormat">Formato del torneo</string>
   <string name="tournamentLocation">Ubicación del torneo</string>
@@ -83,6 +84,26 @@
   <string name="liveboard">Tablero en directo</string>
   <string name="communityBroadcast">Transmisión de la comunidad</string>
   <string name="createdAndManagedBy">Creada y administrada por %s.</string>
-  <string name="roundX" comment="%s is the number of the round.&#10;e.g. &quot;Round 2&quot;.&#10;&#10;If your language changes the word &quot;Round&quot; based on the number after it, consider using punctuation to get around the problem (e.g. &quot;Round: %s&quot;).&#10;&#10;This is the standard name for a round in a broadcast (https://lichess.org/broadcast), so it is translatable.&#10;&#10;Broadcasters may optionally override it. If they override the default name, it will be in a language and words of their choice e.g. &quot;Semifinals Tiebreak 1&quot; - no longer being translatable.">Ronda %s</string>
-  <string name="defaultRoundNameHelp" comment="This is help text for broadcast authors setting a round name. The default is &quot;Round %s&quot; (translatable separately).&#10;&#10;If broadcasters keep the round name to the default, it will be automatically translated.&#10;&#10;Broadcasters may optionally override it. If they override the default name, it will be in a language and words of their choice e.g. &quot;Semifinals Tiebreak 1&quot; - no longer being translatable.">Si mantiene el nombre predeterminado se traducirá automáticamente al resto de idiomas.</string>
+  <string name="matchPoints">Puntos de enfrentamientos</string>
+  <string name="gamePoints">Puntos de partidas</string>
+  <string name="matches">Enfrentamientos</string>
+  <string name="matchHistory">Historial de enfrentamientos</string>
+  <string name="teamResults">Resultados de equipo</string>
+  <string name="termsAutomaticallyTranslated">El(Los) siguiente(s) término(s) se traducirá(n) automáticamente: %s.</string>
+  <string name="roundX">Ronda %s</string>
+  <string name="defaultRoundNameHelp">Si mantiene el nombre predeterminado se traducirá automáticamente al resto de idiomas.</string>
+  <string name="openTournament">Abierto</string>
+  <string name="womenTournament">Femenino</string>
+  <string name="menTournament">Hombres</string>
+  <string name="girlsTournament">Femenino</string>
+  <string name="boysTournament">Chicos</string>
+  <string name="openUnderXAgeTournament">Abierto Sub%s</string>
+  <string name="girlsUnderXAgeTournament">Femenino Sub%s</string>
+  <string name="boysUnderXAgeTournament">Masculino sub%s</string>
+  <string name="quarterfinals">Cuartos de final</string>
+  <string name="semifinals">Semifinales</string>
+  <string name="finals">Finales</string>
+  <string name="tiebreaks">Desempates</string>
+  <string name="gameX">Partida %s</string>
+  <string name="knockouts">Eliminatorias</string>
 </resources>

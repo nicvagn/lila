@@ -1,4 +1,3 @@
-/// <reference path="./tree.d.ts" />
 /// <reference path="./chessground.d.ts" />
 /// <reference path="./cash.d.ts" />
 /// <reference path="./i18n.d.ts" />
@@ -28,6 +27,7 @@ interface Site {
     loadIife(path: string, opts?: AssetUrlOpts): Promise<void>;
     loadEsm<T>(key: string, opts?: EsmModuleOpts): Promise<T>;
     loadPieces: Promise<void>;
+    loadI18n(catalog: string): Promise<void>;
   };
   unload: { expected: boolean };
   redirect(o: RedirectTo, beep?: boolean): void;
@@ -41,8 +41,15 @@ interface Site {
   quietMode?: boolean;
   analysis?: any; // expose the analysis ctrl
   // file://./../../.build/src/manifest.ts
-  manifest: { css: Record<string, string>; js: Record<string, string>; hashed: Record<string, string> };
+  manifest: {
+    css: Manifest;
+    js: Manifest;
+    hashed: Manifest;
+    i18n?: Manifest;
+  };
 }
+
+type Manifest = Record<string, string>;
 
 interface EsmModuleOpts extends AssetUrlOpts {
   init?: any;
@@ -231,6 +238,7 @@ type UserId = string;
 type Uci = string;
 type San = string;
 type Ply = number;
+type Hours = number;
 type Minutes = number;
 type Seconds = number;
 type Centis = number;
@@ -304,6 +312,23 @@ declare namespace PowerTip {
 declare const site: Site;
 declare const fipr: Fipr;
 declare const i18n: I18n;
-declare module 'tablesort';
+declare module 'tablesort' {
+  interface TablesortInstance {
+    refresh(): void;
+  }
+
+  interface TablesortStatic {
+    (el: HTMLTableElement, options?: { descending?: boolean }): TablesortInstance;
+    extend(
+      name: string,
+      pattern: (item: string) => RegExpMatchArray | null,
+      sort: (a: string, b: string) => number,
+    ): void;
+  }
+
+  const tablesort: TablesortStatic;
+  export default tablesort;
+  export type Tablesort = TablesortInstance;
+}
 declare const $html: (s: TemplateStringsArray, ...k: any[]) => string; // file://./../../.build/src/esbuild.ts
 declare const $trim: (s: TemplateStringsArray, ...k: any[]) => string; // file://./../../.build/src/esbuild.ts

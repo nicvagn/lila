@@ -28,8 +28,16 @@
   }
 }
 
-@mixin transition($prop: all, $dur: $transition-duration) {
-  transition: $prop $dur;
+@mixin transition($prop: all, $dur: $transition-duration, $timing: ease) {
+  @if type-of($prop) == 'list' and length($prop) > 1 {
+    $out: ();
+    @for $i from 1 through length($prop) {
+      $out: append($out, nth($prop, $i) $dur $timing, comma);
+    }
+    transition: $out;
+  } @else {
+    transition: $prop $dur $timing;
+  }
 }
 
 @mixin hoverflow {
@@ -39,14 +47,6 @@
     &:not(:hover) {
       overflow: hidden;
     }
-  }
-}
-
-@mixin hide {
-  display: none;
-
-  .blind-mode & {
-    display: inherit;
   }
 }
 
@@ -72,16 +72,6 @@
     /* prevents scroll bar flicker when dragging a piece out */
     overflow-y: scroll;
   }
-}
-
-@mixin margin-inline-start($amount) {
-  margin-inline-start: $amount;
-  margin-inline: $amount 0; // this doesn't have perfect browser support so keep the other margin as fallback
-}
-
-@mixin margin-inline-end($amount) {
-  margin-inline-end: $amount;
-  margin-inline: 0 $amount; // this doesn't have perfect browser support so keep the other margin as fallback
 }
 
 @mixin back-blur($size: 6px) {

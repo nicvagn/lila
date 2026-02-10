@@ -67,7 +67,7 @@ async function boot(
         color: Color;
         player?: { title?: string; name: string; rating?: number };
       }) {
-        if (data.tv && data.tv.channel == o.channel) site.reload();
+        if (data.tv && data.tv.channel === o.channel) site.reload();
         else
           $('.tv-channels .' + o.channel + ' .champion').html(
             o.player
@@ -136,7 +136,7 @@ async function boot(
     }
   }
   startTournamentClock();
-  $('.round__now-playing .move-on input')
+  $('#round-toggle-autoswitch')
     .on('change', round.moveOn.toggle)
     .prop('checked', round.moveOn.get())
     .on('click', 'a', () => {

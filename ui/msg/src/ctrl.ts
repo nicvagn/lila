@@ -23,9 +23,11 @@ export default class MsgCtrl {
   };
   pane: Pane;
   loading = false;
+  loadingContacts = false;
   connected = () => true;
   msgsPerPage = 100;
   canGetMoreSince?: Date;
+  canGetMoreContacts = true;
   typing?: Typing;
   textStore?: LichessStorage;
 
@@ -41,12 +43,16 @@ export default class MsgCtrl {
   }
 
   openConvo = (userId: string) => {
-    if (this.data.convo?.user.id != userId) {
+    if (this.data.convo?.user.id !== userId) {
       this.data.convo = undefined;
       this.loading = true;
     }
     network.loadConvo(userId).then(data => {
-      this.data = data;
+      const existingIds = new Set(this.data.contacts.map(c => c.user.id));
+      this.data = {
+        ...data,
+        contacts: this.data.contacts.concat(data.contacts.filter(c => !existingIds.has(c.user.id))),
+      };
       this.search.result = undefined;
       this.loading = false;
       if (data.convo) {
@@ -70,7 +76,7 @@ export default class MsgCtrl {
         if (
           !this.data.convo ||
           !data.convo ||
-          data.convo.user.id != this.data.convo.user.id ||
+          data.convo.user.id !== this.data.convo.user.id ||
           !data.convo.msgs[0]
         )
           return;
@@ -144,7 +150,7 @@ export default class MsgCtrl {
   private addMsg = (msg: LastMsg, contact?: Contact) => {
     if (contact) {
       contact.lastMsg = msg;
-      this.data.contacts = [contact].concat(this.data.contacts.filter(c => c.user.id != contact.user.id));
+      this.data.contacts = [contact].concat(this.data.contacts.filter(c => c.user.id !== contact.user.id));
     }
   };
 
@@ -167,9 +173,26 @@ export default class MsgCtrl {
     }
   };
 
+  loadMoreContacts = () => {
+    if (this.loadingContacts || !this.canGetMoreContacts) return;
+    const lastContact = this.data.contacts[this.data.contacts.length - 1];
+    if (!lastContact) return;
+    this.loadingContacts = true;
+    this.redraw();
+    network.loadMoreContacts(lastContact.lastMsg.date).then(contacts => {
+      if (contacts.length === 0) {
+        this.canGetMoreContacts = false;
+      } else {
+        this.data.contacts = this.data.contacts.concat(contacts);
+      }
+      this.loadingContacts = false;
+      this.redraw();
+    });
+  };
+
   setRead = () => {
     const msg = this.currentContact()?.lastMsg;
-    if (msg && msg.user != this.data.me.id) {
+    if (msg && msg.user !== this.data.me.id) {
       pubsub.emit('notify-app.set-read', msg.user);
       if (msg.read) return false;
       msg.read = true;
@@ -184,7 +207,8 @@ export default class MsgCtrl {
     const userId = this.data.convo?.user.id;
     if (userId)
       network.del(userId).then(data => {
-        this.data = data;
+        this.data.convo = data.convo;
+        this.data.contacts = this.data.contacts.filter(c => c.user.id !== userId);
         this.redraw();
         history.replaceState({}, '', '/inbox');
       });
