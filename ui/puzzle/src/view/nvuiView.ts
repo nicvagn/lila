@@ -169,7 +169,6 @@ function renderTouchDeviceCommands(ctx: PuzzleNvuiContext): LooseVNodes {
       hl(
         'button.last-move',
         {
-          key: 'last-move',
           attrs: { type: 'button' },
           hook: bind('click', () => {
             notify.set($('.lastMove').text());
@@ -181,7 +180,6 @@ function renderTouchDeviceCommands(ctx: PuzzleNvuiContext): LooseVNodes {
       hl(
         'button.touch-hint',
         {
-          key: 'touch-hint',
           attrs: { type: 'button' },
           hook: bind('click', () => {
             const hint = nextCorrectMove(ctrl);
@@ -196,7 +194,6 @@ function renderTouchDeviceCommands(ctx: PuzzleNvuiContext): LooseVNodes {
       hl(
         'button.touch-solution',
         {
-          key: 'touch-solution',
           attrs: { type: 'button' },
           hook: bind('click', () => ctrl.viewSolution()),
         },
@@ -206,7 +203,6 @@ function renderTouchDeviceCommands(ctx: PuzzleNvuiContext): LooseVNodes {
       hl(
         'button.touch-continue',
         {
-          key: 'touch-continue',
           attrs: { type: 'button' },
           hook: bind('click', () => ctrl.nextPuzzle()),
         },
