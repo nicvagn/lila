@@ -59,7 +59,6 @@ export type PrefixStyle = (typeof prefixStyles)[number];
 export type PositionStyle = 'before' | 'after' | 'none';
 export type BoardStyle = 'plain' | 'table';
 export type PageStyle = 'board-actions' | 'actions-board';
-export type DeviceType = 'desktop' | 'touchscreen';
 
 export function boardSetting(): Setting<BoardStyle> {
   return makeSetting<BoardStyle>({
