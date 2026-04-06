@@ -219,7 +219,8 @@ object mon:
           ipSusp: Boolean,
           fp: Boolean,
           proxy: Option[String],
-          country: String
+          country: String,
+          client: String
       ) =
         counter("user.register.count").withTags:
           tags(
@@ -228,7 +229,8 @@ object mon:
             "ipSusp" -> ipSusp,
             "fp" -> fp,
             "proxy" -> proxy.getOrElse("no"),
-            "country" -> country.escape
+            "country" -> country.escape,
+            "client" -> client
           )
       def mustConfirmEmail(v: String) = counter("user.register.mustConfirmEmail").withTag("type", v)
       def confirmEmailResult(success: Boolean) =

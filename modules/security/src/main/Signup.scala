@@ -11,6 +11,7 @@ import lila.core.email.UserIdOrEmail
 import lila.core.net.{ ApiVersion, IpAddress, ValidReferrer }
 import lila.memo.{ RateLimit, SettingStore }
 import lila.security.SecurityForm.SignupData
+import lila.oauth.Protocol.ClientId
 
 final class Signup(
     store: SessionStore,
@@ -109,7 +110,10 @@ final class Signup(
                           captched = captcha == Hcaptcha.Result.Valid
                         ):
                           MustConfirmEmail(data, suspIp = suspIp, simpleSignup).flatMap: mustConfirm =>
-                            monitor(data, captcha, mustConfirm, ipData, ipSusp = suspIp)
+                            val client = simpleSignup.match
+                              case Some(s) => s.client.value
+                              case None => if HTTPRequest.isLichessMobile(req) then "mobile" else "website"
+                            monitor(data, captcha, mustConfirm, ipData, ipSusp = suspIp, client = client)
                             lila.mon.user.register.mustConfirmEmail(mustConfirm.toString).increment()
                             val passwordHash = authenticator.passEnc(data.clearPassword)
                             userRepo
@@ -152,7 +156,8 @@ final class Signup(
       captcha: Hcaptcha.Result,
       confirm: MustConfirmEmail,
       ipData: IpTrust.IpData,
-      ipSusp: Boolean
+      ipSusp: Boolean,
+      client: String
   ) =
     lila.mon.user.register
       .count(
@@ -161,7 +166,8 @@ final class Signup(
         ipSusp = ipSusp,
         fp = data.fp.isDefined,
         proxy = ipData.proxy.name,
-        country = ipData.location.shortCountry
+        country = ipData.location.shortCountry,
+        client = client
       )
       .increment()
 
