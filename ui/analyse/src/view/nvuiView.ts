@@ -238,24 +238,8 @@ function renderTouchDeviceCommands(ctx: AnalyseNvuiContext): LooseVNodes {
   const { notify, ctrl, moveStyle } = ctx;
   return [
     hl('div.actions', [
-      hl(
-        'button',
-        {
-          hook: bind('click', () => {
-            ctrl.navigate.prev();
-          }),
-        },
-        'previous move',
-      ),
-      hl(
-        'button',
-        {
-          hook: bind('click', () => {
-            ctrl.navigate.next();
-          }),
-        },
-        'next move',
-      ),
+      hl('button', { hook: bind('click', ctrl.navigate.prev) }, 'previous move'),
+      hl('button', { hook: bind('click', ctrl.navigate.next) }, 'next move'),
       hl('button', { hook: bind('click', () => notify.set(renderEvalAndDepth(ctrl))) }, 'evaluation'),
       hl(
         'button',
@@ -271,24 +255,8 @@ function renderTouchDeviceCommands(ctx: AnalyseNvuiContext): LooseVNodes {
         },
         'clocks',
       ),
-      hl(
-        'button',
-        {
-          hook: bind('click', () => {
-            ctrl.navigate.first();
-          }),
-        },
-        'first move',
-      ),
-      hl(
-        'button',
-        {
-          hook: bind('click', () => {
-            ctrl.navigate.last();
-          }),
-        },
-        'last move',
-      ),
+      hl('button', { hook: bind('click', ctrl.navigate.first) }, 'first move'),
+      hl('button', { hook: bind('click', ctrl.navigate.last) }, 'last move'),
     ]),
   ];
 }
