@@ -353,7 +353,7 @@ const playActions = (ctx: PuzzleNvuiContext): VNode => {
     ? requiresI18n('storm', ctx.ctrl.redraw, cat =>
         button(cat.skip, ctrl.skip, i18n.puzzle.streakSkipExplanation, !ctrl.streak?.data.skip),
       )
-    : hl('div.actions_play', [
+    : hl('div.actions-play', [
         button(i18n.site.getAHint, () => {
           const hint = nextCorrectMove(ctrl);
           if (hint) {
@@ -366,7 +366,7 @@ const playActions = (ctx: PuzzleNvuiContext): VNode => {
 
 const afterActions = (ctrl: PuzzleCtrl): VNode =>
   hl(
-    'div.actions_after',
+    'div.actions-after',
     ctrl.streak && ctrl.lastFeedback === 'win'
       ? hl('a', { attrs: { href: '/streak' } }, i18n.puzzle.newStreak)
       : [...renderVote(ctrl), button(i18n.puzzle.continueTraining, ctrl.nextPuzzle)],
