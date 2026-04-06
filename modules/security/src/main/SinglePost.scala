@@ -29,14 +29,16 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
     SinglePostToken(s"$rnd|${digestOf(rnd).hex}")
 
   def consumeToken(token: String)(using RequestHeader): Boolean =
-    token.split('|') match
-      case Array(rnd, sign) =>
-        if !tokens.get(rnd) then result("expired".some)
-        else if !digestOf(rnd).hash_=(sign) then result("badSign".some)
-        else
-          tokens.remove(rnd)
-          result(none)
-      case _ => result("missing".some)
+    if token.isEmpty then result("missing".some)
+    else
+      token.split('|') match
+        case Array(rnd, sign) =>
+          if !tokens.get(rnd) then result("expired".some)
+          else if !digestOf(rnd).hash_=(sign) then result("badSign".some)
+          else
+            tokens.remove(rnd)
+            result(none)
+        case _ => result("weird".some)
 
   private def result(err: Option[String])(using req: RequestHeader) =
     val cold = !lila.common.Uptime.startedSinceMinutes(5)
@@ -53,8 +55,10 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
   private def digestOf(rnd: String)(using req: RequestHeader) =
     signer.sha1(s"$rnd|${HTTPRequest.userAgent(req)}")
 
-  def formMapping(using RequestHeader) =
-    nonEmptyText.verifying("Session has expired, please try again", consumeToken)
+  def formMapping(using RequestHeader): Mapping[String] =
+    optional(nonEmptyText)
+      .transform(~_, _.some)
+      .verifying("Session has expired, please try again", consumeToken)
 
   def formPair(using RequestHeader): (String, Mapping[String]) = "singlePost" -> formMapping
 
