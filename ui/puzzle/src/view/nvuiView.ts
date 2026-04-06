@@ -164,50 +164,17 @@ export function renderNvui(ctx: PuzzleNvuiContext): VNode {
 
 function renderTouchDeviceCommands(ctx: PuzzleNvuiContext): LooseVNodes {
   const { notify, ctrl } = ctx;
+  const btn = (cls: string, text: string, onClick: () => void): VNode =>
+    hl(`button.${cls}`, { attrs: { type: 'button' }, hook: bind('click', onClick) }, text);
   return hl('div.actions', [
+    ctrl.mode !== 'view' && btn('last-move', 'Last move', () => notify.set($('.lastMove').text())),
     ctrl.mode !== 'view' &&
-      hl(
-        'button.last-move',
-        {
-          attrs: { type: 'button' },
-          hook: bind('click', () => {
-            notify.set($('.lastMove').text());
-          }),
-        },
-        'Last move',
-      ),
-    ctrl.mode !== 'view' &&
-      hl(
-        'button.touch-hint',
-        {
-          attrs: { type: 'button' },
-          hook: bind('click', () => {
-            const hint = nextCorrectMove(ctrl);
-            if (hint) {
-              notify.set(makeSquare(hint.from));
-            }
-          }),
-        },
-        i18n.site.getAHint,
-      ),
-    ctrl.mode !== 'view' &&
-      hl(
-        'button.touch-solution',
-        {
-          attrs: { type: 'button' },
-          hook: bind('click', () => ctrl.viewSolution()),
-        },
-        i18n.site.viewTheSolution,
-      ),
-    ctrl.mode === 'view' &&
-      hl(
-        'button.touch-continue',
-        {
-          attrs: { type: 'button' },
-          hook: bind('click', () => ctrl.nextPuzzle()),
-        },
-        i18n.puzzle.continueTraining,
-      ),
+      btn('touch-hint', i18n.site.getAHint, () => {
+        const hint = nextCorrectMove(ctrl);
+        if (hint) notify.set(makeSquare(hint.from));
+      }),
+    ctrl.mode !== 'view' && btn('touch-solution', i18n.site.viewTheSolution, ctrl.viewSolution),
+    ctrl.mode === 'view' && btn('touch-continue', i18n.puzzle.continueTraining, ctrl.nextPuzzle),
   ]);
 }
 
