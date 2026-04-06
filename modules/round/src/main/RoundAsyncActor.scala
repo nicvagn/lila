@@ -204,7 +204,7 @@ final private class RoundAsyncActor(
     case RoundBus.Resign(playerId) =>
       handle(playerId): pov =>
         pov.game.resignable.so(
-          if pov.cannotLose then finisher.other(pov.game, _.InsufficientMaterialClaim, None)
+          if RoundGame.cannotLose(pov) then finisher.other(pov.game, _.InsufficientMaterialClaim, None)
           else finisher.other(pov.game, _.Resign, Some(!pov.color))
         )
 

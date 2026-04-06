@@ -52,7 +52,7 @@ final private[round] class Drawer(
           Messenger.SystemMessage.Persistent(trans.site.drawOfferAccepted.txt()).some
         )
       case Pov(g, color) if g.playerCanOfferDraw(color) =>
-        if pov.cannotLose then finisher.other(pov.game, _.InsufficientMaterialClaim, None)
+        if RoundGame.cannotLose(pov) then finisher.other(pov.game, _.InsufficientMaterialClaim, None)
         else
           val progress = Progress(g).map(offerDraw(color))
           messenger.system(g, color.fold(trans.site.whiteOffersDraw, trans.site.blackOffersDraw).txt())
