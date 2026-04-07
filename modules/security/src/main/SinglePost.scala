@@ -12,6 +12,9 @@ import play.api.data.Mapping
 
 final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Builder)(using Executor):
 
+  private type Rnd = String
+  private type Err = "missing" | "badSign" | "expired" | "weird"
+
   private val signer = com.roundeights.hasher.Algo.hmac(secret.value)
 
   private val tokens = scalalib.cache.ExpireSetMemo[String](10.minutes)
@@ -29,49 +32,61 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
     SinglePostToken(s"$rnd|${digestOf(rnd).hex}")
 
   def consumeToken(token: String)(using RequestHeader): Boolean =
-    if token.isEmpty then result("missing".some)
+    test(token) match
+      case Left(err) => result(err.some)
+      case Right(rnd) if result(none) =>
+        tokens.remove(rnd)
+        true
+      case Right(_) => false
+
+  def preCheckForm(using RequestHeader) = play.api.data.Form:
+    single:
+      "singlePost" -> tokenMapping.verifying("Invalid token", preCheck)
+
+  private def test(token: String)(using RequestHeader): Either[Err, Rnd] =
+    if token.isEmpty then Left("missing")
     else
       token.split('|') match
         case Array(rnd, sign) =>
-          if !digestOf(rnd).hash_=(sign) then result("badSign".some)
-          else if !tokens.get(rnd) then result("expired".some)
-          else
-            tokens.remove(rnd)
-            result(none)
-        case _ => result("weird".some)
+          if !digestOf(rnd).hash_=(sign) then Left("badSign")
+          else if !tokens.get(rnd) then Left("expired")
+          else Right(rnd)
+        case _ => Left("weird")
 
-  private def result(err: Option[String])(using req: RequestHeader) =
-    val cold = !lila.common.Uptime.startedSinceMinutes(5)
+  private def cold = !lila.common.Uptime.startedSinceMinutes(5)
+
+  private def result(err: Option[Err])(using req: RequestHeader) =
     val endpoint = HTTPRequest.actionName(req)
     lila.mon.security.singlePost.consume(endpoint, err | "success").increment()
-    err
-      .filterNot(_ == "expired" && cold)
-      .foreach: e =>
+    err match
+      case None => true
+      case Some("expired") if cold => true
+      case Some(error) =>
         logger
           .branch("singlePost")
-          .info(s"$endpoint $e ${HTTPRequest.printReq(req)} ${HTTPRequest.printClient(req)}")
-    err.isEmpty || cold
+          .info(s"$endpoint $error ${HTTPRequest.printReq(req)} ${HTTPRequest.printClient(req)}")
+        false
 
   private def digestOf(rnd: String)(using req: RequestHeader) =
     signer.sha1(s"$rnd|${enforceIp.get().so(HTTPRequest.ipAddressStr(req))}|${HTTPRequest.userAgent(req)}")
 
+  private def tokenMapping = optional(nonEmptyText).transform(~_, _.some)
+
   def formMapping(using RequestHeader): Mapping[String] =
-    optional(nonEmptyText)
-      .transform(~_, _.some)
-      .verifying("Session has expired, please try again", consumeToken)
+    tokenMapping.verifying("Session has expired, please try again", consumeToken)
 
   def formPair(using RequestHeader): (String, Mapping[String]) = "singlePost" -> formMapping
 
   def formPairWithLichobileCompat(using req: RequestHeader): (String, Mapping[String]) =
     if HTTPRequest.isLichobile(req)
-    then "singlePost" -> optional(text).transform(~_, _.some)
+    then "singlePost" -> tokenMapping
     else formPair
 
-  def signCheckForm = play.api.data.Form(
-    single(
-      "singlePost" ->
-        optional(nonEmptyText)
-          .transform(~_, _.some)
-          .verifying("Session has expired, please try again", checkTokenSign)
-    )
-  )
+  // allows expired tokens, but not invalid ones
+  private def preCheck(token: String)(using req: RequestHeader): Boolean =
+    test(token) match
+      case Right(_) => true
+      case Left("expired") => true
+      case Left(err) =>
+        lila.mon.security.singlePost.preCheck(HTTPRequest.actionName(req), err).increment()
+        false

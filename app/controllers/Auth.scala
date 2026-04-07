@@ -210,7 +210,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
           if HTTPRequest.isLichobile(ctx.req)
           then BadRequest(jsonError("Please use our new mobile app! https://lichess.org/mobile"))
           else
-            bindForm(env.security.singlePost.presenceForm)(
+            bindForm(env.security.singlePost.preCheckForm)(
               _ => Redirect(routes.Auth.signup),
               _ =>
                 limit.enumeration.signup(rateLimited):
