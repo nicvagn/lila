@@ -33,8 +33,8 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
     else
       token.split('|') match
         case Array(rnd, sign) =>
-          if !tokens.get(rnd) then result("expired".some)
-          else if !digestOf(rnd).hash_=(sign) then result("badSign".some)
+          if !digestOf(rnd).hash_=(sign) then result("badSign".some)
+          else if !tokens.get(rnd) then result("expired".some)
           else
             tokens.remove(rnd)
             result(none)
@@ -67,4 +67,11 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
     then "singlePost" -> optional(text).transform(~_, _.some)
     else formPair
 
-  def presenceForm = play.api.data.Form(single("singlePost" -> nonEmptyText))
+  def signCheckForm = play.api.data.Form(
+    single(
+      "singlePost" ->
+        optional(nonEmptyText)
+          .transform(~_, _.some)
+          .verifying("Session has expired, please try again", checkTokenSign)
+    )
+  )
