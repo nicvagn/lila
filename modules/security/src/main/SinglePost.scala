@@ -16,10 +16,10 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
 
   private val tokens = scalalib.cache.ExpireSetMemo[String](10.minutes)
 
-  val enforce = settingStore[Boolean](
-    "singlePostEnforce",
+  val enforceIp = settingStore[Boolean](
+    "singlePostEnforceIp",
     default = true,
-    text = "Enforce single post".some
+    text = "Enforce single post IP".some
   )
 
   val newToken: SinglePostMakeToken = req ?=>
@@ -50,10 +50,10 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
         logger
           .branch("singlePost")
           .info(s"$endpoint $e ${HTTPRequest.printReq(req)} ${HTTPRequest.printClient(req)}")
-    err.isEmpty || !enforce.get() || cold
+    err.isEmpty || cold
 
   private def digestOf(rnd: String)(using req: RequestHeader) =
-    signer.sha1(s"$rnd|${HTTPRequest.userAgent(req)}")
+    signer.sha1(s"$rnd|${enforceIp.get().so(HTTPRequest.ipAddressStr(req))}|${HTTPRequest.userAgent(req)}")
 
   def formMapping(using RequestHeader): Mapping[String] =
     optional(nonEmptyText)
