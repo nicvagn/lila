@@ -1,4 +1,4 @@
-import { defined } from 'lib';
+import { defined, requestIdleCallback } from 'lib';
 import { throttle } from 'lib/async';
 import { isIos } from 'lib/device';
 import { speakable } from 'lib/game/sanWriter';
