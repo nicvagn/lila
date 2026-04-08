@@ -8,7 +8,7 @@ type Name = string;
 type Path = string;
 
 export default new (class implements SoundI {
-  ctx: AudioContext | undefined;
+  ctx = makeAudioContext();
   listeners = new Set<SoundListener>();
   sounds = new Map<Path, Sound>(); // All loaded sounds and their instances
   paths = new Map<Name, Path>(); // sound names to paths
@@ -27,10 +27,7 @@ export default new (class implements SoundI {
 
   constructor() {
     this.primerEvents.forEach(e => window.addEventListener(e, this.primer, { capture: true }));
-    requestIdleCallback(() => {
-      this.ctx = makeAudioContext();
-      window.speechSynthesis?.getVoices(); // preload
-    });
+    window.speechSynthesis?.getVoices(); // preload
   }
 
   async load(name: Name, path?: Path): Promise<Sound | undefined> {
