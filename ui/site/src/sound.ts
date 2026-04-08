@@ -26,11 +26,11 @@ export default new (class implements SoundI {
   };
 
   constructor() {
-    setTimeout(() => {
-      this.ctx = makeAudioContext();
-    }, 0);
     this.primerEvents.forEach(e => window.addEventListener(e, this.primer, { capture: true }));
-    window.speechSynthesis?.getVoices(); // preload
+    requestIdleCallback(() => {
+      this.ctx = makeAudioContext();
+      window.speechSynthesis?.getVoices(); // preload
+    });
   }
 
   async load(name: Name, path?: Path): Promise<Sound | undefined> {
