@@ -213,24 +213,25 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
               _ =>
                 limit.enumeration.signup(rateLimited):
                   proxy.no.so(forms.preloadEmailDns()) >> {
+                    import Signup.Result.*
                     env.security.signup
                       .website(ctx.blind, simpleSignup)
                       .flatMap:
-                        case Signup.Result.RateLimited | Signup.Result.ForbiddenNetwork => rateLimited
-                        case Signup.Result.MissingCaptcha =>
+                        case RateLimited | ForbiddenNetwork | SimpleSignupDuplicate => rateLimited
+                        case MissingCaptcha =>
                           forms.signup
                             .website(simpleSignup)
                             .flatMap: f =>
                               BadRequest.page(views.auth.signup(f.form, f.simple))
-                        case Signup.Result.Bad(err) =>
+                        case FormInvalid(err) =>
                           forms.signup
                             .website(simpleSignup)
                             .flatMap: f =>
                               BadRequest.page(views.auth.signup(f.form.withForm(err), f.simple))
-                        case Signup.Result.ConfirmEmail(user, email) =>
+                        case ConfirmEmail(user, email) =>
                           redirectWithReferrer(routes.Auth.checkYourEmail).withCookies:
                             EmailConfirm.cookie.newSession(env.security.lilaCookie, user, email)
-                        case Signup.Result.AllSet(user, email) =>
+                        case AllSet(user, email) =>
                           welcome(user, email, sendWelcomeEmail = true) >> redirectNewUser(user)
                   }
             )

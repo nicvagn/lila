@@ -232,6 +232,9 @@ object mon:
             "country" -> country.escape,
             "client" -> client
           )
+      def result(client: String, result: String) =
+        counter("user.register.result").withTags:
+          tags("client" -> client, "result" -> result)
       def mustConfirmEmail(v: String) = counter("user.register.mustConfirmEmail").withTag("type", v)
       def confirmEmailResult(success: Boolean) =
         counter("user.register.confirmEmail").withTag("success", successTag(success))
