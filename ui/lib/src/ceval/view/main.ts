@@ -96,34 +96,22 @@ const threatButton = (ctrl: CevalHandler): VNode | null =>
 
 function engineName(ctrl: CevalCtrl): VNode[] {
   const engine = ctrl.engines.active;
-  return engine
-    ? [
-        hl('span', { attrs: { title: engine.name } }, engine.short ?? engine.name),
-        ctrl.engines.isExternalEngineInfo(engine)
-          ? hl(
-              'span.technology.good',
-              { attrs: { title: 'Engine running outside of the browser' } },
-              engine.tech,
-            )
-          : engine.requires.includes('relaxedSimd')
-            ? hl(
-                'span.technology.good',
-                { attrs: { title: 'Multi-threaded WebAssembly with relaxed SIMD' } },
-                engine.tech,
-              )
-            : engine.requires.includes('simd')
-              ? hl(
-                  'span.technology.good',
-                  { attrs: { title: 'Multi-threaded WebAssembly with SIMD' } },
-                  engine.tech,
-                )
-              : engine.requires.includes('sharedMem')
-                ? hl('span.technology.good', { attrs: { title: 'Multi-threaded WebAssembly' } }, engine.tech)
-                : engine.requires.includes('wasm')
-                  ? hl('span.technology', { attrs: { title: 'Single-threaded WebAssembly' } }, engine.tech)
-                  : hl('span.technology', { attrs: { title: 'Single-threaded JavaScript' } }, engine.tech),
-      ]
-    : [];
+  if (!engine) return [];
+  const [good, title] = ctrl.engines.isExternalEngineInfo(engine)
+    ? [true, 'Engine running outside of the browser']
+    : engine.requires.includes('relaxedSimd')
+      ? [true, 'Multi-threaded WebAssembly with relaxed SIMD']
+      : engine.requires.includes('simd')
+        ? [true, 'Multi-threaded WebAssembly with SIMD']
+        : engine.requires.includes('sharedMem')
+          ? [true, 'Multi-threaded WebAssembly']
+          : engine.requires.includes('wasm')
+            ? [false, 'Single-threaded WebAssembly']
+            : [false, 'Single-threaded JavaScript'];
+  return [
+    hl('span', { attrs: { title: engine.name } }, engine.short ?? engine.name),
+    hl(`span.technology${good ? '.good' : ''}`, { attrs: { title } }, engine.tech),
+  ];
 }
 
 export const getBestEval = (ctrl: CevalHandler): EvalScore | undefined => {
