@@ -235,7 +235,7 @@ final class StudentFormUi(helpers: Helpers, clasUi: ClasUi, studentUi: StudentUi
         div(cls := "box__pad")(
           h2(trans.clas.releaseTheAccount()),
           p(
-            raw(trans.clas.releaseDesc1.txt()),
+            trans.clas.releaseDesc1.rawHtml(),
             br,
             trans.clas.releaseDesc2()
           ),
