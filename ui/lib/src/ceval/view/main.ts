@@ -105,17 +105,23 @@ function engineName(ctrl: CevalCtrl): VNode[] {
               { attrs: { title: 'Engine running outside of the browser' } },
               engine.tech,
             )
-          : engine.requires.includes('simd')
+          : engine.requires.includes('relaxedSimd')
             ? hl(
                 'span.technology.good',
-                { attrs: { title: 'Multi-threaded WebAssembly with SIMD' } },
+                { attrs: { title: 'Multi-threaded WebAssembly with relaxed SIMD' } },
                 engine.tech,
               )
-            : engine.requires.includes('sharedMem')
-              ? hl('span.technology.good', { attrs: { title: 'Multi-threaded WebAssembly' } }, engine.tech)
-              : engine.requires.includes('wasm')
-                ? hl('span.technology', { attrs: { title: 'Single-threaded WebAssembly' } }, engine.tech)
-                : hl('span.technology', { attrs: { title: 'Single-threaded JavaScript' } }, engine.tech),
+            : engine.requires.includes('simd')
+              ? hl(
+                  'span.technology.good',
+                  { attrs: { title: 'Multi-threaded WebAssembly with SIMD' } },
+                  engine.tech,
+                )
+              : engine.requires.includes('sharedMem')
+                ? hl('span.technology.good', { attrs: { title: 'Multi-threaded WebAssembly' } }, engine.tech)
+                : engine.requires.includes('wasm')
+                  ? hl('span.technology', { attrs: { title: 'Single-threaded WebAssembly' } }, engine.tech)
+                  : hl('span.technology', { attrs: { title: 'Single-threaded JavaScript' } }, engine.tech),
       ]
     : [];
 }
