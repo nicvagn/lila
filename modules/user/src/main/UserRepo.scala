@@ -9,7 +9,6 @@ import scalalib.model.{ Days, LangTag }
 
 import lila.core.LightUser
 import lila.core.email.NormalizedEmailAddress
-import lila.core.net.ApiVersion
 import lila.core.security.HashedPassword
 import lila.core.user.{ Plan, PlayTime, Profile, TotpSecret, UserMark, RoleDbKey, KidMode }
 import lila.core.userId.UserSearch
@@ -577,9 +576,6 @@ final class UserRepo(c: Coll)(using Executor) extends lila.core.user.UserRepo(c)
 
   def filterSeenSince(since: Instant)(ids: Iterable[UserId]): Fu[List[UserId]] =
     coll.distinctEasy[UserId, List](F.id, $inIds(ids) ++ F.seenAt.$gt(since), _.sec)
-
-  def createdWithApiVersion(userId: UserId) =
-    coll.primitiveOne[ApiVersion]($id(userId), F.createdWithApiVersion)
 
   private val defaultCount = lila.core.user.Count(0, 0, 0, 0, 0)
 

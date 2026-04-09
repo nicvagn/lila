@@ -197,11 +197,9 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
   private def simpleSignup(using Context) =
     summon[Option[ValidReferrer]].flatMap(env.oAuth.signedClients.simpleSignupFrom)
 
-  private def authLog(user: UserName, email: Option[EmailAddress], msg: String)(using ctx: Context) = for
-    proxy <- env.security.ip2proxy.ofReq(ctx.req)
-    creationApi <- env.user.repo.createdWithApiVersion(user.id)
-    cav = creationApi.fold("-")(_.toString)
-  do lila.log("auth").info(s"$proxy $user ${email.fold("-")(_.value)} cav:$cav $msg")
+  private def authLog(user: UserName, email: Option[EmailAddress], msg: String)(using ctx: Context) =
+    for proxy <- env.security.ip2proxy.ofReq(ctx.req)
+    do lila.log("auth").info(s"$proxy $user ${email.fold("-")(_.value)} $msg")
 
   def signupPost = OpenBody:
     NoTor:
