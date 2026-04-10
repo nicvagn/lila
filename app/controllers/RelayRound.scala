@@ -67,30 +67,37 @@ final class RelayRound(
 
   def update(id: RelayRoundId) = AuthOrScopedBody(_.Study.Write) { ctx ?=> me ?=>
     env.relay.api
-      .formNavigation(id)
-      .flatMapz: (round, nav) =>
-        bindForm(env.relay.roundForm.edit(nav.tour, round))(
-          err => fuccess(Left((round, nav) -> err)),
-          data =>
-            env.relay.api
-              .update(round)(data.update(nav.tour.official))
-              .dmap(_.withTour(nav.tour))
-              .dmap(Right(_))
-        ).dmap(some)
-      .orNotFound:
-        _.fold(
-          { case ((round, nav), err) =>
+      .byIdAndContributor(id)
+      .flatMap:
+        case None =>
+          Found(env.relay.api.formNavigation(id)): (_, nav) =>
             negotiate(
-              BadRequest.page(views.relay.form.round.edit(round, err, nav)),
-              jsonFormError(err)
+              Forbidden.page(views.relay.form.noAccess(nav)),
+              forbiddenJson()
             )
-          },
-          _ =>
-            negotiate(
-              Redirect(routes.RelayRound.edit(id)).flashSuccess,
-              doApiShow(id)
-            )
-        )
+        case Some(rt) =>
+          env.relay.api
+            .formNavigation(rt)
+            .flatMap: (round, nav) =>
+              bindForm(env.relay.roundForm.edit(nav.tour, round))(
+                err => fuccess(Left((round, nav, err))),
+                data =>
+                  env.relay.api
+                    .update(round)(data.update(nav.tour.official))
+                    .dmap(_.withTour(nav.tour))
+                    .dmap(Right(_))
+              )
+            .flatMap:
+              case Left((round, nav, err)) =>
+                negotiate(
+                  BadRequest.page(views.relay.form.round.edit(round, err, nav)),
+                  jsonFormError(err)
+                )
+              case Right(_) =>
+                negotiate(
+                  Redirect(routes.RelayRound.edit(id)).flashSuccess,
+                  doApiShow(id)
+                )
   }
 
   def reset(id: RelayRoundId) = AuthOrScoped(_.Study.Write) { ctx ?=> me ?=>
