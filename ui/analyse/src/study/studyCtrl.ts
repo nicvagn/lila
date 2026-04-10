@@ -186,8 +186,9 @@ export default class StudyCtrl {
           ctrl.mainline.length === 1 &&
           !data.chapter.setup.fromFen &&
           !this.relay
-        )
+        ) {
           this.chapters.newForm.openInitial();
+        }
       },
       () => data,
       this.redraw,
