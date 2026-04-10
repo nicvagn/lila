@@ -82,7 +82,8 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
       case None =>
         val prefillUsername = UserStrOrEmail(~switch.filter(_ != "1"))
         val form = api.loginFormFilled(prefillUsername)
-        Ok.page(views.auth.login(form)).map(_.withCanonical(routes.Auth.login))
+        val crawler = HTTPRequest.isCrawler(ctx.req)
+        Ok.page(views.auth.login(form, crawler)).map(_.withCanonical(routes.Auth.login))
 
   private val is2fa = Set("MissingTotpToken", "InvalidTotpToken")
 
