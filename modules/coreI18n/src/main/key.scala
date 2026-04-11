@@ -2750,6 +2750,7 @@ object I18nKey:
     val `doubleDefeat`: I18nKey = "study:doubleDefeat"
     val `blackDefeatWhiteCanNotWin`: I18nKey = "study:blackDefeatWhiteCanNotWin"
     val `whiteDefeatBlackCanNotWin`: I18nKey = "study:whiteDefeatBlackCanNotWin"
+    val `randomChess960Position`: I18nKey = "study:randomChess960Position"
     val `nbChapters`: I18nKey = "study:nbChapters"
     val `nbGames`: I18nKey = "study:nbGames"
     val `nbMembers`: I18nKey = "study:nbMembers"

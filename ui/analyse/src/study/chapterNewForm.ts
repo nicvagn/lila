@@ -394,7 +394,11 @@ export function view(ctrl: StudyChapterNewForm): VNode {
                   }),
                 }),
                 hl('button.button.button-empty', {
-                  attrs: { type: 'button', title: 'Random Chess960 position', ...dataIcon(licon.DieSix) },
+                  attrs: {
+                    type: 'button',
+                    title: i18n.study.randomChess960Position,
+                    ...dataIcon(licon.DieSix),
+                  },
                   hook: bind('click', () => {
                     ctrl.chess960Position(randomPositionId());
                     ctrl.redraw();

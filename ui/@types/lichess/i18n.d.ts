@@ -5299,6 +5299,8 @@ interface I18n {
     private: string;
     /** Public */
     public: string;
+    /** Random Chess960 position */
+    randomChess960Position: string;
     /** Read more about embedding */
     readMoreAboutEmbedding: string;
     /** Recently updated */
