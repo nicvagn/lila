@@ -257,6 +257,11 @@ function renderTouchDeviceCommands(ctx: AnalyseNvuiContext): LooseVNodes {
       ),
       hl('button', { hook: bind('click', ctrl.navigate.first) }, 'first move'),
       hl('button', { hook: bind('click', ctrl.navigate.last) }, 'last move'),
+      hl(
+        'button',
+        { hook: bind('click', () => toggleLocalEvaluation(ctrl)) },
+        noEvalStr(ctrl) ? noEvalStr(ctrl) : 'local evaluation is enabled',
+      ),
     ]),
   ];
 }
@@ -321,6 +326,10 @@ const noEvalStr = (ctrl: AnalyseCtrl) =>
     : !ctrl.cevalEnabled()
       ? 'local evaluation not enabled'
       : '';
+
+function toggleLocalEvaluation(ctrl: AnalyseCtrl): void {
+  if (ctrl.isCevalAllowed() && ctrl.ceval.analysable) ctrl.cevalEnabled(!ctrl.cevalEnabled());
+}
 
 function renderBestMove({ ctrl, moveStyle }: AnalyseNvuiContext): string {
   const noEvalMsg = noEvalStr(ctrl);
