@@ -124,10 +124,11 @@
 }
 
 #user_tag {
-  @extend %flex-center-nowrap;
+  @extend %flex-center-nowrap, %nowrap-ellipsis;
 
-  white-space: nowrap;
   gap: 0.5rem;
+  max-width: 40vw;
+  display: inline-block;
 
   &::after {
     @include transition(color);
