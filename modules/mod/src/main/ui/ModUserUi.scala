@@ -13,7 +13,7 @@ import lila.report.Report
 def mzSection(key: String) =
   div(cls := s"mz-section mz-section--$key", dataRel := key, id := s"mz_$key")
 
-final class ModUserUi(helpers: Helpers, modUi: ModUi):
+final class ModUserUi(helpers: Helpers, modUi: ModUi, mailerEventsUrl: String):
   import helpers.{ *, given }
 
   val dataValue = attr("data-value")
@@ -274,6 +274,17 @@ final class ModUserUi(helpers: Helpers, modUi: ModUi):
             ),
             emails.previous.map: email =>
               s"Previously $email",
+            a(
+              href := mailerEventsUrl +
+                List(
+                  emails.current.map(_.value).getOrElse(""),
+                  emails.previous.map(_.value).mkString("+OR+"),
+                  u.username.value
+                ).filter(_.nonEmpty).mkString("+OR+"),
+              target := "_blank",
+              title := "View email history",
+              cls := "btn-rack btn-rack__btn"
+            )("Email Logs"),
             postForm(
               action := routes.Mod.blankPassword(u.username),
               title := "Blank the password",
