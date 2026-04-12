@@ -8,7 +8,7 @@ import lila.common.HTTPRequest
 import lila.common.Json.given
 import lila.core.id.SessionId
 import lila.core.email.{ UserIdOrEmail, UserStrOrEmail }
-import lila.core.net.{ IpAddress, ValidReferrer }
+import lila.core.net.{ IpAddress, ValidReferrer, Crawler }
 import lila.core.security.{ ClearPassword, SinglePostMakeToken }
 import lila.memo.RateLimit
 import lila.security.SecurityForm.{ MagicLink, PasswordReset }
@@ -95,7 +95,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         bindForm(api.loginForm)(
           err =>
             negotiate(
-              Unauthorized.page(views.auth.login(err, isRemember)),
+              Unauthorized.page(views.auth.login(err, Crawler.No, isRemember)),
               Unauthorized(doubleJsonFormErrorBody(err))
             ),
           (login, pass, _) =>
@@ -119,7 +119,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                                 Ok:
                                   if HTTPRequest.isLichobile(req) then err
                                   else s"$err ${env.security.singlePost.newToken}"
-                              case _ => Unauthorized.page(views.auth.login(err, isRemember))
+                              case _ => Unauthorized.page(views.auth.login(err, Crawler.No, isRemember))
                             ,
                             Unauthorized(doubleJsonFormErrorBody(err))
                           )
