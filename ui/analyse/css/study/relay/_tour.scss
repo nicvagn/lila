@@ -614,13 +614,6 @@
   }
 
   .fide-player {
-    &__photo {
-      @extend %box-neat;
-
-      aspect-ratio: 1;
-      max-width: 300px;
-    }
-
     &__header {
       @extend %tour-margin-horiz;
     }

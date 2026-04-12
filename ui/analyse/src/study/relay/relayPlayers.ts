@@ -172,7 +172,8 @@ const playerView = (ctrl: RelayPlayers, show: PlayerToShow): VNode => {
               }),
             },
             [
-              photo && playerPhotoOrFallback(p, photo, 'medium', 'fide-player__photo'),
+              photo &&
+                hl('div.fide-player__photo', playerPhotoOrFallback(p, photo, 'medium', 'fide-player__photo')),
               hl('div.fide-player__header__info', [
                 hl('a.fide-player__header__name', { attrs: fidePageAttrs }, [
                   hl('span', [userTitle(p), p.name]),
