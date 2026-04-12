@@ -97,6 +97,7 @@ body.zen {
 
   &__donate {
     @extend %nowrap-ellipsis;
+
     padding: 16px 0;
     max-width: 30vw;
 
@@ -132,6 +133,7 @@ body.zen {
     @media (width <= $x-small) {
       display: none;
     }
+
     @media (width <= $small) {
       body.clinput & {
         display: none;
