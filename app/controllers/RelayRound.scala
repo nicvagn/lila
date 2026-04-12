@@ -51,13 +51,18 @@ final class RelayRound(
         )
   }
 
+  private def accessDenied(id: RelayRoundId)(using Context) =
+    negotiate(
+      Found(env.relay.api.byId(id)): r =>
+        Forbidden.page(views.relay.form.noAccess(r)),
+      forbiddenJson()
+    )
+
   def edit(id: RelayRoundId) = Auth { ctx ?=> me ?=>
     env.relay.api
       .byIdAndContributor(id)
       .flatMap:
-        case None =>
-          Found(env.relay.api.formNavigation(id)): (_, nav) =>
-            Forbidden.page(views.relay.form.noAccess(nav))
+        case None => accessDenied(id)
         case Some(rt) =>
           env.relay.api
             .formNavigation(rt)
@@ -69,12 +74,7 @@ final class RelayRound(
     env.relay.api
       .byIdAndContributor(id)
       .flatMap:
-        case None =>
-          Found(env.relay.api.formNavigation(id)): (_, nav) =>
-            negotiate(
-              Forbidden.page(views.relay.form.noAccess(nav)),
-              forbiddenJson()
-            )
+        case None => accessDenied(id)
         case Some(rt) =>
           env.relay.api
             .formNavigation(rt)
