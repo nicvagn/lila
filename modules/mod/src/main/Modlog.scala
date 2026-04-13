@@ -89,7 +89,7 @@ case class Modlog(
     case Modlog.unsetKidMode => "unset kid mode"
     case Modlog.weakPassword => "log in with weak password"
     case Modlog.blankPassword => "blank password"
-    case Modlog.blankedPassword => "log in with blanked password"
+    case Modlog.blankedPassword => "log in attempt with blanked password"
     case Modlog.giftPatronMonth => "gift patron month"
     case Modlog.setCarouselSize => "set blog carousel size"
     case Modlog.imagePass => "approve flagged image"
