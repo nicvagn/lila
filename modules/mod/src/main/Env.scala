@@ -11,6 +11,7 @@ import lila.core.forum.BusForum
 import lila.core.report.SuspectId
 import lila.rating.UserWithPerfs.only
 import lila.core.mod.{ BoardApiMark, LoginWithWeakPassword, LoginWithBlankedPassword }
+import lila.common.autoconfig.given
 
 @Module
 final class Env(
@@ -40,7 +41,7 @@ final class Env(
     msgApi: lila.core.msg.MsgApi
 )(using Executor, Scheduler, lila.core.i18n.Translator, akka.stream.Materializer):
 
-  val mailerEventsUrl = appConfig.get[String]("mailer.events.url")
+  val mailerEventsUrl = appConfig.get[Url]("mailer.events.url")
 
   private lazy val logRepo = ModlogRepo(db(CollName("modlog")))
   private lazy val assessmentRepo = AssessmentRepo(db(CollName("player_assessment")))

@@ -13,7 +13,7 @@ import lila.report.Report
 def mzSection(key: String) =
   div(cls := s"mz-section mz-section--$key", dataRel := key, id := s"mz_$key")
 
-final class ModUserUi(helpers: Helpers, modUi: ModUi, mailerEventsUrl: String):
+final class ModUserUi(helpers: Helpers, modUi: ModUi, mailerEventsUrl: Url):
   import helpers.{ *, given }
 
   val dataValue = attr("data-value")
@@ -275,9 +275,9 @@ final class ModUserUi(helpers: Helpers, modUi: ModUi, mailerEventsUrl: String):
             emails.previous.map: email =>
               s"Previously $email",
             a(
-              href := mailerEventsUrl +
+              href := mailerEventsUrl.value +
                 List(
-                  emails.current.map(_.value).getOrElse(""),
+                  emails.current.so(_.value),
                   emails.previous.map(_.value).mkString("+OR+"),
                   u.username.value
                 ).filter(_.nonEmpty).mkString("+OR+"),
