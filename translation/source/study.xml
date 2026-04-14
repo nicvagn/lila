@@ -200,5 +200,4 @@
   <string name="doubleDefeat">Double defeat</string>
   <string name="blackDefeatWhiteCanNotWin">Black defeat, but White can't win</string>
   <string name="whiteDefeatBlackCanNotWin">White defeat, but Black can't win</string>
-  <string name="randomChess960Position">Random Chess960 position</string>
 </resources>

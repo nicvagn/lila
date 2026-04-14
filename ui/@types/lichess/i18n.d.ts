@@ -4159,6 +4159,8 @@ interface I18n {
     quickPairing: string;
     /** Race finished */
     raceFinished: string;
+    /** Random Chess960 position */
+    randomChess960Position: string;
     /** Random side */
     randomColor: string;
     /** Rank */
@@ -5299,8 +5301,6 @@ interface I18n {
     private: string;
     /** Public */
     public: string;
-    /** Random Chess960 position */
-    randomChess960Position: string;
     /** Read more about embedding */
     readMoreAboutEmbedding: string;
     /** Recently updated */

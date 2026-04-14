@@ -396,7 +396,7 @@ export function view(ctrl: StudyChapterNewForm): VNode {
                 hl('button.button.button-empty', {
                   attrs: {
                     type: 'button',
-                    title: i18n.study.randomChess960Position,
+                    title: i18n.site.randomChess960Position,
                     ...dataIcon(licon.DieSix),
                   },
                   hook: bind('click', () => {

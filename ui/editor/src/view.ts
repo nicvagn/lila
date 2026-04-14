@@ -136,7 +136,7 @@ function controls(ctrl: EditorCtrl, state: EditorState): VNode {
               },
             }),
             h('button.button.button-empty', {
-              attrs: { type: 'button', title: 'Random Chess960 position', ...dataIcon(licon.DieSix) },
+              attrs: { type: 'button', title: i18n.site.randomChess960Position, ...dataIcon(licon.DieSix) },
               on: {
                 click(e) {
                   e.preventDefault();
