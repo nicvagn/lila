@@ -416,6 +416,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
             HasherRateLimit:
               for
                 _ <- env.security.authenticator.setPassword(user.id, ClearPassword(data.newPasswd1))
+                _ <- env.mod.logApi.setPassword
                 confirmed <- env.user.repo.setEmailConfirmed(user.id)
                 _ <- confirmed.so:
                   welcome(user, _, sendWelcomeEmail = false)

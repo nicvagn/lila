@@ -152,6 +152,7 @@ final class Account(
           val newPass = ClearPassword(data.newPasswd1)
           for
             _ <- env.security.authenticator.setPassword(me, newPass)
+            _ <- env.mod.logApi.setPassword
             pwned <- env.security.pwned.isPwned(newPass)
             res <- refreshSessionId(Redirect(routes.Account.passwd).flashSuccess, pwned)
           yield res
@@ -203,16 +204,18 @@ final class Account(
   }
 
   def emailConfirm(token: String) = Open:
-    Found(env.security.emailChange.confirm(token)): (user, prevEmail) =>
+    Found(env.security.emailChange.confirm(token)): (me, prevEmail, newEmail) =>
+      given Me = me
       for
-        _ <- prevEmail.exists(_.isNoReply).so(env.clas.api.student.release(user))
+        _ <- prevEmail.exists(_.isNoReply).so(env.clas.api.student.release(me))
+        _ <- env.mod.logApi.setEmail(me.id, prevEmail, newEmail)
         res <- auth.authenticateUser(
-          user,
+          me,
           pwned = IsPwned.No,
           remember = true,
           result =
             if prevEmail.exists(_.isNoReply)
-            then Redirect(routes.User.show(user.username)).flashSuccess.some
+            then Redirect(routes.User.show(me.username)).flashSuccess.some
             else Redirect(routes.Account.email).flashSuccess.some
         )
       yield res
