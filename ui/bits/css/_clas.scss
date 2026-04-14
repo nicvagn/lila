@@ -97,7 +97,7 @@ h1 {
       @include transition;
 
       border-bottom: $border;
-      padding: 2em var(---box-padding);
+      padding: 2em $box-padding;
       position: relative;
 
       &::before {
@@ -212,7 +212,7 @@ h1 {
     margin: 2em;
 
     &__content {
-      padding: 2em var(---box-padding);
+      padding: 2em $box-padding;
     }
   }
 
@@ -330,7 +330,7 @@ h1 {
 
   &-teacher {
     .clas-show__top h1 {
-      padding: 1.5em var(---box-padding);
+      padding: 1.5em $box-padding;
       margin: 0;
     }
 
@@ -479,7 +479,7 @@ h1 {
   padding-bottom: 3em;
 
   &__top {
-    padding: calc(#{$box-padding-vert} - 1rem) var(---box-padding);
+    padding: calc(#{$box-padding-vert} - 1rem) $box-padding;
     background: var(--bg-clas);
     margin-bottom: 3em;
 
@@ -594,7 +594,7 @@ h1 {
   &__choice {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
-    gap: var(---box-padding);
+    gap: $box-padding;
     align-items: center;
 
     h2 {
