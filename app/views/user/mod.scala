@@ -33,6 +33,20 @@ object mod:
             )
       )
 
+  def takex3Tokens(tokens: List[lila.oauth.AccessToken]): Frag =
+    if tokens.isEmpty then emptyFrag
+    else
+      mzSection("takex3Tokens")(
+        strong(cls := "inline")(pluralize("TakeX3 token", tokens.size)),
+        ul:
+          tokens.map: token =>
+            li(
+              List(token.description, token.clientOrigin).flatten.mkString(" "),
+              token.usedAt.map: at =>
+                frag(", last used ", momentFromNowOnce(at))
+            )
+      )
+
   def plan(u: User)(charges: List[lila.plan.Charge])(using Context): Option[Frag] =
     charges.nonEmpty.option(
       mzSection("plan")(

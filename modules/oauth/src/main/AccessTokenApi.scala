@@ -126,6 +126,18 @@ final class AccessTokenApi(
       .cursor[AccessToken]()
       .list(30)
 
+  def usedTakex3(user: UserId): Fu[List[AccessToken]] =
+    coll
+      .find:
+        $doc(
+          F.scopes -> OAuthScope.Web.Takex3.key,
+          F.usedAt.$exists(true),
+          F.userId -> user
+        )
+      .sort($sort.desc(F.created))
+      .cursor[AccessToken]()
+      .list(3)
+
   def countPersonal(using me: MyId): Fu[Int] =
     coll.countSel:
       $doc(

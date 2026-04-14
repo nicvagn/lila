@@ -417,6 +417,8 @@ final class User(
 
         val boardTokens = env.oAuth.tokenApi.usedBoardApi(user.id).map(views.user.mod.boardTokens)
 
+        val takex3Tokens = env.oAuth.tokenApi.usedTakex3(user.id).map(views.user.mod.takex3Tokens)
+
         val teacher = isGranted(_.AccountInfo).so:
           env.clas.api.clas.countOf(user).map(ui.teacher(user))
 
@@ -439,6 +441,7 @@ final class User(
             .merge(modZoneSegment(irwin, "irwin", user))
             .merge(modZoneSegment(assess, "assess", user))
             .merge(modZoneSegment(boardTokens, "boardTokens", user))
+            .merge(modZoneSegment(takex3Tokens, "takex3Tokens", user))
             .via(EventSource.flow)
             .log("User.renderModZone")
         .as(ContentTypes.EVENT_STREAM)
