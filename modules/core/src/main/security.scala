@@ -62,7 +62,8 @@ case class UserSignup(
 case class ClearPassword(value: String) extends AnyVal:
   override def toString = "ClearPassword(****)"
 
-case class HashedPassword(bytes: Array[Byte])
+case class HashedPassword(bytes: Array[Byte]):
+  def isBlank = bytes.isEmpty
 
 trait Authenticator:
   def passEnc(p: ClearPassword): HashedPassword
