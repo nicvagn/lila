@@ -109,8 +109,8 @@ async function boot(
   };
   const getPresetGroup = (d: RoundData) => {
     if (d.player.spectator) return;
-    if (d.steps.length < 4) return 'start';
-    else if (d.game.status.id >= 30) return 'end';
+    if (d.game.status.id >= 30) return 'end';
+    if (d.steps.length < 6) return 'start';
     return;
   };
   const ctrl = await roundMain(opts);
