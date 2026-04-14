@@ -91,10 +91,9 @@ export class StudyChapterNewForm {
       });
   };
 
-  openInitial = (variant?: VariantKey) => {
+  openInitial = () => {
     this.open();
     this.initial(true);
-    if (variant) this.selectedVariant(variant);
   };
 
   submit = (d: Omit<ChapterData, 'initial'>) => {
