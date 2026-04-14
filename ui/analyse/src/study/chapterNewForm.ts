@@ -23,7 +23,14 @@ import { json as xhrJson, text as xhrText } from 'lib/xhr';
 import type AnalyseCtrl from '../ctrl';
 import type { StudySocketSend } from '../socket';
 import { option } from '../view/util';
-import type { ChapterData, ChapterMode, ChapterTab, Orientation, StudyTour } from './interfaces';
+import type {
+  ChapterData,
+  ChapterMode,
+  ChapterTab,
+  Orientation,
+  StudyChapter,
+  StudyTour,
+} from './interfaces';
 import type { StudyChapters } from './studyChapters';
 import { importPgn, variants as xhrVariants } from './studyXhr';
 
@@ -59,6 +66,7 @@ export class StudyChapterNewForm {
     readonly isBroadcast: boolean,
     readonly setChaptersTab: () => void,
     readonly root: AnalyseCtrl,
+    private readonly currentChapter: () => StudyChapter,
   ) {
     pubsub.on('analysis.closeAll', () => this.isOpen(false));
     this.orientation = root.bottomColor();
@@ -71,7 +79,7 @@ export class StudyChapterNewForm {
     this.loadVariants();
     this.initial(false);
     this.isDefaultName(true);
-    this.selectedVariant(this.root.study!.data.chapter.setup.variant.key);
+    this.selectedVariant(this.currentChapter().setup.variant.key);
     this.chess960Position(518);
   };
 
