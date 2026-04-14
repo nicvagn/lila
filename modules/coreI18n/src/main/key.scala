@@ -1950,6 +1950,7 @@ object I18nKey:
     val `popularOpenings`: I18nKey = "popularOpenings"
     val `endgamePositions`: I18nKey = "endgamePositions"
     val `chess960StartPosition`: I18nKey = "chess960StartPosition"
+    val `randomChess960Position`: I18nKey = "randomChess960Position"
     val `startPosition`: I18nKey = "startPosition"
     val `clearBoard`: I18nKey = "clearBoard"
     val `loadPosition`: I18nKey = "loadPosition"

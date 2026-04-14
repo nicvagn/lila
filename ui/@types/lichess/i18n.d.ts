@@ -4159,6 +4159,8 @@ interface I18n {
     quickPairing: string;
     /** Race finished */
     raceFinished: string;
+    /** Random Chess960 position */
+    randomChess960Position: string;
     /** Random side */
     randomColor: string;
     /** Rank */
