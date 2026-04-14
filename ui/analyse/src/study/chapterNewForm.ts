@@ -178,9 +178,6 @@ export function view(ctrl: StudyChapterNewForm): VNode {
         {
           hook: bindSubmit(e => {
             const tab = ctrl.tab();
-            const selVariant = ctrl.selectedVariant();
-            const pos = ctrl.chess960Position();
-            const fen960 = chess960IdToFEN(pos);
             ctrl.submit({
               name: fieldValue(e, 'name'),
               game: fieldValue(e, 'game'),
@@ -189,8 +186,8 @@ export function view(ctrl: StudyChapterNewForm): VNode {
               orientation: fieldValue(e, 'orientation') as Orientation,
               mode: fieldValue(e, 'mode') as ChapterMode,
               fen:
-                tab === 'init' && selVariant === 'chess960'
-                  ? fen960
+                tab === 'init' && ctrl.selectedVariant() === 'chess960'
+                  ? chess960IdToFEN(ctrl.chess960Position())
                   : fieldValue(e, 'fen') || (tab === 'edit' ? ctrl.editorFen() : null),
               isDefaultName: ctrl.isDefaultName(),
             });
