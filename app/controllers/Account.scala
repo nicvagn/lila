@@ -208,7 +208,7 @@ final class Account(
       given Me = me
       for
         _ <- prevEmail.exists(_.isNoReply).so(env.clas.api.student.release(me))
-        _ <- env.mod.logApi.setEmail(me.id, prevEmail, newEmail)
+        _ <- env.mod.logApi.setEmail(me.userId, prevEmail, newEmail)
         res <- auth.authenticateUser(
           me,
           pwned = IsPwned.No,
