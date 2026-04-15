@@ -99,15 +99,10 @@ final private class FirebasePush(
         )
       .flatMap: res =>
         val project = if device.isMobile then "mobileV2" else "lichobile"
-        lila.mon.push.firebaseStatus(project, res.status).increment()
-        lila.mon.push
-          .firebaseType(
-            project,
-            data.firebaseMod.fold("both"):
-              case PushApi.Data.FirebaseMod.DataOnly => "data"
-              case PushApi.Data.FirebaseMod.NotifOnly(_) => "notif"
-          )
-          .increment()
+        val dataType = data.firebaseMod.fold("both"):
+          case PushApi.Data.FirebaseMod.DataOnly => "data"
+          case PushApi.Data.FirebaseMod.NotifOnly(_) => "notif"
+        lila.mon.push.firebaseStatus(project, dataType, res.status).increment()
         if res.status == 200 then funit
         else if res.status == 404 then
           logger.info(s"Delete missing firebase device $device")
