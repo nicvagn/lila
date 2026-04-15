@@ -634,8 +634,8 @@ object mon:
         val create = send("challengeCreate")
         val accept = send("challengeAccept")
     val googleTokenTime = timer("push.send.googleToken").withoutTags()
-    def firebaseStatus(status: Int) = counter("push.firebase.status").withTag("status", status)
-    def firebaseType(typ: String) = counter("push.firebase.msgType").withTag("type", typ)
+    def firebaseStatus(project: String, typ: String, status: Int) =
+      counter("push.firebase.status").withTags(tags("status" -> status, "project" -> project, "type" -> typ))
   object fishnet:
     object client:
       object result:
