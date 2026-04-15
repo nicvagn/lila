@@ -42,6 +42,7 @@ object AccessToken:
     val usedAt = "used"
     val scopes = "scopes"
     val clientOrigin = "clientOrigin"
+    val description = "description"
 
   def idFrom(bearer: Bearer) = AccessTokenId(Algo.sha256(bearer.value).hex)
 
