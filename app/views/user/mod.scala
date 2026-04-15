@@ -19,11 +19,11 @@ object mod:
       a(href := routes.Clas.show(managed.clas.id))(managed.clas.name)
     )
 
-  def boardTokens(tokens: List[lila.oauth.AccessToken]): Frag =
+  def oauthTokens(tokens: List[lila.oauth.AccessToken]): Frag =
     if tokens.isEmpty then emptyFrag
     else
-      mzSection("boardTokens")(
-        strong(cls := "inline")(pluralize("Board token", tokens.size)),
+      mzSection("oauthTokens")(
+        strong(cls := "inline")(pluralize("OAuth token", tokens.size)),
         ul:
           tokens.map: token =>
             li(

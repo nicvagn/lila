@@ -415,7 +415,7 @@ final class User(
               .preloadMany(as.games.flatMap(_.userIds))
               .inject(ui.assessments(user, as))
 
-        val boardTokens = env.oAuth.tokenApi.usedBoardApi(user.id).map(views.user.mod.boardTokens)
+        val oauthTokens = env.oAuth.tokenApi.modRelevantTokens(user.id).map(views.user.mod.oauthTokens)
 
         val teacher = isGranted(_.AccountInfo).so:
           env.clas.api.clas.countOf(user).map(ui.teacher(user))
@@ -438,7 +438,7 @@ final class User(
             .merge(modZoneSegment(kaladin, "kaladin", user))
             .merge(modZoneSegment(irwin, "irwin", user))
             .merge(modZoneSegment(assess, "assess", user))
-            .merge(modZoneSegment(boardTokens, "boardTokens", user))
+            .merge(modZoneSegment(oauthTokens, "oauthTokens", user))
             .via(EventSource.flow)
             .log("User.renderModZone")
         .as(ContentTypes.EVENT_STREAM)

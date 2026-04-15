@@ -10,7 +10,7 @@ import lila.user.{ ClosedFlags, WithPerfsAndEmails }
 import ScalatagsTemplate.{ *, given }
 import lila.report.Report
 
-def mzSection(key: String) =
+def mzSection(key: String): Tag =
   div(cls := s"mz-section mz-section--$key", dataRel := key, id := s"mz_$key")
 
 final class ModUserUi(helpers: Helpers, modUi: ModUi, mailerEventsUrl: Url):
