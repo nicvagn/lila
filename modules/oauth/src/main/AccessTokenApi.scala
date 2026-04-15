@@ -114,15 +114,15 @@ final class AccessTokenApi(
       .cursor[AccessToken]()
       .list(100)
 
-  def usedBoardApi(user: UserId): Fu[List[AccessToken]] =
+  def modRelevantTokens(user: UserId): Fu[List[AccessToken]] =
     coll
       .find:
         $doc(
-          F.scopes -> OAuthScope.Board.Play.key,
+          F.scopes.$in(OAuthScope.relevantToMods.value.map(_.key)),
           F.usedAt.$exists(true),
           F.userId -> user
         )
-      .sort($sort.desc(F.created))
+      .sort($sort.desc(F.usedAt))
       .cursor[AccessToken]()
       .list(30)
 
