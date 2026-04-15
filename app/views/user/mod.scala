@@ -6,6 +6,7 @@ import lila.mod.IpRender.RenderIp
 import lila.mod.UserWithModlog
 import lila.mod.ui.{ mzSection, ModUserTableUi }
 import lila.security.{ Dated, UserAgentParser, UserClient, UserLogins }
+import lila.oauth.OAuthScope
 
 object mod:
 
@@ -27,9 +28,11 @@ object mod:
         ul:
           tokens.map: token =>
             li(
-              List(token.description, token.clientOrigin).flatten.mkString(" "),
+              strong(token.scopes.value.filter(OAuthScope.relevantToMods.has).map(_.key).mkString("+")),
               token.usedAt.map: at =>
-                frag(", last used ", momentFromNowOnce(at))
+                frag(" ", momentFromNowOnce(at)),
+              br,
+              small(List(token.description, token.clientOrigin).flatten.mkString(" "))
             )
       )
 
