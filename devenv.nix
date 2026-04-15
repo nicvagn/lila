@@ -37,6 +37,7 @@ in
     pkgs.svgo
     pkgs-unstable.oxlint
     pkgs-unstable.oxfmt
+    pkgs-unstable.tsgolint
     pkgs.lint-staged
     pkgs.stylelint
     pkgs.dart-sass
