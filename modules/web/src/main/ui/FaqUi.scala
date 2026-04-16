@@ -50,7 +50,7 @@ final class FaqUi(helpers: Helpers, sitePages: SitePages)(
             p(
               trf.whyIsLilaCalledLila(
                 a(href := "https://github.com/lichess-org/lila")("lila"),
-                a(href := "https://www.scala-lang.org/")("Scala")
+                a(href := "https://scala-lang.org/")("Scala")
               )
             )
           ),
