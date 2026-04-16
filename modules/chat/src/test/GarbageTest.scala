@@ -35,7 +35,7 @@ class GarbageTest extends munit.FunSuite:
     assert(GarbageDetector("sixseven sixseven"))
     assert(GarbageDetector("My name is sixseven sixseven"))
     assert(GarbageDetector("I am sixAsevenasixBseven"))
-  
+
   test("detect repeated characters"):
     assert(GarbageDetector("aaaaa"))
     assert(GarbageDetector("11111"))
@@ -62,4 +62,3 @@ class GarbageTest extends munit.FunSuite:
     assert(!GarbageDetector("no"))
     assert(!GarbageDetector("siu"))
     assert(!GarbageDetector("..."))
-

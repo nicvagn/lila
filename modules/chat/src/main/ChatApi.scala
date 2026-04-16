@@ -348,7 +348,6 @@ private[chat] object GarbageDetector:
   private val duplicateTwoCharacterPattern = """^.?.?(.)\1{3,}.?.?(.)\2+.?.?$""".r
   private val duplicateCharactersPattern = """^.?.?(..)\1{3,}.?.?$""".r
 
-
   def apply(text: String): Boolean = {
     val x = text.filter(_.isLetter).toLowerCase
     x == "last" || x == "first" || x == "second" || x == "third"
