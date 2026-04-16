@@ -17,11 +17,12 @@ final class FaqUi(helpers: Helpers, sitePages: SitePages)(
   private def cmsPageUrl(key: String) = routes.Cms.lonePage(lila.core.id.CmsPageKey(key))
 
   private def question(id: String, title: String, answer: Frag*) =
-    div(
+    details(
       st.id := id,
-      cls := "question"
+      cls := "question",
+      name := "faq"
     )(
-      h3(a(href := s"#$id")(title)),
+      summary(span(title)),
       div(cls := "answer")(answer)
     )
 

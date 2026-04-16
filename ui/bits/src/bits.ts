@@ -23,6 +23,8 @@ export function initModule(args: { fn: string } & any): void {
       return embedReasonToggle();
     case 'eventCountdown':
       return eventCountdown();
+    case 'faq':
+      return faq();
     case 'hcaptcha':
       return hcaptcha();
     case 'importer':
@@ -145,6 +147,24 @@ function eventCountdown() {
     const interval = setInterval(redraw, second);
 
     redraw();
+  });
+}
+
+function faq() {
+  if (location.hash) {
+    const target = document.querySelector(location.hash);
+    const details = target?.closest('details');
+    if (details) {
+      details.open = true;
+    }
+  }
+
+  document.querySelectorAll('details > summary').forEach(summary => {
+    summary.addEventListener('click', () => {
+      const details = summary.closest('details');
+      if (!details?.id) return;
+      history.replaceState(null, '', `#${details.id}`);
+    });
   });
 }
 
