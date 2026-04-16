@@ -56,7 +56,7 @@ export function throttlePromiseWithResult<R, T extends (...args: any) => Promise
 export function throttlePromise<T extends (...args: any) => Promise<void>>(
   wrapped: T,
 ): (...args: Parameters<T>) => Promise<void> {
-  const throttler = throttlePromiseWithResult<void, T>(wrapped); // oxlint-disable-line
+  const throttler = throttlePromiseWithResult<void, T>(wrapped);
   return async function (this: any, ...args: Parameters<T>): Promise<void> {
     return throttler.apply(this, args).catch(() => {});
   };
