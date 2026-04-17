@@ -45,11 +45,12 @@ final class Env(
 
   lazy val bulk = wire[ClasBulkApi]
 
-  def isTeacher(using me: Me) =
-    lila.core.perm.Granter(_.Teacher) && filters.teacher(me)
+  def isAnyTeacher(using me: Me) = lila.core.perm.Granter(_.Teacher)
 
-  def hasClas(using me: Me) =
-    filters.student(me) || isTeacher
+  def isActiveTeacher(using me: Me) = isAnyTeacher && filters.teacher(me)
+
+  def seesClassMenu(using me: Me) =
+    filters.student(me) || isAnyTeacher || me.hasTitle || me.roles.contains("ROLE_COACH")
 
   scheduler.scheduleWithFixedDelay(44.minutes, 1.hour)(() => api.clas.archiveAllInactive)
 
