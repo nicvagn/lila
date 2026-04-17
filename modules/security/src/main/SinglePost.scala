@@ -40,10 +40,6 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
         true
       case Right(_) => false
 
-  def preCheckForm(using RequestHeader) = play.api.data.Form:
-    single:
-      "singlePost" -> tokenMapping.verifying("Invalid token", preCheck)
-
   private def test(token: Token)(using RequestHeader): Either[Err, Rnd] =
     if token.isEmpty then Left("missing")
     else
@@ -80,12 +76,3 @@ final class SinglePost(secret: Secret, settingStore: lila.memo.SettingStore.Buil
     if HTTPRequest.isLichobile(req)
     then "singlePost" -> tokenMapping
     else formPair
-
-  // allows expired tokens, but not invalid ones
-  private def preCheck(token: Token)(using req: RequestHeader): Boolean =
-    test(token) match
-      case Right(_) => true
-      case Left("expired") => true
-      case Left(err) =>
-        lila.mon.security.singlePost.preCheck(HTTPRequest.actionName(req), err).increment()
-        false

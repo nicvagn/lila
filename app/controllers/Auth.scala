@@ -209,33 +209,29 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
           if HTTPRequest.isLichobile(ctx.req)
           then BadRequest(jsonError("Please use our new mobile app! https://lichess.org/mobile"))
           else
-            bindForm(env.security.singlePost.preCheckForm)(
-              _ => Redirect(routes.Auth.signup),
-              _ =>
-                limit.enumeration.signup(rateLimited):
-                  proxy.no.so(forms.preloadEmailDns()) >> {
-                    import Signup.Result.*
-                    env.security.signup
-                      .website(ctx.blind, simpleSignup)
-                      .flatMap:
-                        case RateLimited | ForbiddenNetwork | SimpleSignupDuplicate => rateLimited
-                        case MissingCaptcha =>
-                          forms.signup
-                            .website(simpleSignup)
-                            .flatMap: f =>
-                              BadRequest.page(views.auth.signup(f.form, f.simple))
-                        case FormInvalid(err) =>
-                          forms.signup
-                            .website(simpleSignup)
-                            .flatMap: f =>
-                              BadRequest.page(views.auth.signup(f.form.withForm(err), f.simple))
-                        case ConfirmEmail(user, email) =>
-                          redirectWithReferrer(routes.Auth.checkYourEmail).withCookies:
-                            EmailConfirm.cookie.newSession(env.security.lilaCookie, user, email)
-                        case AllSet(user, email) =>
-                          welcome(user, email, sendWelcomeEmail = true) >> redirectNewUser(user)
-                  }
-            )
+            limit.enumeration.signup(rateLimited):
+              proxy.no.so(forms.preloadEmailDns()) >> {
+                import Signup.Result.*
+                env.security.signup
+                  .website(ctx.blind, simpleSignup)
+                  .flatMap:
+                    case RateLimited | ForbiddenNetwork | SimpleSignupDuplicate => rateLimited
+                    case MissingCaptcha =>
+                      forms.signup
+                        .website(simpleSignup)
+                        .flatMap: f =>
+                          BadRequest.page(views.auth.signup(f.form, f.simple))
+                    case FormInvalid(err) =>
+                      forms.signup
+                        .website(simpleSignup)
+                        .flatMap: f =>
+                          BadRequest.page(views.auth.signup(f.form.withForm(err), f.simple))
+                    case ConfirmEmail(user, email) =>
+                      redirectWithReferrer(routes.Auth.checkYourEmail).withCookies:
+                        EmailConfirm.cookie.newSession(env.security.lilaCookie, user, email)
+                    case AllSet(user, email) =>
+                      welcome(user, email, sendWelcomeEmail = true) >> redirectNewUser(user)
+              }
 
   private def welcome(user: UserModel, email: EmailAddress, sendWelcomeEmail: Boolean)(using
       ctx: Context
