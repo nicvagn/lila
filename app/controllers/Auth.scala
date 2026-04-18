@@ -210,7 +210,9 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
       Firewall:
         WithProxy: _ ?=>
           if HTTPRequest.isLichobile(ctx.req)
-          then BadRequest(jsonError("Please use our new mobile app! https://lichess.org/mobile"))
+          then
+            BadRequest:
+              Json.obj("username" -> List("Please use our new mobile app! https://lichess.org/mobile"))
           else
             limit.enumeration.signup(rateLimited):
               import Signup.Result.*
