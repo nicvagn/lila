@@ -85,6 +85,12 @@ final class Env(
     text = "Enable the user garbage collector".some
   )
 
+  lazy val lichobileLogin = settingStore[Boolean](
+    "lichobileLogin",
+    default = true,
+    text = "Allow users to login with lichobile app".some
+  )
+
   lazy val printBan = PrintBan(db(config.collection.printBan))
 
   private val curPlaying = lila.core.data.LazyDep(() => lazyCurrentlyPlaying)

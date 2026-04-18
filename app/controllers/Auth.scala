@@ -90,9 +90,13 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
       Firewall:
         def redirectTo(url: String) = if HTTPRequest.isXhr(ctx.req) then Ok(s"ok:$url") else Redirect(url)
         val isRemember = api.rememberForm.bindFromRequest().value | true
-        env.security.turnstile
-          .verify()
-          .flatMap:
+        val isLichobile = HTTPRequest.isLichobile(ctx.req)
+        if isLichobile && !env.security.lichobileLogin.get() then
+          BadRequest:
+            Json.obj("username" -> List("Please use our new mobile app! https://lichess.org/mobile"))
+        else
+          val turnstileResult = if isLichobile then fuccess(true) else env.security.turnstile.verify()
+          turnstileResult.flatMap:
             if _ then
               bindForm(api.loginForm)(
                 err =>
@@ -153,7 +157,8 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                             )
                         }
               )
-            else BadRequest.page(views.auth.login(api.loginForm, isRemember))
+            else
+              BadRequest.page(views.auth.login(api.loginForm.withGlobalError("Invalid captcha"), isRemember))
 
   private val clasLoginRateLimit =
     env.security.ipTrust.rateLimit(300, 1.hour, "clas.login")
