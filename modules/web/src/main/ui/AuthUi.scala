@@ -20,7 +20,7 @@ final class AuthUi(helpers: Helpers):
   )(using Option[ValidReferrer]) =
     val blankedPasswordError = form.globalError.exists(_.messages.contains("blankedPassword"))
     Page(trans.site.signIn.txt())
-      .js(esmInit("bits.login", "login"))
+      .js(esmInit("bits.auth", "login"))
       .css("bits.auth")
       .csp(_.withTurnstile)
       .hrefLangs(lila.ui.LangPath(routes.Auth.login)):
@@ -90,7 +90,7 @@ final class AuthUi(helpers: Helpers):
       ctx: Context
   )(using TurnstilePublicConfig, Option[ValidReferrer]) =
     Page(trans.site.signUp.txt())
-      .js(esmInit("bits.login", "signup"))
+      .js(esmInit("bits.auth", "signup"))
       .js(fingerprintTag)
       .css("bits.auth")
       .csp(_.withTurnstile)
@@ -276,7 +276,7 @@ final class AuthUi(helpers: Helpers):
   )(using me: Me) =
     Page(s"${me.username} - ${trans.site.changePassword.txt()}")
       .css("bits.auth")
-      .js(esmInit("bits.login", "reset")):
+      .js(esmInit("bits.auth", "reset")):
         main(cls := "auth page-small box box-pad")(
           boxTop(
             (ok match
