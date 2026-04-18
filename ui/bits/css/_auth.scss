@@ -262,6 +262,10 @@ $auth-input-bg: rgba(26, 22, 16, 1);
   }
 }
 
+#signup-form .cf-turnstile {
+  margin: 3rem 0 0 0;
+}
+
 /* presumably the keyboard is up */
 @media (height <= $x-short) {
   #top {

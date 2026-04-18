@@ -108,6 +108,7 @@ final class AuthUi(helpers: Helpers):
             action := addReferrer(routes.Auth.signupPost.url),
             autocomplete := "off"
           )(
+            authGlobalError(form),
             form3.group(
               form("username"),
               trans.site.username(),
@@ -158,12 +159,9 @@ final class AuthUi(helpers: Helpers):
               )
             ,
             agreement(form("agreement"), form.errors.exists(_.key.startsWith("agreement."))),
-            lila.ui.bits.turnstile(),
             button(cls := "submit button", tpe := "submit")(trans.site.signUp()),
-            simple.option:
-              small(cls := "form-help")(tosLink)
-            ,
-            authGlobalError(form)
+            if simple then small(cls := "form-help")(tosLink)
+            else lila.ui.bits.turnstile()
           )
         )
 

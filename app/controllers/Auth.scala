@@ -208,29 +208,28 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
   def signupPost = OpenBody:
     NoTor:
       Firewall:
-        WithProxy: proxy ?=>
+        WithProxy: _ ?=>
           if HTTPRequest.isLichobile(ctx.req)
           then BadRequest(jsonError("Please use our new mobile app! https://lichess.org/mobile"))
           else
             limit.enumeration.signup(rateLimited):
-              proxy.no.so(forms.preloadEmailDns()) >> {
-                import Signup.Result.*
-                env.security.signup
-                  .website(ctx.blind, simpleSignup)
-                  .flatMap:
-                    case RateLimited | ForbiddenNetwork | SimpleSignupDuplicate => rateLimited
-                    case MissingCaptcha =>
-                      val f = forms.signup.website(simpleSignup)
-                      BadRequest.page(views.auth.signup(f.form, f.simple))
-                    case FormInvalid(err) =>
-                      val f = forms.signup.website(simpleSignup)
-                      BadRequest.page(views.auth.signup(err, f.simple))
-                    case ConfirmEmail(user, email) =>
-                      redirectWithReferrer(routes.Auth.checkYourEmail).withCookies:
-                        EmailConfirm.cookie.newSession(env.security.lilaCookie, user, email)
-                    case AllSet(user, email) =>
-                      welcome(user, email, sendWelcomeEmail = true) >> redirectNewUser(user)
-              }
+              import Signup.Result.*
+              env.security.signup
+                .website(ctx.blind, simpleSignup)
+                .flatMap:
+                  case RateLimited | ForbiddenNetwork | SimpleSignupDuplicate => rateLimited
+                  case TurnstileFail =>
+                    val f = forms.signup.website(simpleSignup)
+                    val form = f.form.withGlobalError("Invalid captcha")
+                    BadRequest.page(views.auth.signup(form, f.simple))
+                  case FormInvalid(err) =>
+                    val f = forms.signup.website(simpleSignup)
+                    BadRequest.page(views.auth.signup(err, f.simple))
+                  case ConfirmEmail(user, email) =>
+                    redirectWithReferrer(routes.Auth.checkYourEmail).withCookies:
+                      EmailConfirm.cookie.newSession(env.security.lilaCookie, user, email)
+                  case AllSet(user, email) =>
+                    welcome(user, email, sendWelcomeEmail = true) >> redirectNewUser(user)
 
   private def welcome(user: UserModel, email: EmailAddress, sendWelcomeEmail: Boolean)(using
       ctx: Context

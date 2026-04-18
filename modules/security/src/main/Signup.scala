@@ -82,69 +82,69 @@ final class Signup(
       formBinding: FormBinding,
       referrer: Option[ValidReferrer]
   ): Fu[Signup.Result] =
-    val ip = HTTPRequest.ipAddress(req)
-    val client = simpleSignup.match
-      case Some(s) => s.client.value
-      case None => if HTTPRequest.isLichessMobile(req) then "mobile" else "website"
-    forms.signup
-      .website(simpleSignup)
-      .form
-      .bindFromRequest()
-      .fold[Fu[Signup.Result]](
-        err =>
-          fuccess:
-            disposableEmailAttempt.onFail(err, HTTPRequest.ipAddress(req))
-            Signup.Result.FormInvalid(err.tap(signupErrLog))
-        ,
-        data =>
-          dedupCache.getFuture(
-            data,
-            _ =>
-              if simpleSignup.exists(s => dedupSimpleSignupEmail.get(s.email))
-              then fuccess(Signup.Result.SimpleSignupDuplicate)
-              else
-                for
-                  suspIp <- ipTrust.isSuspicious(ip)
-                  ipData <- ipTrust.reqData(req)
-                  pwned <- pwnedApi.isPwned(data.clearPassword)
-                  captcha <- turnstile.verify()
-                  result <-
-                    if !captcha then fuccess(Signup.Result.MissingCaptcha)
-                    else
-                      signupRateLimit(data.username.id, suspIp = suspIp):
-                        MustConfirmEmail(data, suspIp = suspIp, simpleSignup).flatMap: mustConfirm =>
-                          val passwordHash = authenticator.passEnc(data.clearPassword)
-                          userRepo
-                            .create(
-                              data.username,
-                              passwordHash,
-                              data.email,
-                              blind = blind,
-                              mustConfirmEmail = mustConfirm.value
-                            )
-                            .orFail(s"No user could be created for ${data.username}")
-                            .addEffect: user =>
-                              monitor(
-                                data,
-                                mustConfirm,
-                                ipData,
-                                ipSusp = suspIp,
-                                client = client
-                              )
-                              logSignup(
-                                req,
-                                user,
-                                data.email,
-                                data.fingerPrint,
-                                mustConfirm,
-                                pwned
-                              )
-                              simpleSignup.foreach(s => dedupSimpleSignupEmail.put(s.email))
-                            .flatMap:
-                              confirmOrAllSet(data.email, mustConfirm, data.fingerPrint, none, pwned)
-                yield result
-          )
-      )
+    val client = simpleSignup.fold("website")(_.client.value)
+    val turnstileSuccess = if simpleSignup.isDefined then fuccess(true)
+    else turnstile.verify()
+    turnstileSuccess
+      .flatMap: turnstileSuccess =>
+        if !turnstileSuccess then fuccess(Signup.Result.TurnstileFail)
+        else
+          forms.preloadEmailDns() >>
+            forms.signup
+              .website(simpleSignup)
+              .form
+              .bindFromRequest()
+              .fold[Fu[Signup.Result]](
+                err =>
+                  fuccess:
+                    disposableEmailAttempt.onFail(err, HTTPRequest.ipAddress(req))
+                    Signup.Result.FormInvalid(err.tap(signupErrLog))
+                ,
+                data =>
+                  dedupCache.getFuture(
+                    data,
+                    _ =>
+                      if simpleSignup.exists(s => dedupSimpleSignupEmail.get(s.email))
+                      then fuccess(Signup.Result.SimpleSignupDuplicate)
+                      else
+                        for
+                          suspIp <- ipTrust.isSuspicious(HTTPRequest.ipAddress(req))
+                          ipData <- ipTrust.reqData(req)
+                          pwned <- pwnedApi.isPwned(data.clearPassword)
+                          result <- signupRateLimit(data.username.id, suspIp = suspIp):
+                            MustConfirmEmail(data, suspIp = suspIp, simpleSignup).flatMap: mustConfirm =>
+                              val passwordHash = authenticator.passEnc(data.clearPassword)
+                              userRepo
+                                .create(
+                                  data.username,
+                                  passwordHash,
+                                  data.email,
+                                  blind = blind,
+                                  mustConfirmEmail = mustConfirm.value
+                                )
+                                .orFail(s"No user could be created for ${data.username}")
+                                .addEffect: user =>
+                                  monitor(
+                                    data,
+                                    mustConfirm,
+                                    ipData,
+                                    ipSusp = suspIp,
+                                    client = client
+                                  )
+                                  logSignup(
+                                    req,
+                                    user,
+                                    data.email,
+                                    data.fingerPrint,
+                                    mustConfirm,
+                                    pwned
+                                  )
+                                  simpleSignup.foreach(s => dedupSimpleSignupEmail.put(s.email))
+                                .flatMap:
+                                  confirmOrAllSet(data.email, mustConfirm, data.fingerPrint, none, pwned)
+                        yield result
+                  )
+              )
       .addEffect: res =>
         lila.mon.user.register.result(client, res.key).increment()
 
@@ -237,7 +237,7 @@ object Signup:
 
   enum Result(val key: String):
     case FormInvalid(err: Form[?]) extends Result("formError")
-    case MissingCaptcha extends Result("missingCaptcha")
+    case TurnstileFail extends Result("turnstileFail")
     case RateLimited extends Result("rateLimited")
     case SimpleSignupDuplicate extends Result("simpleSignupDuplicate")
     case ForbiddenNetwork extends Result("forbiddenNetwork")
