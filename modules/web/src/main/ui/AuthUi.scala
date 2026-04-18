@@ -129,7 +129,9 @@ final class AuthUi(helpers: Helpers):
                 simple.option:
                   div(cls := "password-generator")(button("Generate a random password"))
                 ,
-                form3.passwordComplexityMeter(trans.site.newPasswordStrength())
+                form3.passwordComplexityMeter(trans.site.newPasswordStrength())(
+                  cls := f.value.orZero.isEmpty.option("none")
+                )
               ),
             form3.group(
               form("email"),
