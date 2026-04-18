@@ -31,14 +31,14 @@ final class AuthUi(helpers: Helpers):
             action := addReferrer(routes.Auth.authenticate.url)
           )(
             div(cls := "one-factor")(
-              blankedPasswordError.option:
+              if blankedPasswordError then
                 div(cls := "auth-login__blanked")(
                   p(trans.site.blankedPassword()),
                   a(href := routes.Auth.passwordReset, cls := "button button-no-upper")(
                     trans.site.passwordReset()
                   )
                 )
-              ,
+              else authGlobalError(form),
               form3.group(form("username"), trans.site.usernameOrEmail()): f =>
                 div(cls := "text-wrapper")(
                   form3.input(f)(autofocus, required, autocomplete := "username"),
@@ -60,9 +60,7 @@ final class AuthUi(helpers: Helpers):
                   trans.site.rememberMe()
                 )
               ),
-              lila.ui.bits.turnstile(),
-              form3.submit(trans.site.signIn(), icon = none),
-              authGlobalError(form).ifFalse(blankedPasswordError)
+              form3.submit(trans.site.signIn(), icon = none)
             ),
             div(cls := "two-factor none")(
               form3.group(
@@ -78,7 +76,8 @@ final class AuthUi(helpers: Helpers):
               ),
               p(cls := "error none")("Invalid code."),
               form3.submit(trans.site.signIn(), icon = none)
-            )
+            ),
+            lila.ui.bits.turnstile(explicit = true)
           ),
           div(cls := "or-separator")(span(trans.site.orSeparator())),
           a(href := addReferrer(routes.Auth.magicLink.url), cls := "button button-empty magic-link")(

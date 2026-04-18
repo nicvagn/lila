@@ -23,6 +23,20 @@ class LoginHistory {
   };
 }
 
+function renderTurnstile() {
+  const selector = '.cf-turnstile';
+  const el = document.querySelector<HTMLDivElement>(selector)!;
+  el.innerHTML = '';
+  const options = Object.assign({}, el.dataset);
+  return window.turnstile.render(selector, {
+    ...options,
+    appearance: 'interaction-only',
+    callback: (token: string) => {
+      console.log('Success:', token);
+    },
+  });
+}
+
 function loginStart() {
   const selector = '.auth-login form';
   const history = new LoginHistory();
@@ -32,6 +46,7 @@ function loginStart() {
   (function load() {
     const form = document.querySelector(selector) as HTMLFormElement,
       $f = $(form);
+    renderTurnstile();
     initTextClear(form);
     const lockSeconds = history.lockSeconds();
     if (lockSeconds) {
@@ -63,6 +78,7 @@ function loginStart() {
             requestAnimationFrame(() => $f.find('.two-factor input').val('')[0]!.focus());
             toggleSubmit($f.find('.submit'), true);
             if (text === 'InvalidTotpToken') $f.find('.two-factor .error').removeClass('none');
+            renderTurnstile();
           } else if (res.ok) location.href = text.startsWith('ok:') ? text.slice(3) : '/';
           else {
             try {
