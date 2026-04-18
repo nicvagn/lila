@@ -4,8 +4,8 @@ package ui
 import play.api.data.Form
 
 import lila.ui.*
-
-import ScalatagsTemplate.{ *, given }
+import lila.ui.ScalatagsTemplate.{ *, given }
+import lila.core.security.TurnstilePublicConfig
 
 final class ClasPages(helpers: Helpers, clasUi: ClasUi, dashUi: DashboardUi):
   import helpers.{ *, given }
@@ -62,7 +62,7 @@ final class ClasPages(helpers: Helpers, clasUi: ClasUi, dashUi: DashboardUi):
       }
     )
 
-  def create(form: lila.core.security.TurnstileForm[ClasForm.ClasData])(using Context) =
+  def create(form: Form[ClasForm.ClasData])(using TurnstilePublicConfig, Context) =
     ClasPage(trans.clas.newClass.txt(), Right("newClass"))(cls := "clas-create")
       .csp(_.withTurnstile):
         frag(
@@ -70,8 +70,8 @@ final class ClasPages(helpers: Helpers, clasUi: ClasUi, dashUi: DashboardUi):
             h1(trans.clas.newClass())
           ),
           postForm(cls := "form3 box-pad", action := routes.Clas.create)(
-            clasForm(form.form, none),
-            lila.ui.bits.turnstile(form),
+            clasForm(form, none),
+            lila.ui.bits.turnstile(),
             form3.actions(
               a(href := routes.Clas.index)(trans.site.cancel()),
               form3.submit(trans.site.apply())

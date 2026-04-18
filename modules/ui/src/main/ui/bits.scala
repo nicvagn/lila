@@ -5,7 +5,7 @@ import java.time.YearMonth
 import chess.format.Fen
 
 import lila.core.i18n.Translate
-import lila.core.security.{ TurnstileForm, TurnstilePublicConfig }
+import lila.core.security.TurnstilePublicConfig
 import lila.core.config.ImageGetOrigin
 import lila.ui.ScalatagsTemplate.{ *, given }
 
@@ -93,9 +93,7 @@ object bits:
     private val dataLang = attrData("language")
     private val scriptTag =
       script(src := "https://challenges.cloudflare.com/turnstile/v0/api.js", deferAttr, async)
-    def apply()(using config: TurnstilePublicConfig, ctx: Context) = config.enabled.so(widget(config))
-    def apply(form: TurnstileForm[?])(using ctx: Context) = form.enabled.so(widget(form.config))
-    private def widget(config: TurnstilePublicConfig)(using ctx: Context) =
+    def apply()(using config: TurnstilePublicConfig, ctx: Context) = config.enabled.so:
       val theme = ctx.pref.bg match
         case 500 => "auto"
         case 100 => "light"

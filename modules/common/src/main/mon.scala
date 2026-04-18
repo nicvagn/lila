@@ -364,8 +364,6 @@ object mon:
     object turnstile:
       def hit(client: String, result: String) =
         counter("turnstile.hit").withTags(tags("client" -> client, "result" -> result))
-      def form(client: String) =
-        counter("turnstile.form").withTags(tags("client" -> client))
     object pwned:
       def get(res: Boolean) = timer("security.pwned.result").withTag("res", res)
     object geoip:

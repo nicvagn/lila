@@ -3,7 +3,6 @@ package lila.clas
 import play.api.data.*
 import play.api.data.Forms.*
 import play.api.i18n.Lang
-import play.api.mvc.RequestHeader
 
 import lila.common.Form.{ cleanNonEmptyText, cleanText, into }
 import lila.clas.Student.RealName
@@ -11,8 +10,7 @@ import lila.clas.Student.RealName
 final class ClasForm(
     lightUserAsync: lila.core.LightUser.Getter,
     signupForm: lila.core.security.SignupFormFields,
-    nameGenerator: NameGenerator,
-    turnstile: lila.core.security.Turnstile
+    nameGenerator: NameGenerator
 )(using Executor):
 
   import ClasForm.*
@@ -33,8 +31,6 @@ final class ClasForm(
         "canMsg" -> boolean,
         "hasTeam" -> boolean
       )(ClasData.apply)(unapply)
-
-    def create(using RequestHeader) = turnstile.form(form)
 
     def edit(c: Clas): Form[ClasData] = form.fill:
       ClasData(
