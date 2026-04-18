@@ -100,7 +100,7 @@ object bits:
         val widget = div(
           cls := "cf-turnstile form-group",
           dataSitekey := config.key,
-          dataLang := ctx.lang.code,
+          dataLang := ctx.lang.code.toLowerCase,
           dataTheme := theme,
           dataAppear := "interaction-only"
         )
