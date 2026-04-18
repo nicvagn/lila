@@ -107,7 +107,8 @@ function signupStart() {
   initTextClear($form[0] as HTMLFormElement);
 
   $form.on('submit', () => {
-    if ($form.find('[name="cf-turnstile-response"]').val())
+    const responseEl = $form.find('[name="cf-turnstile-response"]');
+    if (!responseEl.length || responseEl.val())
       $form.find('button.submit').prop('disabled', true).addClass('button-empty').html(spinnerHtml);
     else return false;
   });
