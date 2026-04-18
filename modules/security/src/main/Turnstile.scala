@@ -69,33 +69,35 @@ final class TurnstileReal(
 
   protected def verify(response: String)(using req: RequestHeader): Fu[Result] =
     given Conversion[Result, Fu[Result]] = fuccess
+    def logInfo(msg: String) = logger.branch("turnstile").info(s"$msg ${HTTPRequest.printReqAndClient(req)}")
     def missingResponse: Result =
-      logger.info(s"turnstile missing ${HTTPRequest.printClient(req)}")
+      logInfo("missing")
       Result.Missing
     if response.isEmpty then missingResponse
     else
       ws.url("https://challenges.cloudflare.com/turnstile/v0/siteverify")
-        .post(
+        .post:
           Map(
             "secret" -> config.secretKey.value,
             "response" -> response,
             "remoteip" -> HTTPRequest.ipAddress(req).value,
             "sitekey" -> config.siteKey
           )
-        )
         .flatMap:
           case res if res.status == 200 =>
             res.body[JsValue].validate[GoodResponse] match
               case JsSuccess(res, _) =>
                 if res.hostname != netDomain.value then Result.InvalidDomain
-                else if !res.success then Result.Fail
+                else if !res.success then
+                  logInfo("fail")
+                  Result.Fail
                 else Result.Valid
               case JsError(_) =>
                 res.body[JsValue].validate[BadResponse].asOpt match
                   case Some(err) if err.missingInput => missingResponse
                   case _ =>
-                    logger.info(s"turnstile ${res.body}")
+                    logInfo("error")
                     Result.InvalidResponse
           case res =>
-            logger.info(s"turnstile ${res.status} ${res.body}")
+            logInfo(s"cf error ${res.body}")
             Result.CfError
