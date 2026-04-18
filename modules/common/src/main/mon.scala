@@ -362,8 +362,9 @@ object mon:
       def fetch(success: Boolean, ok: Boolean) =
         timer("mailcheck.fetch").withTags(tags("success" -> successTag(success), "ok" -> ok))
     object turnstile:
-      def hit(client: String, result: String) =
-        counter("turnstile.hit").withTags(tags("client" -> client, "result" -> result))
+      def hit(client: String, action: String, result: String) =
+        counter("turnstile.hit").withTags(tags("client" -> client, "action" -> action, "result" -> result))
+      val request = future("security.turnstile.request")
     object pwned:
       def get(res: Boolean) = timer("security.pwned.result").withTag("res", res)
     object geoip:

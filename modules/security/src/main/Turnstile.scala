@@ -21,7 +21,13 @@ trait Turnstile:
 
   def verify()(using req: play.api.mvc.Request[?])(using FormBinding, Executor): Fu[Boolean] =
     verify(~Turnstile.form.bindFromRequest().value.flatten).map: result =>
-      lila.mon.security.turnstile.hit(HTTPRequest.clientName(req), result.toString).increment()
+      lila.mon.security.turnstile
+        .hit(
+          client = HTTPRequest.clientName(req),
+          action = HTTPRequest.actionName(req),
+          result = result.toString
+        )
+        .increment()
       result.ok
 
 object Turnstile:
@@ -101,3 +107,4 @@ final class TurnstileReal(
           case res =>
             logInfo(s"cf error ${res.body}")
             Result.CfError
+        .monSuccess(_.security.proxy.request)
