@@ -31,9 +31,6 @@ function renderTurnstile() {
   return window.turnstile.render(selector, {
     ...options,
     appearance: 'interaction-only',
-    callback: (token: string) => {
-      console.log('Success:', token);
-    },
   });
 }
 

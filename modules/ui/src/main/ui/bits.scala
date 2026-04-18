@@ -102,7 +102,7 @@ object bits:
           dataSitekey := config.key,
           dataLang := ctx.lang.code,
           dataTheme := theme,
-          dataAppear := "always"
+          dataAppear := "interaction-only"
         )
         val scriptUrl = "https://challenges.cloudflare.com/turnstile/v0/api.js"
         val scriptTag =
