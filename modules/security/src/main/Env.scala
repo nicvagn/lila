@@ -161,14 +161,6 @@ final class Env(
     text = "Types of proxy that require 2FA to login".some
   ).taggedWith[Proxy2faSetting]
 
-  val alwaysCaptcha = settingStore[Boolean](
-    "alwaysCaptcha",
-    default = false,
-    text = "Always serve captchas, don't skip once per IP and per 24h".some
-  ).taggedWith[AlwaysCaptcha]
-
-  val singlePost = SinglePost(config.singlePostSecret, settingStore)
-
   lazy val api = wire[SecurityApi]
 
   lazy val csrfRequestHandler = wire[CSRFRequestHandler]

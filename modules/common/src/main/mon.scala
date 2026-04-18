@@ -386,12 +386,6 @@ object mon:
       )
     def userTrust(trust: Boolean, cause: String) =
       counter("security.userTrust").withTags(tags("trust" -> trust, "cause" -> cause)).increment()
-    object singlePost:
-      def newToken(endpoint: String) = counter("security.singlePost.newToken").withTag("endpoint", endpoint)
-      def preCheck(endpoint: String, result: String) =
-        counter("security.singlePost.preCheck").withTags(tags("endpoint" -> endpoint, "result" -> result))
-      def consume(endpoint: String, result: String) =
-        counter("security.singlePost.consume").withTags(tags("endpoint" -> endpoint, "result" -> result))
   object shutup:
     def analyzer = timer("shutup.analyzer.time").withoutTags()
   object tv:

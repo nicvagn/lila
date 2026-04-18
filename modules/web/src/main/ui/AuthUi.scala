@@ -3,8 +3,8 @@ package ui
 
 import play.api.data.Form
 
-import lila.core.net.{ Crawler, ValidReferrer }
-import lila.core.security.{ TurnstilePublicConfig, SinglePostMakeToken }
+import lila.core.net.ValidReferrer
+import lila.core.security.TurnstilePublicConfig
 import lila.ui.*
 import lila.ui.ScalatagsTemplate.{ *, given }
 
@@ -14,8 +14,7 @@ final class AuthUi(helpers: Helpers):
   private def addReferrer(url: String)(using referrer: Option[ValidReferrer]): String =
     referrer.fold(url)(ref => addQueryParam(url, "referrer", ref.value))
 
-  def login(form: Form[?], crawler: Crawler, isRememberMe: Boolean = true)(using
-      singlePostToken: SinglePostMakeToken,
+  def login(form: Form[?], isRememberMe: Boolean = true)(using
       turnstile: TurnstilePublicConfig,
       ctx: Context
   )(using Option[ValidReferrer]) =
@@ -61,11 +60,6 @@ final class AuthUi(helpers: Helpers):
                   trans.site.rememberMe()
                 )
               ),
-              form3.hidden(
-                form("singlePost"),
-                if crawler.yes then "crawler".some else singlePostToken(using ctx.req).value.some
-              ),
-              form3.errors(form("singlePost")),
               lila.ui.bits.turnstile(),
               form3.submit(trans.site.signIn(), icon = none),
               authGlobalError(form).ifFalse(blankedPasswordError)
@@ -93,7 +87,6 @@ final class AuthUi(helpers: Helpers):
         )
 
   def signup(form: Form[?], simple: Boolean)(using
-      singlePostToken: SinglePostMakeToken,
       ctx: Context
   )(using TurnstilePublicConfig, Option[ValidReferrer]) =
     Page(trans.site.signUp.txt())
@@ -170,8 +163,6 @@ final class AuthUi(helpers: Helpers):
             simple.option:
               small(cls := "form-help")(tosLink)
             ,
-            form3.hidden(form("singlePost"), singlePostToken(using ctx.req).some),
-            form3.errors(form("singlePost")),
             authGlobalError(form)
           )
         )
@@ -249,11 +240,7 @@ final class AuthUi(helpers: Helpers):
             )
         )
 
-  def passwordReset(form: Form[?], fail: Option[String])(using
-      singlePostToken: SinglePostMakeToken,
-      turnstile: TurnstilePublicConfig,
-      ctx: Context
-  ) =
+  def passwordReset(form: Form[?], fail: Option[String])(using TurnstilePublicConfig, Context) =
     Page(trans.site.passwordReset.txt())
       .css("bits.auth")
       .csp(_.withTurnstile):
@@ -270,8 +257,6 @@ final class AuthUi(helpers: Helpers):
               form3.input(_, typ = "email")(autofocus, required, autocomplete := "email")
             ),
             lila.ui.bits.turnstile(),
-            form3.hidden(form("singlePost"), singlePostToken(using ctx.req).some),
-            form3.errors(form("singlePost")),
             form3.action(form3.submit(trans.site.emailMeALink()))
           )
         )

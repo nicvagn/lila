@@ -57,14 +57,12 @@ function loginStart() {
       })
         .then(res => res.text().then(text => [res, text]))
         .then(([res, text]: [Response, string]) => {
-          const [err, singlePostToken] = text.split(' ');
-          if (err === 'MissingTotpToken' || err === 'InvalidTotpToken') {
-            $f.find('[name="singlePost"]').val(singlePostToken);
+          if (text === 'MissingTotpToken' || text === 'InvalidTotpToken') {
             $f.find('.one-factor').hide();
             $f.find('.two-factor').removeClass('none');
             requestAnimationFrame(() => $f.find('.two-factor input').val('')[0]!.focus());
             toggleSubmit($f.find('.submit'), true);
-            if (err === 'InvalidTotpToken') $f.find('.two-factor .error').removeClass('none');
+            if (text === 'InvalidTotpToken') $f.find('.two-factor .error').removeClass('none');
           } else if (res.ok) location.href = text.startsWith('ok:') ? text.slice(3) : '/';
           else {
             try {

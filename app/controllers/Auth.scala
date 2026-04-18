@@ -8,8 +8,8 @@ import lila.common.HTTPRequest
 import lila.common.Json.given
 import lila.core.id.SessionId
 import lila.core.email.{ UserIdOrEmail, UserStrOrEmail }
-import lila.core.net.{ IpAddress, ValidReferrer, Crawler }
-import lila.core.security.{ ClearPassword, SinglePostMakeToken }
+import lila.core.net.{ IpAddress, ValidReferrer }
+import lila.core.security.ClearPassword
 import lila.memo.RateLimit
 import lila.security.SecurityForm.{ MagicLink, PasswordReset }
 import lila.security.{ FingerPrint, Signup, EmailConfirm, IsPwned }
@@ -19,7 +19,6 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
   import env.security.{ api, forms }
 
   private given (using Context): Option[ValidReferrer] = env.web.referrerRedirect.fromReq
-  private given SinglePostMakeToken = env.security.singlePost.newToken
 
   private def referrerOr(default: => Call)(using referrer: Option[ValidReferrer]): String =
     referrer.fold(default.url)(_.value)
@@ -82,8 +81,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
       case None =>
         val prefillUsername = UserStrOrEmail(~switch.filter(_ != "1"))
         val form = api.loginFormFilled(prefillUsername)
-        val crawler = HTTPRequest.isCrawler(ctx.req)
-        Ok.page(views.auth.login(form, crawler)).map(_.withCanonical(routes.Auth.login))
+        Ok.page(views.auth.login(form)).map(_.withCanonical(routes.Auth.login))
 
   private val is2fa = Set("MissingTotpToken", "InvalidTotpToken")
 
@@ -99,10 +97,10 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
               bindForm(api.loginForm)(
                 err =>
                   negotiate(
-                    Unauthorized.page(views.auth.login(err, Crawler.No, isRemember)),
+                    Unauthorized.page(views.auth.login(err, isRemember)),
                     Unauthorized(doubleJsonFormErrorBody(err))
                   ),
-                (login, pass, _) =>
+                (login, pass) =>
                   LoginRateLimit(login.normalize, ctx.req): chargeLimiters =>
                     env.security.pwned
                       .isPwned(pass)
@@ -119,11 +117,8 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                                   .increment()
                                 negotiate(
                                   err.errors match
-                                    case List(FormError("", Seq(err), _)) if is2fa(err) =>
-                                      Ok:
-                                        if HTTPRequest.isLichobile(req) then err
-                                        else s"$err ${env.security.singlePost.newToken}"
-                                    case _ => Unauthorized.page(views.auth.login(err, Crawler.No, isRemember))
+                                    case List(FormError("", Seq(err), _)) if is2fa(err) => Ok(err)
+                                    case _ => Unauthorized.page(views.auth.login(err, isRemember))
                                   ,
                                   Unauthorized(doubleJsonFormErrorBody(err))
                                 )
@@ -158,7 +153,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                             )
                         }
               )
-            else BadRequest.page(views.auth.login(api.loginForm, Crawler.No, isRemember))
+            else BadRequest.page(views.auth.login(api.loginForm, isRemember))
 
   private val clasLoginRateLimit =
     env.security.ipTrust.rateLimit(300, 1.hour, "clas.login")

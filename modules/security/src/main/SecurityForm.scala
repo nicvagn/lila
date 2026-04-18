@@ -3,7 +3,7 @@ package lila.security
 import play.api.data.*
 import play.api.data.Forms.*
 import play.api.data.validation.Constraints
-import play.api.mvc.{ Request, RequestHeader }
+import play.api.mvc.Request
 
 import lila.common.Form.*
 import lila.common.{ Form as LilaForm, LameName }
@@ -16,8 +16,7 @@ final class SecurityForm(
     userRepo: lila.user.UserRepo,
     authenticator: Authenticator,
     emailValidator: EmailAddressValidator,
-    lameNameCheck: LameNameCheck,
-    singlePost: SinglePost
+    lameNameCheck: LameNameCheck
 )(using ec: Executor, mode: play.api.Mode):
 
   import SecurityForm.*
@@ -92,14 +91,13 @@ final class SecurityForm(
       "account" -> agreementBool
     )(AgreementData.apply)(unapply)
 
-    def website(simpleSignup: Option[SimpleSignup])(using RequestHeader): SignupForm =
+    def website(simpleSignup: Option[SimpleSignup]): SignupForm =
       val base = Form:
         mapping(
           "username" -> username,
           "password" -> newPasswordField,
           "email" -> emailField,
           "agreement" -> agreement,
-          singlePost.formPair,
           "fp" -> optional(nonEmptyText)
         )(SignupData.apply)(unapply)
           .verifying(PasswordCheck.errorSame, x => x.password != x.username.value)
@@ -114,17 +112,15 @@ final class SecurityForm(
                 password = "",
                 email = prefill.email,
                 agreement = AgreementData(true, true, true),
-                singlePost = "",
                 fp = none
               )
             ,
             simple = true
           )
 
-  def passwordReset(using RequestHeader) = Form:
+  def passwordReset = Form:
     mapping(
-      "email" -> sendableEmail, // allow unacceptable emails for BC
-      singlePost.formPair
+      "email" -> sendableEmail // allow unacceptable emails for BC
     )(PasswordReset.apply)(_ => None)
 
   case class PasswordResetConfirm(newPasswd1: String, newPasswd2: String):
@@ -261,13 +257,12 @@ object SecurityForm:
       password: String,
       email: EmailAddress,
       agreement: AgreementData,
-      singlePost: String,
       fp: Option[String]
   ) extends AnySignupData:
     def fingerPrint = FingerPrint.from(fp.filter(_.nonEmpty))
     def clearPassword = ClearPassword(password)
 
-  case class PasswordReset(email: EmailAddress, singlePost: String)
+  case class PasswordReset(email: EmailAddress)
 
   case class MagicLink(email: EmailAddress)
 
