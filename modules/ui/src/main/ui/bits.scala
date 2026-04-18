@@ -5,7 +5,7 @@ import java.time.YearMonth
 import chess.format.Fen
 
 import lila.core.i18n.Translate
-import lila.core.security.HcaptchaForm
+import lila.core.security.{ TurnstileForm, TurnstilePublicConfig }
 import lila.core.config.ImageGetOrigin
 import lila.ui.ScalatagsTemplate.{ *, given }
 
@@ -86,10 +86,28 @@ object bits:
       lila.core.i18n.I18nKey.site.analysis()
     )
 
-  private val dataSitekey = attr("data-sitekey")
-
-  def hcaptcha(form: HcaptchaForm[?]) =
-    div(cls := "h-captcha form-group", dataSitekey := form.config.key)
+  object turnstile:
+    private val dataSitekey = attrData("sitekey")
+    private val dataTheme = attrData("theme")
+    private val dataAppear = attrData("appearance")
+    private val dataLang = attrData("language")
+    private val scriptTag =
+      script(src := "https://challenges.cloudflare.com/turnstile/v0/api.js", deferAttr, async)
+    def apply()(using config: TurnstilePublicConfig, ctx: Context) = config.enabled.so(widget(config))
+    def apply(form: TurnstileForm[?])(using ctx: Context) = form.enabled.so(widget(form.config))
+    private def widget(config: TurnstilePublicConfig)(using ctx: Context) =
+      val theme = ctx.pref.bg match
+        case 500 => "auto"
+        case 100 => "light"
+        case _ => "dark"
+      val widget = div(
+        cls := "cf-turnstile form-group",
+        dataSitekey := config.key,
+        dataLang := ctx.lang.code,
+        dataTheme := theme,
+        dataAppear := "always"
+      )
+      frag(scriptTag, widget)
 
   def contactEmailLinkEmpty(email: String) =
     a(cls := "contact-email-obfuscated", attr("data-email") := scalalib.StringOps.base64.encode(email))

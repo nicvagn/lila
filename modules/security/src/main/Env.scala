@@ -38,8 +38,6 @@ final class Env(
 
   private val config = appConfig.get[SecurityConfig]("security")
 
-  private def hcaptchaPublicConfig = config.hcaptcha.public
-
   val lilaCookie = wire[LilaCookie]
 
   lazy val firewall = Firewall(
@@ -59,9 +57,10 @@ final class Env(
 
   lazy val authenticator = wire[Authenticator]
 
-  lazy val hcaptcha: Hcaptcha =
-    if config.hcaptcha.enabled then wire[HcaptchaReal]
-    else wire[HcaptchaSkip]
+  val turnstilePublicConfig = config.turnstile.public
+  lazy val turnstile: Turnstile =
+    if config.turnstile.enabled then wire[TurnstileReal]
+    else wire[TurnstileSkip]
 
   lazy val forms = wire[SecurityForm]
   def signupForm: lila.core.security.SignupFormFields = forms.signup

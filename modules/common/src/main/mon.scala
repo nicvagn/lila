@@ -215,7 +215,6 @@ object mon:
     object register:
       def count(
           confirm: String,
-          captcha: String,
           ipSusp: Boolean,
           fp: Boolean,
           proxy: Option[String],
@@ -225,7 +224,6 @@ object mon:
         counter("user.register.count").withTags:
           tags(
             "confirm" -> confirm,
-            "captcha" -> captcha,
             "ipSusp" -> ipSusp,
             "fp" -> fp,
             "proxy" -> proxy.getOrElse("no"),
@@ -363,11 +361,11 @@ object mon:
     object mailcheckApi:
       def fetch(success: Boolean, ok: Boolean) =
         timer("mailcheck.fetch").withTags(tags("success" -> successTag(success), "ok" -> ok))
-    object hCaptcha:
+    object turnstile:
       def hit(client: String, result: String) =
-        counter("hcaptcha.hit").withTags(tags("client" -> client, "result" -> result))
-      def form(client: String, result: String) =
-        counter("hcaptcha.form").withTags(tags("client" -> client, "result" -> result))
+        counter("turnstile.hit").withTags(tags("client" -> client, "result" -> result))
+      def form(client: String) =
+        counter("turnstile.form").withTags(tags("client" -> client))
     object pwned:
       def get(res: Boolean) = timer("security.pwned.result").withTag("res", res)
     object geoip:

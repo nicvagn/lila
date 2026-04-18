@@ -34,15 +34,15 @@ trait SecurityApi:
   def shareAnIpOrFp(users: PairOf[UserId]): Fu[Boolean]
   def getUserIdsWithSameIpAndPrint(userId: UserId): Fu[Set[UserId]]
 
-case class HcaptchaPublicConfig(key: String, enabled: Boolean)
-case class HcaptchaForm[A](form: Form[A], config: HcaptchaPublicConfig, skip: Boolean):
-  def enabled = config.enabled && !skip
+case class TurnstilePublicConfig(key: String, enabled: Boolean)
+case class TurnstileForm[A](form: Form[A], config: TurnstilePublicConfig):
+  export config.enabled
   def apply(key: String) = form(key)
   def withForm[B](f: Form[B]) = copy(form = f)
   def fill(data: A) = copy(form = form.fill(data))
 
-trait Hcaptcha:
-  def form[A](form: Form[A])(using req: RequestHeader): Fu[HcaptchaForm[A]]
+trait Turnstile:
+  def form[A](form: Form[A])(using RequestHeader): TurnstileForm[A]
 
 trait SignupFormFields:
   val emailField: Mapping[EmailAddress]

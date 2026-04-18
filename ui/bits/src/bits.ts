@@ -25,8 +25,6 @@ export function initModule(args: { fn: string } & any): void {
       return eventCountdown();
     case 'faq':
       return faq();
-    case 'hcaptcha':
-      return hcaptcha();
     case 'importer':
       return importer();
     case 'pmAll':
@@ -166,26 +164,6 @@ function faq() {
       history.replaceState(null, '', `#${details.id}`);
     });
   });
-}
-
-function hcaptcha() {
-  const script = document.createElement('script');
-  script.src = 'https://hcaptcha.com/1/api.js';
-
-  if ('credentialless' in window && window.crossOriginIsolated) {
-    const documentCreateElement = document.createElement;
-    script.src = 'https://hcaptcha.com/1/api.js?onload=initHcaptcha&recaptchacompat=off';
-    script.onload = () => {
-      document.createElement = function () {
-        const element = documentCreateElement.apply(this, arguments as any);
-        if (element instanceof HTMLIFrameElement) element.setAttribute('credentialless', '');
-        return element;
-      };
-    };
-    (window as any).initHcaptcha = () => (document.createElement = documentCreateElement);
-  }
-
-  document.head.appendChild(script);
 }
 
 function importer() {

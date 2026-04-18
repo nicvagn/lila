@@ -52,27 +52,25 @@ final class Clas(env: Env, authC: Auth) extends LilaController(env):
   def create = SecureBody(_.Teacher) { ctx ?=> _ ?=>
     NoTor:
       SafeTeacher:
-        env.clas.forms.clas.create.flatMap:
-          _.form
-            .bindFromRequest()
-            .fold(
-              err => BadRequest.async(renderCreate(err.some)),
-              data =>
-                env.security.hcaptcha
-                  .verify()
-                  .flatMap: captcha =>
-                    if captcha.ok
-                    then env.clas.api.clas.create(data).map(redirectTo)
-                    else BadRequest.async(renderCreate(data.some))
-            )
+        env.clas.forms.clas.create.form
+          .bindFromRequest()
+          .fold(
+            err => BadRequest.async(renderCreate(err.some)),
+            data =>
+              env.security.turnstile
+                .verify()
+                .flatMap:
+                  if _ then env.clas.api.clas.create(data).map(redirectTo)
+                  else BadRequest.async(renderCreate(data.some))
+          )
   }
 
   private def renderCreate(from: Option[Form[ClasData] | ClasData])(using ctx: Context) =
-    env.clas.forms.clas.create.map: baseForm =>
-      views.clas.clas.create:
-        from.fold(baseForm):
-          case data: ClasData => baseForm.fill(data)
-          case form: Form[ClasData] => baseForm.withForm(form)
+    val baseForm = env.clas.forms.clas.create
+    views.clas.clas.create:
+      from.fold(baseForm):
+        case data: ClasData => baseForm.fill(data)
+        case form: Form[ClasData] => baseForm.withForm(form)
 
   private def preloadStudentUsers(students: List[lila.clas.Student.WithUser]): Unit =
     env.user.lightUserApi.preloadUsers(students.map(_.user))

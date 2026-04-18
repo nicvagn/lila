@@ -109,7 +109,7 @@ function signupStart() {
   initTextClear($form[0] as HTMLFormElement);
 
   $form.on('submit', () => {
-    if ($form.find('[name="h-captcha-response"]').val() || !$form.hasClass('h-captcha-enabled'))
+    if ($form.find('[name="cf-turnstile-response"]').val())
       $form.find('button.submit').prop('disabled', true).addClass('button-empty').html(spinnerHtml);
     else return false;
   });

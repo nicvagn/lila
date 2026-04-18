@@ -62,17 +62,16 @@ final class ClasPages(helpers: Helpers, clasUi: ClasUi, dashUi: DashboardUi):
       }
     )
 
-  def create(form: lila.core.security.HcaptchaForm[ClasForm.ClasData])(using Context) =
+  def create(form: lila.core.security.TurnstileForm[ClasForm.ClasData])(using Context) =
     ClasPage(trans.clas.newClass.txt(), Right("newClass"))(cls := "clas-create")
-      .js(hcaptchaScript(form))
-      .csp(_.withHcaptcha):
+      .csp(_.withTurnstile):
         frag(
           div(cls := "box-pad box__top")(
             h1(trans.clas.newClass())
           ),
           postForm(cls := "form3 box-pad", action := routes.Clas.create)(
             clasForm(form.form, none),
-            lila.ui.bits.hcaptcha(form),
+            lila.ui.bits.turnstile(form),
             form3.actions(
               a(href := routes.Clas.index)(trans.site.cancel()),
               form3.submit(trans.site.apply())
