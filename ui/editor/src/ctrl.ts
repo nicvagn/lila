@@ -16,7 +16,7 @@ import {
   chess960CastlingSquares,
   chess960IdToFEN,
   fenToChess960Id,
-  firstFenFieldToChess960Id,
+  boardFenToChess960Id,
   randomPositionId,
 } from './chess960';
 import {
@@ -120,8 +120,7 @@ export default class EditorCtrl {
 
   onChange(): void {
     // We can use the first field of the fen now; it's the ep and castle fields that may be inaccurate at the moment.
-    this.chess960PositionId =
-      firstFenFieldToChess960Id(this.getFen().split(' ')[0]) ?? this.chess960PositionId;
+    this.chess960PositionId = boardFenToChess960Id(this.getFen().split(' ')[0]) ?? this.chess960PositionId;
     // The id will be used for computing castling toggles, which will in turn be used in the later `this.getFen()` call.
     this.enabledCastlingToggles = this.computeCastlingToggles();
     if (this.guessCastlingToggles) {
