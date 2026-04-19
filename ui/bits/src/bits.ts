@@ -39,7 +39,7 @@ export function initModule(args: { fn: string } & any): void {
       return thanksReport();
     case 'titleRequest':
       return titleRequest();
-    case 'validEmail':
+    case 'validateEmail':
       return validateEmail();
     case 'emailErrorCheck':
       return emailErrorCheck();
