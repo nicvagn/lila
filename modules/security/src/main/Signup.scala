@@ -202,7 +202,6 @@ final class Signup(
       .rateLimit[Signup.Result](
         rateLimitDefault,
         enforce = netConfig.rateLimit,
-        userCost = 1,
         ipCost = ipCost
       )(id.into(UserIdOrEmail), req): _ =>
         signupRateLimitPerIP(HTTPRequest.ipAddress(req), rateLimitDefault, cost = ipCost)(f)

@@ -8,7 +8,7 @@ import lila.common.HTTPRequest
 import lila.common.Json.given
 import lila.core.id.SessionId
 import lila.core.email.{ UserIdOrEmail, UserStrOrEmail }
-import lila.core.net.{ IpAddress, ValidReferrer }
+import lila.core.net.ValidReferrer
 import lila.core.security.ClearPassword
 import lila.memo.RateLimit
 import lila.security.SecurityForm.{ MagicLink, PasswordReset }
@@ -18,7 +18,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
 
   import env.security.{ api, forms }
 
-  private given (using Context): Option[ValidReferrer] = env.web.referrerRedirect.fromReq
+  private given (using Context): Option[ValidReferrer] = env.web.referrerRedirect.fromReq.pp
 
   private def referrerOr(default: => Call)(using referrer: Option[ValidReferrer]): String =
     referrer.fold(default.url)(_.value)
@@ -514,20 +514,14 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         case Some(user) => f(user)
 
   private[controllers] object LoginRateLimit:
-    private val lastAttemptIp =
-      env.memo.cacheApi.notLoadingSync[UserIdOrEmail, IpAddress](256, "login.lastIp"):
-        _.expireAfterWrite(1.minute).build()
     def apply(id: UserIdOrEmail, req: RequestHeader)(run: RateLimit.Charge => Fu[Result])(using
         Context
     ): Fu[Result] =
-      val ip = req.ipAddress
-      val multipleIps = lastAttemptIp.asMap().put(id, ip).exists(_ != ip)
       passwordCost(req).flatMap: cost =>
         env.security.passwordHasher.rateLimit[Result](
           rateLimited,
           enforce = env.net.rateLimit,
-          ipCost = cost.toInt + EmailAddress.isValid(id.value).so(2),
-          userCost = 1 + multipleIps.so(4)
+          ipCost = cost.toInt
         )(id, req)(run)
 
   private[controllers] def HasherRateLimit(run: => Fu[Result])(using me: Me, ctx: Context): Fu[Result] =
@@ -540,7 +534,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
 
   private def passwordCost(req: RequestHeader): Fu[Float] =
     env.security.ipTrust
-      .rateLimitCostFactor(req, _.proxyMultiplier(if HTTPRequest.nginxWhitelist(req) then 1 else 8))
+      .rateLimitCostFactor(req, _.proxyMultiplier(if HTTPRequest.nginxWhitelist(req) then 1 else 3))
 
   private[controllers] def EmailConfirmRateLimit = EmailConfirm.rateLimit[Result]
 
