@@ -262,7 +262,29 @@ $auth-input-bg: rgba(26, 22, 16, 1);
   }
 
   .cf-turnstile {
-    margin: 3rem 0 0 0;
+    margin: 1em 0;
+  }
+  .button.submit {
+    .button__loader .spinner {
+      width: 1.3em;
+      height: 1.3em;
+    }
+    .button__ready {
+      display: block;
+    }
+    .button__verifying {
+      justify-content: center;
+      gap: 1ch;
+      display: none;
+    }
+    &:disabled {
+      .button__ready {
+        display: none;
+      }
+      .button__verifying {
+        display: flex;
+      }
+    }
   }
 }
 

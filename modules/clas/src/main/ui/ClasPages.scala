@@ -71,7 +71,7 @@ final class ClasPages(helpers: Helpers, clasUi: ClasUi, dashUi: DashboardUi):
           ),
           postForm(cls := "form3 box-pad", action := routes.Clas.create)(
             clasForm(form, none),
-            lila.ui.bits.turnstile(),
+            turnstile.widget(),
             form3.actions(
               a(href := routes.Clas.index)(trans.site.cancel()),
               form3.submit(trans.site.apply())

@@ -13,8 +13,9 @@ import { isTouchDevice } from '@/device';
 import { blurIfPrimaryClick, defined, notNull, requestIdleCallback } from '@/index';
 import * as licon from '@/licon';
 import type { ClientEval, LocalEval, PvData } from '@/tree/types';
-import { stepwiseScroll, type VNode, type LooseVNodes, bind, hl } from '@/view';
+import { type VNode, type LooseVNodes, bind, hl } from '@/view';
 import { cmnToggle } from '@/view/cmn-toggle';
+import stepwiseScroll from '@/view/stepwiseScroll';
 
 import type CevalCtrl from '../ctrl';
 import { type CevalHandler, type NodeEvals, CevalState } from '../types';

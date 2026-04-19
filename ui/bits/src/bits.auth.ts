@@ -1,6 +1,6 @@
 import { debounce } from 'lib/async';
-import { storedJsonProp } from 'lib/storage';
 import { addPasswordVisibilityToggleListener, spinnerHtml, alert } from 'lib/view';
+import turnstile from 'lib/view/turnstile';
 import * as xhr from 'lib/xhr';
 
 export function initModule(mode: 'login' | 'signup' | 'reset'): void {
@@ -9,55 +9,16 @@ export function initModule(mode: 'login' | 'signup' | 'reset'): void {
   addPasswordVisibilityToggleListener();
 }
 
-class LoginHistory {
-  historyStorage = storedJsonProp<number[]>('login.history', () => []);
-  private readonly now = () => Math.round(Date.now() / 1000);
-  add = () => {
-    const now = this.now();
-    this.historyStorage([now, ...this.historyStorage().filter(d => d > now - 30)]);
-  };
-  lockSeconds = () => {
-    const now = this.now();
-    const recentTries = this.historyStorage().filter(d => d > now - 30);
-    if (recentTries.length >= 3) return Math.max(0, recentTries[recentTries.length - 1] + 30 - now);
-  };
-}
-
-function renderTurnstile() {
-  const selector = '.cf-turnstile';
-  const el = document.querySelector<HTMLDivElement>(selector)!;
-  el.innerHTML = '';
-  const options = Object.assign({}, el.dataset);
-  return window.turnstile.render(selector, {
-    ...options,
-    appearance: 'interaction-only',
-  });
-}
+const toggleSubmit = ($submit: Cash, v: boolean) => $submit.prop('disabled', !v);
 
 function loginStart() {
   const selector = '.auth-login form';
-  const history = new LoginHistory();
 
-  const toggleSubmit = ($submit: Cash, v: boolean) =>
-    $submit.prop('disabled', !v).toggleClass('disabled', !v);
   (function load() {
     const form = document.querySelector(selector) as HTMLFormElement,
       $f = $(form);
-    renderTurnstile();
+    turnstile($f);
     initTextClear(form);
-    const lockSeconds = history.lockSeconds();
-    if (lockSeconds) {
-      const $submit = $f.find('.submit');
-      const submitText = toggleSubmit($submit, false).text();
-      const refresh = () => {
-        const seconds = history.lockSeconds();
-        if (seconds) {
-          $submit.text('' + seconds);
-          setTimeout(refresh, 1000);
-        } else $submit.text(submitText).prop('disabled', false).removeClass('disabled');
-      };
-      refresh();
-    }
     form.addEventListener('submit', (e: Event) => {
       e.preventDefault();
       toggleSubmit($f.find('.submit'), false);
@@ -75,13 +36,12 @@ function loginStart() {
             requestAnimationFrame(() => $f.find('.two-factor input').val('')[0]!.focus());
             toggleSubmit($f.find('.submit'), true);
             if (text === 'InvalidTotpToken') $f.find('.two-factor .error').removeClass('none');
-            renderTurnstile();
+            turnstile($f);
           } else if (res.ok) location.href = text.startsWith('ok:') ? text.slice(3) : '/';
           else {
             try {
               const el = $(text).find(selector);
               if (el.length) {
-                history.add();
                 $f.replaceWith(el);
                 addPasswordVisibilityToggleListener();
                 load();
@@ -118,6 +78,8 @@ function signupStart() {
   }, 300);
 
   initTextClear($form[0] as HTMLFormElement);
+
+  turnstile($form.find('.submit'));
 
   $form.on('submit', () => {
     const responseEl = $form.find('[name="cf-turnstile-response"]');
