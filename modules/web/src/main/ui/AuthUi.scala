@@ -25,7 +25,10 @@ final class AuthUi(helpers: Helpers):
       .csp(_.withTurnstile)
       .hrefLangs(lila.ui.LangPath(routes.Auth.login)):
         main(cls := "auth auth-login box box-pad")(
-          span(cls := "auth__logo", aria.label := "Lichess"),
+          div(cls := "auth__brand")(
+            span(cls := "auth__logo", aria.hidden := "true"),
+            span(cls := "auth__brand-name")("lichess.org")
+          ),
           authTabs("login"),
           postForm(
             cls := "form3",
@@ -100,7 +103,10 @@ final class AuthUi(helpers: Helpers):
             "auth-signup--simple" -> simple
           )
         )(
-          span(cls := "auth__logo", aria.label := "Lichess"),
+          div(cls := "auth__brand")(
+            span(cls := "auth__logo", aria.hidden := "true"),
+            span(cls := "auth__brand-name")("lichess.org")
+          ),
           authTabs("signup"),
           postForm(
             id := "signup-form",
