@@ -364,7 +364,6 @@ object mon:
     object turnstile:
       def hit(client: String, action: String, result: String) =
         counter("turnstile.hit").withTags(tags("client" -> client, "action" -> action, "result" -> result))
-      val request = future("security.turnstile.request")
     object pwned:
       def get(res: Boolean) = timer("security.pwned.result").withTag("res", res)
     object geoip:

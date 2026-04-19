@@ -40,6 +40,7 @@ object Turnstile:
     case Fail extends Result(false)
     case InvalidResponse extends Result(true)
     case CfError extends Result(true)
+    case NetError extends Result(true)
 
   val field = "cf-turnstile-response" -> optional(nonEmptyText)
   val form = Form(single(field))
@@ -107,4 +108,7 @@ final class TurnstileReal(
           case res =>
             logInfo(s"cf error ${res.body}")
             Result.CfError
-        .monSuccess(_.security.turnstile.request)
+        .recover:
+          case e =>
+            logInfo(s"net error ${e.getMessage}")
+            Result.NetError
