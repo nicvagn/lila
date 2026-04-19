@@ -103,10 +103,10 @@ final class TurnstileReal(
                 res.body[JsValue].validate[BadResponse].asOpt match
                   case Some(err) if err.missingInput => missingResponse
                   case _ =>
-                    logInfo("error")
+                    logInfo(s"error ${res.body.toString.take(400)}")
                     Result.InvalidResponse
           case res =>
-            logInfo(s"cf error ${res.body}")
+            logInfo(s"cf error ${res.body.toString.take(400)}")
             Result.CfError
         .recover:
           case e =>

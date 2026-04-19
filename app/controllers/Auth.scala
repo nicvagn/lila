@@ -18,7 +18,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
 
   import env.security.{ api, forms }
 
-  private given (using Context): Option[ValidReferrer] = env.web.referrerRedirect.fromReq.pp
+  private given (using Context): Option[ValidReferrer] = env.web.referrerRedirect.fromReq
 
   private def referrerOr(default: => Call)(using referrer: Option[ValidReferrer]): String =
     referrer.fold(default.url)(_.value)
