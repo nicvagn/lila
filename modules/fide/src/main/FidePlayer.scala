@@ -54,7 +54,7 @@ case class FidePlayer(
   def isSame(other: FidePlayer) = fideData == other.fideData
 
   private def fideData =
-    (name, fed, title, standard, standardK, rapid, rapidK, blitz, blitzK, year, inactive)
+    (name, fed, title, standard, standardK, rapid, rapidK, blitz, blitzK, year, gender, inactive)
 
   def ratingsStr = List(
     "Standard" -> standard,

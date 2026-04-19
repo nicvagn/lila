@@ -532,7 +532,7 @@ final class Clas(env: Env, authC: Auth) extends LilaController(env):
   private def couldBeTeacher(using ctx: Context): Fu[Boolean] = ctx.useMe: me ?=>
     if me.isBot then fuFalse
     else if ctx.kid.yes then fuFalse
-    else if env.clas.isTeacher then fuTrue
+    else if env.clas.isActiveTeacher then fuTrue
     else env.mod.logApi.wasUnteachered(me).not
 
   def invitation(id: ClasInviteId) = Auth { _ ?=> me ?=>
