@@ -107,4 +107,4 @@ final class TurnstileReal(
           case res =>
             logInfo(s"cf error ${res.body}")
             Result.CfError
-        .monSuccess(_.security.proxy.request)
+        .monSuccess(_.security.turnstile.request)
