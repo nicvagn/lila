@@ -52,7 +52,8 @@ object HTTPRequest:
   val isMobileBrowser = UaMatcher("""(?i)iphone|ipad|ipod|android.+mobile""")
   def isLichessMobile(ua: UserAgent): Boolean = ua.value.startsWith("Lichess Mobile/")
   def isLichessMobile(req: RequestHeader): Boolean = isLichessMobile(userAgent(req))
-  def isLichobile(req: RequestHeader) = userAgent(req).value.contains("Lichobile/")
+  def isLichobile(ua: UserAgent): Boolean = ua.value.contains("Lichobile/")
+  def isLichobile(req: RequestHeader): Boolean = isLichobile(userAgent(req))
   def isAndroid = UaMatcher("Android")
   def isLitools(req: RequestHeader) = userAgent(req) == UserAgent("litools")
   def lichessMobileVersion(ua: UserAgent): Option[LichessMobileVersion] =
