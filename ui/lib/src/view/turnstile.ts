@@ -7,8 +7,8 @@ export default function turnstile($form: Cash): void {
   el.innerHTML = '';
   const options = Object.assign({}, el.dataset);
   const showError = (message: string | false) => {
-    const $err = $(selector).find('.cf-turnstile-error');
-    if (message) $err.text(message).removeClass('none');
+    const $err = $form.find('.cf-turnstile-error');
+    if (message) $err.html(`<p>${message}</p>`).removeClass('none');
     else $err.addClass('none');
   };
   requestIdleCallbackSafe(() => {
@@ -17,8 +17,7 @@ export default function turnstile($form: Cash): void {
       appearance: 'interaction-only',
       callback: () => {
         $form.find('.submit').prop('disabled', false);
-        // showError(false);
-        showError('Captcha completed, you can submit now');
+        showError(false);
       },
       'error-callback': (errorCode: string) => {
         showError('Captcha error: ' + errorCode);
