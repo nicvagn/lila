@@ -1,8 +1,12 @@
 .puzzle__feedback.after {
-  flex-flow: row nowrap;
-
-  @include mq-at-least-col2 {
-    flex-flow: column;
+  .complete-continue {
+    @extend %flex-center-nowrap;
+    @include mq-at-least-col2 {
+      flex-flow: column;
+    }
+    flex: 1 1 50%;
+    align-items: stretch;
+    justify-content: space-between;
   }
 
   .continue {
@@ -46,8 +50,6 @@
 
   .puzzle__more {
     @extend %flex-between;
-
-    display: none;
     border-top: $border;
     padding: 1em 2em;
 
@@ -59,8 +61,13 @@
       }
     }
 
-    @include mq-at-least-col2 {
-      display: flex;
+    button.study {
+      &::before {
+        margin-inline-end: 0.4em;
+      }
+      &:hover {
+        color: $c-link;
+      }
     }
   }
 }
