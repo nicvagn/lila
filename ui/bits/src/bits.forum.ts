@@ -19,9 +19,9 @@ site.load.then(() => {
         $(dlg.view)
           .find('form')
           .attr('action', link.href)
-          .on('submit', function (this: HTMLFormElement, e: Event) {
+          .on('submit', async function (this: HTMLFormElement, e: Event) {
             e.preventDefault();
-            xhr.formToXhr(this);
+            await xhr.formToXhr(this);
             $(link).closest('.forum-post').hide();
             dlg.close();
           });
@@ -43,9 +43,9 @@ site.load.then(() => {
       });
       return false;
     })
-    .on('click', 'form.unsub button', function (this: HTMLButtonElement) {
+    .on('click', 'form.unsub button', async function (this: HTMLButtonElement) {
       const form = $(this).parent().toggleClass('on off')[0] as HTMLFormElement;
-      xhr.text(`${form.action}?unsub=${this.dataset.unsub}`, { method: 'post' });
+      await xhr.text(`${form.action}?unsub=${this.dataset.unsub}`, { method: 'post' });
       return false;
     })
     .on('click', '.reactions-auth button', e => {

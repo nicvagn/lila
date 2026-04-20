@@ -19,8 +19,8 @@ export function initModule(opts: TeamOpts): void {
   $('#team-subscribe').on('change', function (this: HTMLInputElement) {
     $(this)
       .parents('form')
-      .each(function (this: HTMLFormElement) {
-        xhr.formToXhr(this);
+      .each(async function (this: HTMLFormElement) {
+        await xhr.formToXhr(this);
       });
   });
 }
@@ -35,6 +35,6 @@ $('button.explain').on('click', async e => {
   }
 });
 
-$('.emoji-details').each(function (this: HTMLElement) {
-  flairPickerLoader(this);
+$('.emoji-details').each(async function (this: HTMLElement) {
+  await flairPickerLoader(this);
 });
