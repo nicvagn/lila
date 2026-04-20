@@ -147,7 +147,9 @@ export default class PuzzleCtrl implements CevalHandler {
     // If the page loads while being hidden (like when changing settings),
     // chessground is not displayed, and the first move is not fully applied.
     // Make sure chessground is fully shown when the page goes back to being visible.
-    document.addEventListener('visibilitychange', () => requestIdleCallbackSafe(() => this.jump(this.path), 500));
+    document.addEventListener('visibilitychange', () =>
+      requestIdleCallbackSafe(() => this.jump(this.path), 500),
+    );
 
     pubsub.on('zen', toggleZenMode);
     $('body').addClass('playing'); // for zen
