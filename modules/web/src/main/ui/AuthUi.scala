@@ -14,6 +14,12 @@ final class AuthUi(helpers: Helpers):
   private def addReferrer(url: String)(using referrer: Option[ValidReferrer]): String =
     referrer.fold(url)(ref => addQueryParam(url, "referrer", ref.value))
 
+  private def logoAndName =
+    div(cls := "auth__brand")(
+      span(cls := "auth__logo", aria.hidden := "true"),
+      span(cls := "auth__brand-name")("lichess.org")
+    )
+
   def login(form: Form[?], isRememberMe: Boolean = true)(using
       TurnstilePublicConfig,
       Option[ValidReferrer]
@@ -25,10 +31,7 @@ final class AuthUi(helpers: Helpers):
       .csp(_.withTurnstile)
       .hrefLangs(lila.ui.LangPath(routes.Auth.login)):
         main(cls := "auth auth-login box box-pad")(
-          div(cls := "auth__brand")(
-            span(cls := "auth__logo", aria.hidden := "true"),
-            span(cls := "auth__brand-name")("lichess.org")
-          ),
+          logoAndName,
           authTabs("login"),
           postForm(
             cls := "form3",
@@ -103,10 +106,7 @@ final class AuthUi(helpers: Helpers):
             "auth-signup--simple" -> simple
           )
         )(
-          div(cls := "auth__brand")(
-            span(cls := "auth__logo", aria.hidden := "true"),
-            span(cls := "auth__brand-name")("lichess.org")
-          ),
+          logoAndName,
           authTabs("signup"),
           postForm(
             id := "signup-form",
