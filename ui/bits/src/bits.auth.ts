@@ -79,7 +79,7 @@ function signupStart() {
 
   initTextClear($form[0] as HTMLFormElement);
 
-  turnstile($form.find('.submit'));
+  turnstile($form);
 
   $form.on('submit', () => {
     const responseEl = $form.find('[name="cf-turnstile-response"]');

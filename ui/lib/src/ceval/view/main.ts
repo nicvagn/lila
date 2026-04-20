@@ -10,7 +10,7 @@ import { opposite, parseUci } from 'chessops/util';
 import { setupPosition } from 'chessops/variant';
 
 import { isTouchDevice } from '@/device';
-import { blurIfPrimaryClick, defined, notNull, requestIdleCallback } from '@/index';
+import { blurIfPrimaryClick, defined, notNull, requestIdleCallbackSafe } from '@/index';
 import * as licon from '@/licon';
 import type { ClientEval, LocalEval, PvData } from '@/tree/types';
 import { type VNode, type LooseVNodes, bind, hl } from '@/view';
@@ -305,7 +305,7 @@ function getElPvMoves(e: TouchEvent | MouseEvent): (string | null)[] {
 }
 
 function checkHover(el: HTMLElement, ceval: CevalCtrl): void {
-  requestIdleCallback(
+  requestIdleCallbackSafe(
     () => setHovering(ceval, getElFen(el), $(el).find('div.pv:hover').attr('data-uci') || undefined),
     500,
   );

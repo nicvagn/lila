@@ -1,4 +1,4 @@
-import { requestIdleCallback } from 'lib';
+import { requestIdleCallbackSafe } from '@/common';
 
 export default function turnstile($form: Cash): void {
   $form.find('.submit').prop('disabled', true);
@@ -11,7 +11,7 @@ export default function turnstile($form: Cash): void {
     if (message) $err.text(message).removeClass('none');
     else $err.addClass('none');
   };
-  requestIdleCallback(() => {
+  requestIdleCallbackSafe(() => {
     window.turnstile.render(selector, {
       ...options,
       appearance: 'interaction-only',

@@ -10,7 +10,7 @@ import { parseSquare, parseUci, makeSquare, makeUci, opposite } from 'chessops/u
 import { ctrl as makeKeyboardMove, type KeyboardMove, type KeyboardMoveRootCtrl } from 'keyboardMove';
 import { makeVoiceMove, type VoiceMove } from 'voice';
 
-import { prop, type Prop, propWithEffect, type Toggle, toggle, requestIdleCallback } from 'lib';
+import { prop, type Prop, propWithEffect, type Toggle, toggle, requestIdleCallbackSafe } from 'lib';
 import { type Deferred, defer, throttle } from 'lib/async';
 import { CevalCtrl } from 'lib/ceval';
 import type { CevalHandler } from 'lib/ceval/types';
@@ -147,7 +147,7 @@ export default class PuzzleCtrl implements CevalHandler {
     // If the page loads while being hidden (like when changing settings),
     // chessground is not displayed, and the first move is not fully applied.
     // Make sure chessground is fully shown when the page goes back to being visible.
-    document.addEventListener('visibilitychange', () => requestIdleCallback(() => this.jump(this.path), 500));
+    document.addEventListener('visibilitychange', () => requestIdleCallbackSafe(() => this.jump(this.path), 500));
 
     pubsub.on('zen', toggleZenMode);
     $('body').addClass('playing'); // for zen
