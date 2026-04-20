@@ -6,7 +6,6 @@ export default function turnstile($form: Cash): void {
   $form.find(selector).each(function (this: HTMLDivElement) {
     const turnstileDiv = this;
     $form.find('.submit').prop('disabled', true);
-    console.log($form, $form[0]);
     turnstileDiv.innerHTML = '';
     const options = Object.assign({}, turnstileDiv.dataset);
     const showError = (message: string | false) => {
