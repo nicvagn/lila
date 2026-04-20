@@ -22,8 +22,8 @@ import {
   dataIcon,
   hl,
   spinnerVdom as spinner,
-  stepwiseScroll,
 } from 'lib/view';
+import stepwiseScroll from 'lib/view/stepwiseScroll';
 
 import type AnalyseCtrl from '../ctrl';
 import * as chessground from '../ground';
