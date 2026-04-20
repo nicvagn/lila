@@ -26,29 +26,29 @@ $auth-input-bg: rgba(26, 22, 16, 1);
   border-radius: $auth-input-radius;
   border: $border;
 
-  .auth__brand {
+  &__brand {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-  }
 
-  .auth__logo {
-    display: block;
-    width: 64px;
-    height: 64px;
-    background: center no-repeat url('../logo/lichess-white.svg');
-    background-size: contain;
+    &__logo {
+      display: block;
+      width: 64px;
+      height: 64px;
+      background: center no-repeat url('../logo/lichess-white.svg');
+      background-size: contain;
 
-    @include if-light {
-      background-image: url('../logo/lichess.svg');
+      @include if-light {
+        background-image: url('../logo/lichess.svg');
+      }
     }
-  }
 
-  .auth__brand-name {
-    font-size: 1.5rem;
-    font-weight: bold;
+    &__name {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
   }
 
   .auth-tabs {
@@ -289,23 +289,28 @@ $auth-input-bg: rgba(26, 22, 16, 1);
   .cf-turnstile {
     margin: 1em 0;
   }
+
   .button.submit {
     .button__loader .spinner {
       width: 1.3em;
       height: 1.3em;
     }
+
     .button__ready {
       display: block;
     }
+
     .button__verifying {
       justify-content: center;
       gap: 1ch;
       display: none;
     }
+
     &:disabled {
       .button__ready {
         display: none;
       }
+
       .button__verifying {
         display: flex;
       }

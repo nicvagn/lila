@@ -16,8 +16,8 @@ final class AuthUi(helpers: Helpers):
 
   private def logoAndName =
     div(cls := "auth__brand")(
-      span(cls := "auth__logo", aria.hidden := "true"),
-      span(cls := "auth__brand-name")("lichess.org")
+      span(cls := "auth__brand__logo", aria.hidden := "true"),
+      span(cls := "auth__brand__name")("lichess.org")
     )
 
   def login(form: Form[?], isRememberMe: Boolean = true)(using
