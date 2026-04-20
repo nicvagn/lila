@@ -123,7 +123,7 @@ let mouchListener: EventListener;
 const setupHooks = (ctrl: ChatCtrl, chatEl: HTMLInputElement) => {
   const inner = tempStorage.make(`chat.input`);
   const storage = {
-    get: (): string | undefined => {
+    get: () => {
       const v = inner.get();
       if (v) {
         try {
@@ -135,7 +135,7 @@ const setupHooks = (ctrl: ChatCtrl, chatEl: HTMLInputElement) => {
           console.log(`Could not parse "chat.input" value ${v}`);
         }
       }
-      return;
+      return undefined;
     },
     set: (txt: string) => {
       inner.set(JSON.stringify([ctrl.data.opponentId || '', txt]));

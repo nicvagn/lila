@@ -176,11 +176,10 @@ export default class TournamentController {
           return;
         }
       }
-      xhr.join(this, password, team);
+      await xhr.join(this, password, team);
       this.joinSpinner = true;
       this.focusOnMe = true;
     }
-    return;
   };
 
   scrollToMe = () => this.setPage(myPage(this));
