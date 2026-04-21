@@ -1057,6 +1057,8 @@ interface I18n {
     emailChange_subject: I18nFormat;
     /** Click the link to enable your Lichess account: */
     emailConfirm_click: string;
+    /** Thanks for registering with Lichess! */
+    emailConfirm_intro: string;
     /** If you did not register with Lichess, you can safely ignore this message. The unconfirmed account and all traces of your email address will be deleted from our system after 48 hours. */
     emailConfirm_justIgnore: string;
     /** Confirm your lichess.org account, %s */
