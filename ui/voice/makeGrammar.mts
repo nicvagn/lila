@@ -45,7 +45,7 @@ async function main() {
       ? ((await parseCrowdvData(lexicon.crowdv)).map(data => makeLexEntry(data)).filter(x => x) as LexEntry[])
       : [];
 
-    for (const e of entries.filter(e => e.h != e.x)) {
+    for (const e of entries.filter(e => e.h !== e.x)) {
       parseTransforms(findTransforms(e.h, e.x, buildMode), e, subMap, opThreshold);
     }
     subMap.forEach(v => (v.freq = v.count / v.all));

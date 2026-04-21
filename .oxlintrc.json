@@ -6,6 +6,13 @@
   },
   "ignorePatterns": ["**/dist/", "**/public"],
   "rules": {
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
     "no-var": "warn",
     "no-constant-condition": [
       "warn",
