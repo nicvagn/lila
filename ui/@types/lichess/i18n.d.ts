@@ -3767,7 +3767,7 @@ interface I18n {
     level: string;
     /** Rated games played on Lichess */
     lichessDbExplanation: string;
-    /** Lichess is a charity and entirely free/libre open source software. */
+    /** Lichess is a charity and entirely free/libre open source software. We depend on user donations to support our operating costs, development, and content. Without our generous community, we would not be able to keep the site running. Thank you for joining us! */
     lichessPatronInfo: string;
     /** Lichess tournaments */
     lichessTournaments: string;
