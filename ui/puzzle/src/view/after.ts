@@ -80,7 +80,6 @@ const hiddenInput = (name: string, value: string) => hl('input', { attrs: { type
 function renderPgnInput(ctrl: PuzzleCtrl): string {
   const puzURL = `${location.origin}/training/${ctrl.data.puzzle.id}`;
   const tags = [
-    ['Event', `Puzzle ${ctrl.data.puzzle.id}`],
     ['Site', puzURL],
     ['Variant', 'Standard'],
     ['FEN', ctrl.initialNode.fen],
