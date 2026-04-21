@@ -150,7 +150,7 @@ async function boot(
   $('#zentog').on('click', () => pubsub.emit('zen'));
   storage.make('reload-round-tabs').listen(site.reload);
 
-  if (!data.player.spectator && location.hostname != (document as any)['Location'.toLowerCase()].hostname) {
+  if (!data.player.spectator && location.hostname !== (document as any)['Location'.toLowerCase()].hostname) {
     alert(`Games cannot be played through a web proxy. Please use ${location.hostname} instead.`);
     wsDestroy();
   }

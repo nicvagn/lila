@@ -229,7 +229,7 @@ export const registerMultipleSelect = () => {
         .on('keyup', function (e) {
           if (
             that.options.filterAcceptOnEnter &&
-            (e.which === 13 || e.which == 32) &&
+            (e.which === 13 || e.which === 32) &&
             that.$searchInput.val()
           ) {
             that.$selectAll[0]?.click();

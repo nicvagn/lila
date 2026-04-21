@@ -93,8 +93,8 @@ function signupStart() {
     return false;
   });
   const showPasswordTools = () => {
-    $form.find('.password-generator').toggleClass('none', $password.val() != '');
-    $form.find('.password-complexity').toggleClass('none', $password.val() == '');
+    $form.find('.password-generator').toggleClass('none', $password.val() !== '');
+    $form.find('.password-complexity').toggleClass('none', $password.val() === '');
   };
   $password.on('input', showPasswordTools);
   showPasswordTools();
