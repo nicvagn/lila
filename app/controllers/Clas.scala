@@ -104,7 +104,7 @@ final class Clas(env: Env, authC: Auth) extends LilaController(env):
             )
         yield Ok(page),
       orDefault = _ =>
-        isGranted(_.UserModView).so(FoundPage(env.clas.api.clas.byId(id)): clas =>
+        isGranted(_.AccountInfo).so(FoundPage(env.clas.api.clas.byId(id)): clas =>
           env.clas.api.student.allWithUsers(clas).flatMap { students =>
             env.user.api.withPerfsAndEmails(students.map(_.user)).map {
               views.mod.search.clas(clas, _)

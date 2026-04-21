@@ -7,6 +7,13 @@
   "ignorePatterns": ["**/dist/", "**/public"],
   "rules": {
     "default-param-last": "error",
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
     "no-var": "warn",
     "no-constant-condition": [
       "warn",
