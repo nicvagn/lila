@@ -88,8 +88,8 @@ function signupStart() {
     else return false;
   });
 
-  $form.find('.password-generator button').on('click', async () => {
-    await site.asset.loadEsm('bits.passwordGenerator', { init: 'form3-password' });
+  $form.find('.password-generator button').on('click', () => {
+    void site.asset.loadEsm('bits.passwordGenerator', { init: 'form3-password' });
     return false;
   });
   const showPasswordTools = () => {
