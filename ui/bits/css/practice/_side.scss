@@ -1,15 +1,24 @@
 .practice-side {
   @extend %box-radius;
+  @include backdrop-blur-if-transparent;
 
-  background: $c-primary;
-  color: $c-over;
+  background: $c-bg-box;
+  border: $border;
   text-align: center;
-  padding: 1.2em;
   align-self: start;
+  padding: 1em 1.25em;
+
+  @include if-light {
+    color: $c-font;
+
+    i.fat {
+      filter: brightness(0.15);
+    }
+  }
 
   h1 {
     font-size: 3.3em;
-    margin: 0.2em;
+    margin-top: 0.2em;
   }
 
   h2 {
@@ -19,80 +28,34 @@
 
   @keyframes fat-glide {
     50% {
-      opacity: 1;
+      transform: translateY(-4px);
     }
   }
 
   .fat {
     display: block;
-    width: 16em;
-    height: 16em;
+    width: 160px;
+    height: 160px;
     background: url('../images/practice/robot-golem.svg');
     margin: auto;
     opacity: 0.8;
-    animation: 1.2s fat-glide ease-in-out infinite;
   }
 
-  .progress {
-    @extend %box-radius-force;
-
-    position: relative;
-    width: 100%;
-    height: 2em;
-    background: #ccc3; // better
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
-  }
-
-  @keyframes animated-background {
-    from {
-      background-position: 0 0;
-    }
-
-    to {
-      background-position: 0 1000%;
-    }
-  }
-
-  @keyframes animated-bar {
-    from {
-      transform: translateX(-100px);
-    }
-
-    to {
-      transform: translateX(0);
-    }
-  }
-
-  .progress .bar {
-    @extend %box-radius-right;
-
-    height: 100%;
-    background: #ccc3; // better
-    background-image: url('../images/grain.png');
-    transform: translateX(-100px);
-    animation:
-      animated-background 50s linear infinite,
-      animated-bar 1s forwards;
-  }
-
-  .progress .text {
-    @extend %abs-100;
-
-    line-height: 2em;
-    z-index: 1;
+  &:hover i.fat {
+    animation: 1.5s fat-glide ease-in-out infinite;
   }
 
   form {
-    padding-top: 1em;
-    text-align: left;
-  }
+    padding: 16px 10px 8px;
+    text-align: center;
 
-  a {
-    opacity: 0.6;
-    color: #fff;
-  }
+    button {
+      opacity: 0.6;
+      color: $c-font;
 
-  a:hover {
-    opacity: 1;
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
 }

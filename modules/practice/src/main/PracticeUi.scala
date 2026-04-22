@@ -11,6 +11,7 @@ final class PracticeUi(helpers: Helpers)(
     explorerAndCevalConfig: Context ?=> JsObject
 ):
   import helpers.{ *, given }
+  import trans.learn as trl
 
   def show(us: UserStudy, data: JsonView.JsData)(using ctx: Context) =
     Page(us.practiceStudy.name.value)
@@ -47,16 +48,16 @@ final class PracticeUi(helpers: Helpers)(
             h1("Practice"),
             h2("makes your chess perfect"),
             div(cls := "progress")(
-              div(cls := "text")("Progress: ", data.progressPercent, "%"),
+              div(cls := "text")(trl.progressX(s"${data.progressPercent}%")),
               div(cls := "bar", style := s"width: ${data.progressPercent}%")
             ),
             postForm(action := routes.Practice.reset)(
               if ctx.isAuth then
                 (data.nbDoneChapters > 0).option(
                   submitButton(
-                    cls := "button ok-cancel-confirm",
-                    title := "You will lose your practice progress!"
-                  )("Reset my progress")
+                    cls := "ok-cancel-confirm",
+                    title := trl.youWillLoseAllYourProgress.txt()
+                  )(trl.resetMyProgress.txt())
                 )
               else a(href := routes.Auth.signup)("Sign up to save your progress")
             )
@@ -74,7 +75,11 @@ final class PracticeUi(helpers: Helpers)(
                     )(
                       ctx.isAuth.option(
                         span(cls := "ribbon-wrapper")(
-                          span(cls := "ribbon")(prog.done, " / ", prog.total)
+                          span(cls := s"ribbon ${if prog.complete then "done" else "ongoing"}")(
+                            prog.done,
+                            " / ",
+                            prog.total
+                          )
                         )
                       ),
                       i(cls := s"${stud.id}"),
