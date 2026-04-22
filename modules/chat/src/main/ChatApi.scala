@@ -344,8 +344,8 @@ private[chat] object GarbageDetector:
     """(?i)^(I?\s?claim(ed?)?\s?((\d+(st|ts|nd|rd|th)?)|(first|second|third)))$""".r
   private val numberMemeDuplicatePattern = """(?i)([\W\w]?[67][\W\w]?[678][\W\w]?){2,}""".r.unanchored
   private val numberLetterMemeDuplicatePattern = """(?i)((six)[\W\w]?(seven)[\W\w]?){2,}""".r.unanchored
-  private val duplicateCharacterPattern = """(?is)^(.)\1{4,}$""".r.unanchored
-  private val duplicateCharactersPattern = """(?is)^(..)\1{3,}$""".r.unanchored
+  private val duplicateCharacterPattern = """(?i)^(.)\1{4,}$""".r.unanchored
+  private val duplicateCharactersPattern = """(?i)^(..)\1{3,}$""".r.unanchored
 
   def apply(text: String): Boolean = {
     val x = text.filter(_.isLetter).toLowerCase
