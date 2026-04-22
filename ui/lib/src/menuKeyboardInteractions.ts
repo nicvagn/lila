@@ -10,7 +10,6 @@ export default function menuKeyboardInteractions(): void {
     if (ev.code === 'Tab') {
       if (ev.shiftKey ? $target.is(':first-child') : $target.is(':last-child')) {
         $section.removeClass('active');
-      } else if ($section.hasClass('active')) {
       }
     } else if (ev.code === 'Space') {
       $section.toggleClass('active');
