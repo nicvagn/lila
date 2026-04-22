@@ -17,10 +17,10 @@
 }
 
 .ribbon {
-  --ribbon-fade: #1111115a;
+  --ribbon-fade: #1111116e;
 
   @include if-light {
-    --ribbon-fade: #1111113a;
+    --ribbon-fade: #1111113e;
   }
 
   @include inline-start(-4px);
@@ -79,12 +79,12 @@
   }
 
   &.done {
-    background-color: #bfdc7a;
+    background-color: #c5e791;
     box-shadow: 1px 0 3px $m-secondary--fade-50;
   }
 
   &.ongoing {
-    background-color: #b3e5fc;
+    background-color: #bddffa;
     box-shadow: 1px 0 3px $m-primary--fade-50;
   }
 
