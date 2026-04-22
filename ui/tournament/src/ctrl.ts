@@ -176,7 +176,7 @@ export default class TournamentController {
           return;
         }
       }
-      await xhr.join(this, password, team);
+      xhr.join(this, password, team);
       this.joinSpinner = true;
       this.focusOnMe = true;
     }
