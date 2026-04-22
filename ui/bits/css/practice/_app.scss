@@ -50,7 +50,11 @@
 
     @media (width < $xx-small) {
       min-height: fit-content;
-      padding: 4px 2.5em 4px 0;
+      padding: 6px 3em 6px 0;
+
+      p {
+        margin-top: 2px;
+      }
     }
 
     i {
@@ -69,13 +73,12 @@
     }
 
     h3 {
-      font-size: 1.4em;
+      font-size: 1.5em;
       line-height: 1;
     }
 
-    em {
-      display: inline-block;
-      margin: 2px 0 0 0;
+    p {
+      margin: 4px 0 0 0;
       line-height: 1.2;
     }
 
