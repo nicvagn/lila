@@ -41,7 +41,6 @@ function renderPgnInput(ctrl: PuzzleCtrl): string {
   const puzURL = `${location.origin}/training/${ctrl.data.puzzle.id}`;
   const tags = [
     ['Site', puzURL],
-    ['Variant', 'Standard'],
     ['FEN', ctrl.initialNode.fen],
   ]
     .map(([k, v]) => `[${k} "${v}"]\n`)
@@ -59,7 +58,6 @@ const studyButton = (ctrl: PuzzleCtrl) =>
           hiddenInput('pgn', renderPgnInput(ctrl)),
           hiddenInput('fen', ctrl.initialNode.fen),
           hiddenInput('orientation', ctrl.pov),
-          hiddenInput('variant', 'Standard'),
           hiddenInput('mode', 'gamebook'),
           hl(
             'button.button.text',
