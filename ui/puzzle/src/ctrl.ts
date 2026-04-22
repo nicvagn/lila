@@ -10,7 +10,7 @@ import { parseSquare, parseUci, makeSquare, makeUci, opposite } from 'chessops/u
 import { ctrl as makeKeyboardMove, type KeyboardMove, type KeyboardMoveRootCtrl } from 'keyboardMove';
 import { makeVoiceMove, type VoiceMove } from 'voice';
 
-import { prop, type Prop, propWithEffect, type Toggle, toggle, requestIdleCallbackSafe } from 'lib';
+import { prop, type Prop, propWithEffect, type Toggle, toggle, requestIdleCallbackSafe, myUserId } from 'lib';
 import { type Deferred, defer, throttle } from 'lib/async';
 import { CevalCtrl } from 'lib/ceval';
 import type { CevalHandler } from 'lib/ceval/types';
@@ -94,13 +94,13 @@ export default class PuzzleCtrl implements CevalHandler {
       `puzzle.autoNext${opts.data.streak ? '.streak' : ''}`,
       !!opts.data.streak,
     );
-    this.blindfolded = storedBooleanProp(`puzzle.${this.opts.data.user?.id || 'anon'}.blindfolded`, false);
+    this.blindfolded = storedBooleanProp(`puzzle.${myUserId() || 'anon'}.blindfolded`, false);
     this.streak = opts.data.streak ? new PuzzleStreak(opts.data) : undefined;
     if (this.streak) {
       opts.data = { ...opts.data, ...this.streak.data.current };
       this.streakFailStorage.listen(_ => this.failStreak(this.streak!));
     }
-    this.session = new PuzzleSession(opts.data.angle.key, opts.data.user?.id, !!opts.data.streak);
+    this.session = new PuzzleSession(opts.data.angle.key, myUserId(), !!opts.data.streak);
     this.menu = toggle(false, redraw);
 
     this.initiate(opts.data);
