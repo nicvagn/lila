@@ -57,3 +57,5 @@ class GarbageTest extends munit.FunSuite:
     assert(!GarbageDetector("no"))
     assert(!GarbageDetector("siu"))
     assert(!GarbageDetector("..."))
+    assert(!GarbageDetector("haha"))
+    assert(!GarbageDetector("aaaaaa 111111"))
