@@ -32,7 +32,7 @@
     @include backdrop-blur-if-transparent;
 
     position: relative;
-    height: 90px;
+    min-height: 90px;
     color: #fff;
     box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.07);
     font-size: 1.2em;
@@ -49,7 +49,8 @@
     }
 
     @media (width < $xx-small) {
-      height: fit-content;
+      min-height: fit-content;
+      padding: 4px 2.5em 4px 0;
     }
 
     i {
@@ -59,6 +60,7 @@
       opacity: 0.75;
       background-repeat: no-repeat;
       background-position: center;
+      flex-shrink: 0;
 
       @media (width < $xx-small) {
         width: 50px;
@@ -68,6 +70,13 @@
 
     h3 {
       font-size: 1.4em;
+      line-height: 1;
+    }
+
+    em {
+      display: inline-block;
+      margin: 2px 0 0 0;
+      line-height: 1.2;
     }
 
     &.ongoing {
@@ -99,6 +108,8 @@
   }
 
   .what_next > p {
+    @extend %page-text-shadow !optional;
+
     width: 100%;
     text-align: center;
     margin: 20px 0;
