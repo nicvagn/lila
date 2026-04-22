@@ -2429,7 +2429,7 @@ interface I18n {
     didYouLikeThisPuzzle: string;
     /** Difficulty level */
     difficultyLevel: string;
-    /** Rate puzzle negatively */
+    /** Bad puzzle! */
     downVote: string;
     /** Easier */
     easier: string;
@@ -2549,14 +2549,12 @@ interface I18n {
     toGetPersonalizedPuzzles: string;
     /** Try something else. */
     trySomethingElse: string;
-    /** Rate puzzle positively */
+    /** Great puzzle! */
     upVote: string;
     /** Use Ctrl+f to find your favourite opening! */
     useCtrlF: string;
     /** Use "Find in page" in the browser menu to find your favourite opening! */
     useFindInPage: string;
-    /** Vote to load the next one! */
-    voteToLoadNextOne: string;
     /** Your puzzle rating will not change. Note that puzzles are not a competition. Your rating helps select the most appropriate puzzles for your skill level. */
     yourPuzzleRatingWillNotChange: string;
     /** Your streak: %s */

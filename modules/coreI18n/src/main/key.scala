@@ -1257,7 +1257,6 @@ object I18nKey:
     val `origin`: I18nKey = "puzzle:origin"
     val `specialMoves`: I18nKey = "puzzle:specialMoves"
     val `didYouLikeThisPuzzle`: I18nKey = "puzzle:didYouLikeThisPuzzle"
-    val `voteToLoadNextOne`: I18nKey = "puzzle:voteToLoadNextOne"
     val `upVote`: I18nKey = "puzzle:upVote"
     val `downVote`: I18nKey = "puzzle:downVote"
     val `yourPuzzleRatingWillNotChange`: I18nKey = "puzzle:yourPuzzleRatingWillNotChange"

@@ -79,7 +79,6 @@ export default class PuzzleCtrl implements CevalHandler {
   hintHasBeenShown = toggle(false);
   autoScrollRequested: boolean;
   autoScrollNow: boolean;
-  voteDisabled?: boolean;
   isDaily: boolean;
   blindfolded: StoredProp<boolean>;
   cgVersion = 1;
@@ -644,13 +643,8 @@ export default class PuzzleCtrl implements CevalHandler {
     }
 
     this.autoScrollRequested = true;
-    this.voteDisabled = true;
     this.redraw();
     this.startCeval();
-    setTimeout(() => {
-      this.voteDisabled = false;
-      this.redraw();
-    }, 500);
   };
 
   skip = () => {
@@ -671,10 +665,7 @@ export default class PuzzleCtrl implements CevalHandler {
   };
 
   vote = (v: boolean) => {
-    if (!this.voteDisabled) {
-      xhr.vote(this.data.puzzle.id, v);
-      this.nextPuzzle();
-    }
+    xhr.vote(this.data.puzzle.id, v);
   };
 
   voteTheme = (theme: ThemeKey, v: boolean) => {
