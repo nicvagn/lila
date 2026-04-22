@@ -81,11 +81,14 @@ function setupTextarea(area: HTMLTextAreaElement, contact: string, ctrl: MsgCtrl
   area.value = storage.get() || '';
   if (area.value) area.dispatchEvent(new Event('input'));
 
-  // send the content on <enter.
-  area.addEventListener('keypress', (e: KeyboardEvent) => {
+  // send the content on Enter
+  area.addEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       setTimeout(send);
+    } else if (e.key === 'Escape') {
+      e.stopPropagation();
+      area.blur();
     }
   });
   area.addEventListener('send', send);

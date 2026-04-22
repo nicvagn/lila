@@ -168,6 +168,12 @@ export default function () {
       loadEsm('cli', { init: { input: $input[0] } }).catch(() => (booted = false));
     };
     $input.on({
+      keydown(e) {
+        if ((e as KeyboardEvent).key === 'Escape') {
+          e.stopPropagation();
+          $input[0]?.blur();
+        }
+      },
       blur() {
         $input.val('');
         $('body').removeClass('clinput');

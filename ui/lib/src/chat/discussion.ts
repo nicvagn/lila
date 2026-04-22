@@ -149,8 +149,12 @@ const setupHooks = (ctrl: ChatCtrl, chatEl: HTMLInputElement) => {
     if (!ctrl.opts.public && previousText.match(whisperRegex)) chatEl.classList.add('whisper');
   } else if (ctrl.vm.autofocus) chatEl.focus();
 
-  chatEl.addEventListener(
-    'keydown',
+  chatEl.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      chatEl.blur();
+      return;
+    }
     enter(target => {
       setTimeout(() => {
         const el = target as HTMLInputElement,
@@ -173,8 +177,8 @@ const setupHooks = (ctrl: ChatCtrl, chatEl: HTMLInputElement) => {
           if (!pub) el.classList.remove('whisper');
         }
       });
-    }),
-  );
+    })(e);
+  });
 
   chatEl.addEventListener('input', (e: KeyboardEvent) =>
     setTimeout(() => {

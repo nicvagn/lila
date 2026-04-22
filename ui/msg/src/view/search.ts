@@ -19,6 +19,12 @@ export const renderInput = (ctrl: MsgCtrl): VNode =>
             'input',
             throttle(500, () => ctrl.searchInput(input.value.trim())),
           );
+          input.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+              e.stopPropagation();
+              input.blur();
+            }
+          });
           input.addEventListener('blur', () =>
             setTimeout(() => {
               input.value = '';

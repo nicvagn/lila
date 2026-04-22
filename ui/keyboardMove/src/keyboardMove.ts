@@ -64,14 +64,17 @@ function makeBindings(opts: Opts, submit: Submit, clear: () => void) {
       submit(v, { isTrusted: true });
   });
   opts.input.addEventListener('keydown', (e: KeyboardEvent) => {
+    // prevent default on arrow keys: they only replay moves
     if (isArrowKey(e.key)) {
       opts.ctrl.arrowNavigate(e.key);
       e.preventDefault();
+    } else if (e.key === 'Escape') {
+      e.stopPropagation();
+      opts.input.blur();
     }
   });
   opts.input.addEventListener('focus', () => opts.ctrl.isFocused(true));
   opts.input.addEventListener('blur', () => opts.ctrl.isFocused(false));
-  // prevent default on arrow keys: they only replay moves
 }
 
 function focusChat() {

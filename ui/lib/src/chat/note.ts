@@ -36,6 +36,12 @@ export function noteView(ctrl: NoteCtrl, autofocus: boolean): VNode {
         const el = vnode.elm as HTMLTextAreaElement;
         el.value = text;
         if (autofocus) el.focus();
+        el.addEventListener('keydown', (e: KeyboardEvent) => {
+          if (e.key === 'Escape') {
+            e.stopPropagation();
+            el.blur();
+          }
+        });
         $(el).on('change keyup paste', () => ctrl.post(el.value));
       },
     },
