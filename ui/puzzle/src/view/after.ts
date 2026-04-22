@@ -1,4 +1,3 @@
-import { renderNodesTxt } from 'lib/game/nodePGN';
 import * as licon from 'lib/licon';
 import { type VNode, type MaybeVNodes, bind, dataIcon, hl } from 'lib/view';
 
@@ -48,21 +47,19 @@ export default function (ctrl: PuzzleCtrl): VNode {
     ctrl.streak && !win
       ? renderStreak(ctrl)
       : [
-          hl('div.complete-continue', [
-            hl('div.complete', i18n.puzzle[win ? 'puzzleSuccess' : 'puzzleComplete']),
-            data.user ? renderVote(ctrl) : renderContinue(ctrl),
-          ]),
+          hl('div.complete', i18n.puzzle[win ? 'puzzleSuccess' : 'puzzleComplete']),
+          data.user ? renderVote(ctrl) : renderContinue(ctrl),
           hl('div.puzzle__more', [
-            canContinue &&
-              hl('a', {
-                attrs: {
-                  'data-icon': licon.Bullseye,
-                  href: `/analysis/${ctrl.node.fen.replace(/ /g, '_')}?color=${ctrl.pov}#practice`,
-                  title: i18n.site.playAgainstComputer,
-                  target: '_blank',
-                },
-              }),
-            data.user && studyButton(ctrl),
+            canContinue
+              ? hl('a', {
+                  attrs: {
+                    'data-icon': licon.Bullseye,
+                    href: `/analysis/${ctrl.node.fen.replace(/ /g, '_')}?color=${ctrl.pov}#practice`,
+                    title: i18n.site.playAgainstComputer,
+                    target: '_blank',
+                  },
+                })
+              : hl('a'),
             data.user &&
               !ctrl.autoNexting() &&
               hl(
@@ -74,29 +71,3 @@ export default function (ctrl: PuzzleCtrl): VNode {
         ],
   );
 }
-
-const hiddenInput = (name: string, value: string) => hl('input', { attrs: { type: 'hidden', name, value } });
-
-function renderPgnInput(ctrl: PuzzleCtrl): string {
-  const puzURL = `${location.origin}/training/${ctrl.data.puzzle.id}`;
-  const tags = [
-    ['Site', puzURL],
-    ['Variant', 'Standard'],
-    ['FEN', ctrl.initialNode.fen],
-  ]
-    .map(([k, v]) => `[${k} "${v}"]\n`)
-    .join('');
-  const linkPreamble = ` {${puzURL}} `;
-  return tags + linkPreamble + renderNodesTxt(ctrl.initialNode, true);
-}
-
-const studyButton = (ctrl: PuzzleCtrl) =>
-  ctrl.mode !== 'play' &&
-  hl('form', { attrs: { action: '/study/as', method: 'post', target: '_blank' } }, [
-    hiddenInput('pgn', renderPgnInput(ctrl)),
-    hiddenInput('fen', ctrl.initialNode.fen),
-    hiddenInput('orientation', ctrl.pov),
-    hiddenInput('variant', 'Standard'),
-    hiddenInput('mode', 'gamebook'),
-    hl('button.study', { attrs: { type: 'submit', 'data-icon': licon.StudyBoard } }, i18n.site.toStudy),
-  ]);
