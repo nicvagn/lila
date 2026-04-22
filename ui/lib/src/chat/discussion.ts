@@ -1,5 +1,6 @@
 import { h, thunk, type VNode, type VNodeData } from 'snabbdom';
 
+import { blurIfEscape } from '@/common';
 import { pubsub } from '@/pubsub';
 import { tempStorage } from '@/storage';
 import { enter, alert } from '@/view';
@@ -150,11 +151,7 @@ const setupHooks = (ctrl: ChatCtrl, chatEl: HTMLInputElement) => {
   } else if (ctrl.vm.autofocus) chatEl.focus();
 
   chatEl.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      e.stopPropagation();
-      chatEl.blur();
-      return;
-    }
+    if (blurIfEscape(e)) return;
     enter(target => {
       setTimeout(() => {
         const el = target as HTMLInputElement,

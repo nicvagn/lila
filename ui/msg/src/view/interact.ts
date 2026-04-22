@@ -1,5 +1,6 @@
 import { h, type VNode } from 'snabbdom';
 
+import { blurIfEscape } from 'lib';
 import { throttle } from 'lib/async';
 import * as licon from 'lib/licon';
 import { bindSubmit, alert } from 'lib/view';
@@ -86,10 +87,7 @@ function setupTextarea(area: HTMLTextAreaElement, contact: string, ctrl: MsgCtrl
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       setTimeout(send);
-    } else if (e.key === 'Escape') {
-      e.stopPropagation();
-      area.blur();
-    }
+    } else blurIfEscape(e);
   });
   area.addEventListener('send', send);
 

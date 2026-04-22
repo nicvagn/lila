@@ -1,3 +1,4 @@
+import { blurIfEscape } from 'lib';
 import { sanWriter, destsToUcis } from 'lib/game';
 
 import type { KeyboardMoveHandler, Opts, ArrowKey } from '@/exports';
@@ -68,10 +69,7 @@ function makeBindings(opts: Opts, submit: Submit, clear: () => void) {
     if (isArrowKey(e.key)) {
       opts.ctrl.arrowNavigate(e.key);
       e.preventDefault();
-    } else if (e.key === 'Escape') {
-      e.stopPropagation();
-      opts.input.blur();
-    }
+    } else blurIfEscape(e);
   });
   opts.input.addEventListener('focus', () => opts.ctrl.isFocused(true));
   opts.input.addEventListener('blur', () => opts.ctrl.isFocused(false));

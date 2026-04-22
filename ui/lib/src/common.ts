@@ -163,3 +163,20 @@ export function blurIfPrimaryClick(e: Event): void {
   if (target instanceof HTMLElement && e.button === 0 && (e.clientX || e.clientY))
     requestAnimationFrame(() => target.blur());
 }
+
+export function blurIfEscape(e: KeyboardEvent): boolean {
+  if (e.target instanceof HTMLElement && e.key === 'Escape') {
+    e.stopPropagation();
+    e.target.blur();
+    return true;
+  }
+  return false;
+}
+export function blurOnEscape(el: HTMLElement): void {
+  el.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      el.blur();
+    }
+  });
+}
