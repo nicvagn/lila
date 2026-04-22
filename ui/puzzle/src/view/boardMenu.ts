@@ -26,7 +26,11 @@ export default function (ctrl: PuzzleCtrl) {
     ]),
     studyButton(ctrl),
     h('section.board-menu__links', [
-      h('a', { attrs: { target: '_blank', href: '/account/preferences/display' } }, i18n.preferences.display),
+      h(
+        'a.text',
+        { attrs: { target: '_blank', href: '/account/preferences/display', 'data-icon': licon.Gear } },
+        i18n.preferences.display,
+      ),
     ]),
   ]);
 }
