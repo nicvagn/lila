@@ -77,6 +77,7 @@ export default class PuzzleCtrl implements CevalHandler {
   canViewSolution = toggle(false);
   showHint = toggle(false);
   hintHasBeenShown = toggle(false);
+  voted: boolean | undefined;
   autoScrollRequested: boolean;
   autoScrollNow: boolean;
   isDaily: boolean;
@@ -666,6 +667,8 @@ export default class PuzzleCtrl implements CevalHandler {
 
   vote = (v: boolean) => {
     xhr.vote(this.data.puzzle.id, v);
+    this.voted = this.voted === v ? undefined : v;
+    this.redraw();
   };
 
   voteTheme = (theme: ThemeKey, v: boolean) => {

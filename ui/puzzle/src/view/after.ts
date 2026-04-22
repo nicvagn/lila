@@ -13,10 +13,12 @@ const renderVote = (ctrl: PuzzleCtrl): VNode =>
         hl('div.puzzle__vote__help', i18n.puzzle.didYouLikeThisPuzzle),
       hl('div.puzzle__vote__buttons', [
         hl('button.button.button-empty.vote-up', {
+          class: { active: ctrl.voted === true },
           attrs: { title: i18n.puzzle.upVote },
           hook: bind('click', () => ctrl.vote(true)),
         }),
         hl('button.button.button-empty.vote-down', {
+          class: { active: ctrl.voted === false },
           attrs: { title: i18n.puzzle.downVote },
           hook: bind('click', () => ctrl.vote(false)),
         }),

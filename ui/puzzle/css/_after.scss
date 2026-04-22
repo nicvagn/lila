@@ -100,13 +100,23 @@
     &.vote-down {
       color: $c-bad;
 
+      &.active {
+        background: $m-bad_bg--mix-50;
+      }
+
       &::before {
         transform: rotate(0.5turn);
       }
     }
 
-    &.vote-up:hover {
-      color: $c-good !important;
+    &.vote-up {
+      &.active {
+        background: $m-good_bg--mix-50;
+      }
+
+      &:hover {
+        color: $c-good !important;
+      }
     }
   }
 }
