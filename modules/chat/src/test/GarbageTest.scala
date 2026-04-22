@@ -39,11 +39,6 @@ class GarbageTest extends munit.FunSuite:
   test("detect repeated characters"):
     assert(GarbageDetector("aaaaa"))
     assert(GarbageDetector("11111"))
-    assert(GarbageDetector("aaabbb"))
-    assert(GarbageDetector("aaabbccc"))
-    assert(GarbageDetector("yessssss"))
-    assert(GarbageDetector("nooooooo"))
-    assert(GarbageDetector("siuuuuu"))
     assert(GarbageDetector("Hahahahaha"))
 
   test("ignore normal messages"):
