@@ -24,7 +24,7 @@ async function fetchAndRender(data: OpeningPage, render: (html: string) => void)
         if (page.invalid) {
           console.warn('invalid request: ' + page.invalidreason);
         } else if (!page.extract) {
-          console.warn('error: unexpected API response:<br><pre>' + JSON.stringify(page) + '</pre>');
+          console.warn('error: unexpected API response: ' + JSON.stringify(page));
         } else {
           return render(transformWikiHtml(page.extract, title));
         }
