@@ -69,13 +69,14 @@ final class PracticeUi(helpers: Helpers)(
                 div(cls := "studies")(
                   section.studies.map: stud =>
                     val prog = data.progressOn(stud.id)
+                    val stateClas = if prog.complete then "done" else "ongoing";
                     a(
-                      cls := s"study ${if prog.complete then "done" else "ongoing"}",
+                      cls := s"study ${stateClas}",
                       href := routes.Practice.show(section.id, stud.slug, stud.id)
                     )(
                       ctx.isAuth.option(
                         span(cls := "ribbon-wrapper")(
-                          span(cls := s"ribbon ${if prog.complete then "done" else "ongoing"}")(
+                          span(cls := s"ribbon ${stateClas}")(
                             prog.done,
                             " / ",
                             prog.total
@@ -86,7 +87,8 @@ final class PracticeUi(helpers: Helpers)(
                       span(cls := "text")(
                         h3(stud.name),
                         p(stud.desc)
-                      )
+                      ),
+                      (!prog.complete).option(div(cls := "attention-effect"))
                     )
                 )
               )

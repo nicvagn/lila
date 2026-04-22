@@ -83,20 +83,24 @@
     }
 
     &.ongoing {
-      border-color: $m-primary--fade-30;
+      border-color: $m-primary--fade-50;
       background: linear-gradient(0deg, $m-primary--fade-60, $m-primary--fade-80 100px);
+
+      .attention-effect {
+        @include animated-border($m-primary--lighten-30, $m-primary--fade-80);
+      }
 
       @include if-light {
         background: linear-gradient(180deg, $m-primary--fade-60, $m-primary--fade-80 100px);
+
+        .attention-effect {
+          @include animated-border($m-primary--darken-25, $m-primary--fade-80);
+        }
       }
     }
 
-    &.ongoing:hover {
-      filter: saturate(1.2);
-    }
-
     &.done {
-      border-color: $m-secondary--fade-30;
+      border-color: $m-secondary--fade-35;
       background: linear-gradient(0deg, $m-secondary--fade-60, $m-secondary--fade-80 100px);
 
       @include if-light {

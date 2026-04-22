@@ -34,6 +34,7 @@ const mapView = (ctrl: LearnCtrl) =>
                 status !== 'future' ? ribbon(ctrl, stage, status, stageProgress) : undefined,
                 h('img', { attrs: { src: stage.image } }),
                 h('div.text', [h('h3', title), h('p.subtitle', stage.subtitle)]),
+                status === 'ongoing' ? h('div.attention-effect') : undefined,
               ]);
             }),
           ),
