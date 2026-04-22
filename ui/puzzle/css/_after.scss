@@ -28,8 +28,8 @@
   .complete {
     @extend %flex-center-center;
 
-    flex: 1 1 50%;
-    white-space: nowrap;
+    padding: 1em;
+    flex: 0 1 50%;
 
     .game-over {
       letter-spacing: 0.5ch;
