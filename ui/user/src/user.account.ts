@@ -1,5 +1,5 @@
 import flairPickerLoader from 'bits/flairPicker';
-import {createSelectSearch} from 'bits/selectSearch'
+import { createSelectSearch } from 'bits/selectSearch';
 
 import * as licon from 'lib/licon';
 import { storage } from 'lib/storage';
