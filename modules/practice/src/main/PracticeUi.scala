@@ -69,7 +69,8 @@ final class PracticeUi(helpers: Helpers)(
                 div(cls := "studies")(
                   section.studies.map: stud =>
                     val prog = data.progressOn(stud.id)
-                    val stateClas = if prog.complete then "done" else "ongoing";
+                    val stateClas =
+                      if prog.complete then "done" else if prog.done > 0 then "ongoing" else "future";
                     a(
                       cls := s"study ${stateClas}",
                       href := routes.Practice.show(section.id, stud.slug, stud.id)

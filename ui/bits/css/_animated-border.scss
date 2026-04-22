@@ -16,7 +16,7 @@
     var(--gradient-border) border-box,
     transparent border-box;
   background-position: center center;
-  animation: bg-spin 4s linear infinite;
+  animation: bg-spin 3.5s linear infinite;
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);

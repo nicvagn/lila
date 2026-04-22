@@ -17,6 +17,12 @@
 }
 
 .ribbon {
+  --ribbon-fade: #1111115a;
+
+  @include if-light {
+    --ribbon-fade: #1111113a;
+  }
+
   @include inline-start(-4px);
 
   display: block;
@@ -28,7 +34,7 @@
   padding: 7px 0;
   top: 15px;
   width: 120px;
-  color: #6a6340;
+  color: #5c5c5c;
   box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
   transform: rotate(45deg);
 
@@ -53,18 +59,23 @@
   &::before,
   &::after {
     content: '';
-    border-left: 3px solid $c-border;
-    border-right: 3px solid $c-border;
+    width: 32px;
+    height: 100%;
     position: absolute;
-    bottom: -3px;
+    top: 0;
+    mix-blend-mode: overlay;
   }
 
   &::before {
     @include inline-start(0);
+
+    background: linear-gradient(90deg, var(--ribbon-fade), transparent);
   }
 
   &::after {
     @include inline-end(0);
+
+    background: linear-gradient(270deg, var(--ribbon-fade), transparent);
   }
 
   &.done {
@@ -75,5 +86,10 @@
   &.ongoing {
     background-color: #b3e5fc;
     box-shadow: 1px 0 3px $m-primary--fade-50;
+  }
+
+  &.future {
+    background-color: $m-future--lighten-22;
+    box-shadow: 1px 0 3px $m-future--fade-50;
   }
 }
