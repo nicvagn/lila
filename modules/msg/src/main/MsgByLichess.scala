@@ -55,7 +55,10 @@ final class MsgByLichess(
 
   def lichobileDeprecationMessage(user: lila.core.user.User) =
     given play.api.i18n.Lang = user.realLang | lila.core.i18n.defaultLang
-    api.systemPost(user.id, s"""${trans.lichobileNewAppAvailable.txt()}\n\n${trans.lichobileNewAppDownload.txt(s"$baseUrl/app")}""")
+    api.systemPost(
+      user.id,
+      s"""${trans.lichobileNewAppAvailable.txt()}\n\n${trans.lichobileNewAppDownload.txt(s"$baseUrl/app")}"""
+    )
 
   object chatTimeout:
     def apply(userId: UserId) = cache.get(userId)
