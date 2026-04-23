@@ -1796,6 +1796,12 @@ interface I18n {
     /** You will lose all your progress! */
     youWillLoseAllYourProgress: string;
   };
+  msg: {
+    /** There is a new Lichess mobile app available! */
+    lichobileNewAppAvailable: string;
+    /** Please download the new official Lichess app at %s. */
+    lichobileNewAppDownload: I18nFormat;
+  };
   nvui: {
     /** Actions */
     actions: string;

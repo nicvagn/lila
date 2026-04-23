@@ -2,12 +2,15 @@ package lila.msg
 
 import lila.memo.MongoCache
 import lila.core.config.BaseUrl
+import lila.core.config.RouteUrl
+import lila.core.i18n.I18nKey.msg as trans
 
 final class MsgByLichess(
     mongoCache: MongoCache.Api,
     userApi: lila.core.user.UserApi,
     api: MsgApi,
-    baseUrl: BaseUrl
+    baseUrl: BaseUrl,
+    routeUrl: RouteUrl
 )(using
     Executor,
     lila.core.i18n.Translator
@@ -52,15 +55,9 @@ final class MsgByLichess(
                   _.filterNot(_.hasEmail).fold(fuccess(true)): user =>
                     for _ <- api.systemPost(user.id, text) yield false
 
-  def lichobileLogin(userId: UserId) = api.systemPost(
-    userId,
-    """The app you are using is no longer supported.
-
-Please upgrade to the new official Lichess app:
-
-lichess.org/mobile
-"""
-  )
+  def lichobileDeprecationMessage(user: lila.core.user.User) =
+    given play.api.i18n.Lang = user.realLang | lila.core.i18n.defaultLang
+    api.systemPost(user.id, s"""${trans.lichobileNewAppAvailable.txt()}\n\n${trans.lichobileNewAppDownload.txt(routeUrl(routes.Main.mobile))}""")
 
   object chatTimeout:
     def apply(userId: UserId) = cache.get(userId)

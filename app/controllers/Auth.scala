@@ -36,7 +36,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         for
           povs <- env.round.proxyRepo.urgentGames(u)
           perfs <- ctx.pref.showRatings.optionFu(env.user.perfsRepo.perfsOf(u))
-          _ <- env.msg.systemMsg.lichobileLogin(u.id)
+          _ <- env.msg.systemMsg.lichobileDeprecationMessage(u)
         yield Ok:
           env.user.jsonView.full(u, perfs, withProfile = true) ++ Json.obj(
             "nowPlaying" -> JsArray(povs.take(20).map(env.api.lobbyApi.nowPlaying)),

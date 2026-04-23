@@ -931,6 +931,10 @@ object I18nKey:
     val `puzzleFailed`: I18nKey = "learn:puzzleFailed"
     val `retry`: I18nKey = "learn:retry"
 
+  object msg:
+    val `lichobileNewAppAvailable`: I18nKey = "msg:lichobileNewAppAvailable"
+    val `lichobileNewAppDownload`: I18nKey = "msg:lichobileNewAppDownload"
+
   object nvui:
     val `featuredEvents`: I18nKey = "nvui:featuredEvents"
     val `moveList`: I18nKey = "nvui:moveList"
