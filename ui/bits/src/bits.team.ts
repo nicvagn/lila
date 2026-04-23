@@ -19,8 +19,8 @@ export function initModule(opts: TeamOpts): void {
   $('#team-subscribe').on('change', function (this: HTMLInputElement) {
     $(this)
       .parents('form')
-      .each(async function (this: HTMLFormElement) {
-        await xhr.formToXhr(this);
+      .each(function (this: HTMLFormElement) {
+        void xhr.formToXhr(this);
       });
   });
 }

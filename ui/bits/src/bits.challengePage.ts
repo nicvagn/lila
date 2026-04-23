@@ -39,9 +39,9 @@ export function initModule(opts: ChallengeOpts): void {
       });
     $(selector)
       .find('form.xhr')
-      .on('submit', async function (this: HTMLFormElement, e) {
+      .on('submit', function (this: HTMLFormElement, e) {
         e.preventDefault();
-        await xhr.formToXhr(this);
+        void xhr.formToXhr(this);
         $(this).html('<span class="ddloader"></span>');
       });
     $(selector)
