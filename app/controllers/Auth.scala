@@ -93,7 +93,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         val isLichobile = HTTPRequest.isLichobile(ctx.req)
         if isLichobile && !env.security.lichobileLogin.get() then
           BadRequest:
-            Json.obj("global" -> List("Please use our new mobile app! https://lichess.org/mobile"))
+            Json.obj("global" -> List("Please use our new mobile app! https://lichess.org/app"))
         else
           val turnstileResult = if isLichobile then fuccess(true) else env.security.turnstile.verify()
           turnstileResult.flatMap:
@@ -218,7 +218,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
           then
             BadRequest:
               jsonError:
-                Json.obj("username" -> List("Please use our new mobile app! https://lichess.org/mobile"))
+                Json.obj("username" -> List("Please use our new mobile app! https://lichess.org/app"))
           else
             limit.enumeration.signup(rateLimited):
               import Signup.Result.*
