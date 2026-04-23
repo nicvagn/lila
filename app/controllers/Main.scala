@@ -35,6 +35,9 @@ final class Main(env: Env, assetsC: ExternalAssets) extends LilaController(env):
   def mobile = Open(serveMobile)
   def mobileLang = LangPage(routes.Main.mobile)(serveMobile)
 
+  def redirectToMobile = Anon:
+    Redirect(routes.Main.mobile)
+
   def redirectToAppStore = Anon:
     pageHit
     Redirect(StaticContent.appStoreUrl)

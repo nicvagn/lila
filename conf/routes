@@ -903,7 +903,8 @@ POST  /cms/:id/delete                 controllers.Cms.delete(id: CmsPageId)
 
 # Misc
 GET   /developers                      controllers.Main.webmasters
-GET   /mobile                          controllers.Main.mobile
+GET   /app                             controllers.Main.mobile
+GET   /mobile                          controllers.Main.redirectToMobile
 GET   /app-store                       controllers.Main.redirectToAppStore
 GET   /swag                            controllers.Main.redirectToSwag
 GET   /$lang<\w\w\w?>/mobile           controllers.Main.mobileLang(lang: Language)
