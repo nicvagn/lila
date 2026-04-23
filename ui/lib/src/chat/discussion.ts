@@ -151,7 +151,7 @@ const setupHooks = (ctrl: ChatCtrl, chatEl: HTMLInputElement) => {
   } else if (ctrl.vm.autofocus) chatEl.focus();
 
   chatEl.addEventListener('keydown', e => {
-    if (blurIfEscape(e)) return;
+    blurIfEscape(e);
     enter(target => {
       setTimeout(() => {
         const el = target as HTMLInputElement,
