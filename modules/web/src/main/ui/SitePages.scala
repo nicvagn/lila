@@ -1,7 +1,7 @@
 package lila.web
 package ui
 
-import lila.core.id.{ CmsPageKey, ForumCategId }
+import lila.core.id.CmsPageKey
 import lila.ui.*
 
 import ScalatagsTemplate.{ *, given }
