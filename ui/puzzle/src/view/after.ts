@@ -31,7 +31,7 @@ const renderStreak = (ctrl: PuzzleCtrl): MaybeVNodes => [
     hl('span.game-over', 'GAME OVER'),
     hl('span', i18n.puzzle.yourStreakX.asArray(hl('strong', `${ctrl.streak?.data.index ?? 0}`))),
   ]),
-  hl('button.continue', { attrs: { href: ctrl.routerWithLang('/streak') } }, [
+  hl('a.continue', { attrs: { href: ctrl.routerWithLang('/streak') } }, [
     hl('i', { attrs: dataIcon(licon.PlayTriangle) }),
     i18n.puzzle.newStreak,
   ]),
