@@ -361,4 +361,3 @@ private[chat] object GarbageDetector:
     duplicateCharacterPattern.matches(text) ||
     duplicateCharactersPattern.matches(text) ||
     duplicateDoublePattern.matches(text)
-
