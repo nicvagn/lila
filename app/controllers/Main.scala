@@ -46,9 +46,6 @@ final class Main(env: Env, assetsC: ExternalAssets) extends LilaController(env):
     pageHit
     FoundPage(env.cms.renderKey("mobile"))(views.mobile)
 
-  def dailyPuzzleSlackApp = Open:
-    Ok.page(views.site.ui.dailyPuzzleSlackApp)
-
   def jslog(id: GameFullId) = Open:
     env.round.selfReport(
       userId = ctx.userId,

@@ -911,7 +911,6 @@ GET   /lag                             controllers.Main.lag
 GET   /get-fishnet                     controllers.Main.getFishnet
 GET   /costs                           controllers.Main.costs
 GET   /InstantChess.com                controllers.Main.instantChess
-GET   /daily-puzzle-slack              controllers.Main.dailyPuzzleSlackApp
 POST  /upload/image/user/:rel          controllers.Main.uploadImage(rel)
 GET   /image-url/:id                   controllers.Main.imageUrl(id: ImageId, width: Int)
 POST  /github/secret-scanning          controllers.Github.secretScanning
