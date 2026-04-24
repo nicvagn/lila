@@ -171,10 +171,5 @@ export function blurIfEscape(e: KeyboardEvent): void {
   }
 }
 export function blurOnEscape(el: HTMLElement): void {
-  el.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation();
-      el.blur();
-    }
-  });
+  el.addEventListener('keydown', blurIfEscape);
 }
