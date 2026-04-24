@@ -25,10 +25,12 @@ class GarbageTest extends munit.FunSuite:
     assert(GarbageDetector("I claim 1st as normal"))
     assert(GarbageDetector("I'm claim 1st"))
     assert(GarbageDetector("I claim 324245"))
+    assert(GarbageDetector("I claiming 324245"))
     assert(GarbageDetector("claimed first"))
     assert(GarbageDetector("me 1st :)"))
     assert(GarbageDetector("I'm 1st"))
     assert(GarbageDetector("call first"))
+    assert(GarbageDetector("called 1st"))
 
   test("detect repeated 6-7 and six-seven memes"):
     assert(GarbageDetector("6767"))
