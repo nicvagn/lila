@@ -255,6 +255,7 @@ export default class PuzzleCtrl implements CevalHandler {
     this.hintHasBeenShown(false);
     this.canViewSolution(false);
     this.report = new Report();
+    this.voted = undefined;
 
     this.setPath(site.blindMode ? initialPath : treePath.init(initialPath));
     setTimeout(
