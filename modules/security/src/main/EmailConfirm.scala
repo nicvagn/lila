@@ -5,6 +5,7 @@ import play.api.mvc.{ Cookie, Session, RequestHeader }
 import scalatags.Text.all.*
 
 import lila.core.config.*
+import lila.core.i18n.Translate
 import lila.core.i18n.I18nKey.emails as trans
 import lila.core.net.ValidReferrer
 import lila.mailer.Mailer
@@ -60,17 +61,7 @@ final class EmailConfirmMailer(
             Mailer.Message(
               to = email,
               subject = trans.emailConfirm_subject.txt(user.username),
-              text = Mailer.txt.addServiceNote(s"""
-${trans.emailConfirm_intro.txt()}
-
-${trans.emailConfirm_click.txt()}
-
-$url
-
-${trans.common_orPaste.txt()}
-
-${trans.emailConfirm_justIgnore.txt("https://lichess.org")}
-"""),
+              text = Mailer.txt.addServiceNote(EmailConfirm.emailText(url)),
               htmlBody = emailMessage(
                 pDesc(trans.emailConfirm_intro()),
                 pDesc(trans.emailConfirm_click()),
@@ -193,3 +184,15 @@ object EmailConfirm:
                       case None => NoEmail(user.username)
                       case Some(email) => EmailSent(user.username, email)
                   else Confirmed(user.username)
+
+  private[security] def emailText(url: Url)(using Translate) = s"""
+${trans.emailConfirm_intro.txt()}
+
+${trans.emailConfirm_click.txt()}
+
+$url
+
+${trans.common_orPaste.txt()}
+
+${trans.emailConfirm_justIgnore.txt("https://lichess.org")}
+"""
