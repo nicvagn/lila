@@ -95,6 +95,64 @@ final class EmailConfirmMailer(
     getCurrentValue = id => userRepo.email(id).dmap(_.so(_.value))
   )
 
+final class EmailConfirmByUserSend(
+    securityForm: SecurityForm,
+    emailValidator: EmailAddressValidator,
+    userRepo: UserRepo,
+    mailer: lila.mailer.AutomaticEmail
+)(using Executor):
+
+  case class Data(sender: EmailAddress, to: EmailAddress):
+    private def userAndMillis: Option[(UserStr, Int)] =
+      to.username.split('.') match
+        case Array(u, m) => for user <- UserStr.read(u); millis <- m.toIntOption yield user -> millis
+        case _ => none
+    def user: Option[UserStr] = userAndMillis.map(_._1)
+
+  import play.api.data.*
+  import play.api.data.Forms.*
+
+  def workerForm(using Me) = Form:
+    mapping(
+      "sender" -> securityForm.fullyValidEmail, // player.email@example.com
+      "to" -> securityForm.anyEmail // username.millis@verify.lichess.org
+    )(Data.apply)(unapply)
+
+  enum Result:
+    case notFound, alreadyConfirmed, emailInUse
+    case confirm(user: User, email: EmailAddress) extends Result
+
+  def process(data: Data)(using Me): Fu[Option[(User, EmailAddress)]] =
+    resultOf(data)
+      .addEffect: res =>
+        val resKey = res match
+          case Result.confirm(_, _) => "success"
+          case r => r.toString
+        lila.mon.user.register
+          .modConfirmEmail(by = "worker", result = resKey)
+          .increment()
+      .flatMap:
+        case Result.confirm(user, email) =>
+          given Lang = user.realLang | lila.core.i18n.defaultLang
+          for
+            _ <- mailer.welcomeEmail(user, email)
+            _ <- mailer.welcomePM(user)
+          yield Some(user -> email)
+        case _ => fuccess(none)
+
+  private def resultOf(d: Data): Fu[Result] =
+    d.user
+      .so(userRepo.enabledById)
+      .flatMap:
+        _.fold(fuccess(Result.notFound)): user =>
+          if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
+          else
+            emailValidator
+              .uniqueAsync(d.sender, user.some)
+              .map: uniqueEmail =>
+                if !uniqueEmail then Result.emailInUse
+                else Result.confirm(user, d.sender)
+
 object EmailConfirm:
 
   enum Result:
