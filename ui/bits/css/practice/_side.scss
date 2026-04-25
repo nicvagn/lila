@@ -32,6 +32,21 @@
     }
   }
 
+  &__header {
+    @extend %flex-column;
+
+    @media (width < $small) {
+      flex-flow: row nowrap;
+      gap: $block-gap;
+      text-align: left;
+
+      .practice-side__decoration {
+        width: min(100px, 30vw);
+        margin: 0;
+      }
+    }
+  }
+
   &__decoration {
     display: block;
     width: 160px;

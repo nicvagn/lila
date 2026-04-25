@@ -50,8 +50,10 @@ final class PracticeUi(helpers: Helpers)(
                 alt := "Decorative image of a robotic golem",
                 src := assetUrl("images/practice/robot-golem.svg")
               ),
-              h1("Practice"),
-              h2("makes your chess perfect")
+              div(cls := "practice-side__title")(
+                h1("Practice"),
+                h2("makes your chess perfect")
+              )
             ),
             div(cls := "progress")(
               div(cls := "text")(trl.progressX(s"${data.progressPercent}%")),
