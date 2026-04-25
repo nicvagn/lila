@@ -152,17 +152,16 @@ final class EmailConfirmByUserSend(
         .enabledById(userId)
         .flatMap:
           _.fold(fuccess(Result.notFound)): user =>
-            if creationMillis(user) != millis then fuccess(Result.milliMismatch)
-            else
-              rateLimitPerUser(user.id, fuccess(Result.rateLimit)):
-                rateLimitPerEmail(d.sender, fuccess(Result.rateLimit)):
-                  if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
-                  else
-                    emailValidator
-                      .uniqueAsync(d.sender, user.some)
-                      .map: uniqueEmail =>
-                        if !uniqueEmail then Result.emailInUse
-                        else Result.confirm(user, d.sender)
+            rateLimitPerUser(user.id, fuccess(Result.rateLimit)):
+              rateLimitPerEmail(d.sender, fuccess(Result.rateLimit)):
+                if creationMillis(user) != millis then fuccess(Result.milliMismatch)
+                else if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
+                else
+                  emailValidator
+                    .uniqueAsync(d.sender, user.some)
+                    .map: uniqueEmail =>
+                      if !uniqueEmail then Result.emailInUse
+                      else Result.confirm(user, d.sender)
 
   private def creationMillis(user: User) =
     user.createdAt.atZone(java.time.ZoneOffset.UTC).getNano / 1_000_000
