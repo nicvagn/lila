@@ -98,7 +98,8 @@ final class EmailConfirmMailer(
 final class EmailConfirmByUserSend(
     securityForm: SecurityForm,
     emailValidator: EmailAddressValidator,
-    userRepo: UserRepo
+    userRepo: UserRepo,
+    mailer: lila.mailer.AutomaticEmail
 )(using Executor):
 
   case class Data(sender: EmailAddress, to: EmailAddress):
@@ -131,7 +132,12 @@ final class EmailConfirmByUserSend(
           .modConfirmEmail(by = "worker", result = resKey)
           .increment()
       .flatMap:
-        case Result.confirm(user, email) => fuccess(Some(user -> email))
+        case Result.confirm(user, email) =>
+          given Lang = user.realLang | lila.core.i18n.defaultLang
+          for
+            _ <- mailer.welcomeEmail(user, email)
+            _ <- mailer.welcomePM(user)
+          yield Some(user -> email)
         case _ => fuccess(none)
 
   private def resultOf(d: Data): Fu[Result] =

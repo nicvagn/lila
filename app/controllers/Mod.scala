@@ -534,7 +534,8 @@ final class Mod(
           .process(data)
           .flatMap:
             _.fold(fuccess(BadRequest)): (user, email) =>
-              for _ <- api.setEmail(user.id, email.some) yield NoContent
+              for _ <- api.setEmail(user.id, email.some)
+              yield NoContent
     )
   }
 
