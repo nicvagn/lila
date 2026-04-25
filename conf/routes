@@ -635,7 +635,8 @@ POST  /mod/:username/permissions       controllers.Mod.savePermissions(username:
 POST  /mod/:username/gdpr-erase        controllers.Mod.gdprErase(username: UserStr)
 GET   /mod/public-chat                 controllers.Mod.publicChat
 POST  /mod/public-chat/timeout         controllers.Mod.publicChatTimeout
-GET   /mod/email-confirm               controllers.Mod.emailConfirm
+GET   /mod/email-confirm               controllers.Mod.emailConfirmGet
+POST  /mod/email-confirm               controllers.Mod.emailConfirmApi
 GET   /mod/print/:fh                   controllers.Mod.print(fh)
 POST  /mod/print/ban/:v/:fh            controllers.Mod.printBan(v: Boolean, fh)
 GET   /mod/ip/:ip                      controllers.Mod.singleIp(ip)
