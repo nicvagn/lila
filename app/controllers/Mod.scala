@@ -512,7 +512,7 @@ final class Mod(
               case List(lila.user.WithPerfsAndEmails(user, _)) =>
                 for
                   _ <- user.everLoggedIn.not.so:
-                    lila.mon.user.register.modConfirmEmail.increment()
+                    lila.mon.user.register.modConfirmEmail(by = "mod", "success").increment()
                     api.setEmail(user.id, setEmail.some)
                   email <- env.user.repo.email(user.id)
                   page <- renderPage(views.mod.ui.emailConfirm("", user.some, email))
@@ -527,7 +527,15 @@ final class Mod(
   }
 
   def emailConfirmApi = SecuredScopedBody(_.SetEmail)(_.Web.Mod) { ctx ?=> me ?=>
-    ???
+    bindForm(env.security.emailConfirmByUserSend.workerForm)(
+      jsonFormError,
+      data =>
+        env.security.emailConfirmByUserSend
+          .process(data)
+          .flatMap:
+            _.fold(fuccess(BadRequest)): (user, email) =>
+              for _ <- api.setEmail(user.id, email.some) yield NoContent
+    )
   }
 
   def presets(group: String) = Secure(_.Presets) { ctx ?=> _ ?=>

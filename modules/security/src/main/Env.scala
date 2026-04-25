@@ -109,6 +109,8 @@ final class Env(
       )
     else wire[EmailConfirmSkip]
 
+  lazy val emailConfirmByUserSend = wire[EmailConfirmByUserSend]
+
   lazy val passwordReset =
     def mk = (s: Secret) => wire[PasswordReset]
     mk(config.passwordResetSecret)
