@@ -138,6 +138,12 @@ final class EmailConfirmByUserSend(
             _ <- mailer.welcomeEmail(user, email)
             _ <- mailer.welcomePM(user)
           yield Some(user -> email)
+        case Result.emailInUse =>
+          for _ <- mailer.emailAlreadyInUse(data.sender)
+          yield none
+        case Result.alreadyConfirmed =>
+          for _ <- mailer.alreadyConfirmed(data.sender)
+          yield none
         case _ => fuccess(none)
 
   private def resultOf(d: Data): Fu[Result] =
