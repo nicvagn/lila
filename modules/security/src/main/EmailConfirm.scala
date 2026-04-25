@@ -155,7 +155,7 @@ final class EmailConfirmByUserSend(
           _.fold(fuccess(Result.notFound)): user =>
             rateLimitPerUser(user.id, fuccess(Result.rateLimit)):
               rateLimitPerEmail(d.sender, fuccess(Result.rateLimit)):
-                if creationMillis(user) != millis then fuccess(Result.milliMismatch)
+                if EmailConfirm.creationMillis(user) != millis then fuccess(Result.milliMismatch)
                 else if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
                 else
                   emailValidator
@@ -163,9 +163,6 @@ final class EmailConfirmByUserSend(
                     .map: uniqueEmail =>
                       if !uniqueEmail then Result.emailInUse
                       else Result.confirm(user, d.sender)
-
-  private def creationMillis(user: User) =
-    user.createdAt.atZone(java.time.ZoneOffset.UTC).getNano / 1_000_000
 
   private lazy val rateLimitPerUser = RateLimit[UserId](
     credits = 4,
@@ -210,6 +207,9 @@ object EmailConfirm:
   given Executor = scala.concurrent.ExecutionContextOpportunistic
   given lila.core.config.RateLimit = lila.core.config.RateLimit.Yes
 
+  def creationMillis(user: User) =
+    user.createdAt.atZone(java.time.ZoneOffset.UTC).getNano / 1_000_000
+
   private lazy val rateLimitPerIP = RateLimit[IpAddress](
     credits = 40,
     duration = 1.hour,
@@ -242,7 +242,7 @@ object EmailConfirm:
       case Closed(name: UserName)
       case Confirmed(name: UserName)
       case NoEmail(name: UserName)
-      case EmailSent(name: UserName, email: EmailAddress)
+      case EmailSent(name: UserName, email: EmailAddress, sendTo: EmailAddress)
 
     import play.api.data.*
     import play.api.data.Forms.*
@@ -265,7 +265,10 @@ object EmailConfirm:
                   if _ then
                     emails.current match
                       case None => NoEmail(user.username)
-                      case Some(email) => EmailSent(user.username, email)
+                      case Some(email) =>
+                        val sendTo = EmailAddress:
+                          s"${user.username}.${EmailConfirm.creationMillis(user)}@verify.lichess.org"
+                        EmailSent(user.username, email, sendTo)
                   else Confirmed(user.username)
 
   private[security] def emailText(url: Url)(using Translate) = s"""

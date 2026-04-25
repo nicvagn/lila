@@ -160,8 +160,8 @@ final class AccountSecurity(helpers: Helpers)(
               )
             )
           ),
-          div(cls := "replies")(
-            status.map {
+          div(cls := "replies"):
+            status.map:
               case Status.NoSuchUser(name) =>
                 frag(
                   p(trans.site.usernameNotFound(strong(name))),
@@ -171,7 +171,7 @@ final class AccountSecurity(helpers: Helpers)(
                     )
                   )
                 )
-              case Status.EmailSent(name, email) =>
+              case Status.EmailSent(name, email, sendTo) =>
                 frag(
                   p(trans.site.emailSent(email.conceal)),
                   p(
@@ -180,18 +180,13 @@ final class AccountSecurity(helpers: Helpers)(
                     strong(trans.site.refreshInboxAfterFiveMinutes())
                   ),
                   p(trans.site.checkSpamFolder()),
-                  p(trans.site.emailForSignupHelp()),
                   hr,
-                  p(i(s"Hello, please confirm my account: $name")),
-                  hr,
-                  p(
-                    trans.site.copyTextToEmail(
-                      a(href := s"mailto:${contactEmail.value}?subject=Confirm account $name")(
-                        contactEmail.value
-                      )
-                    )
-                  ),
-                  p(trans.site.waitForSignupHelp())
+                  p:
+                    trans.site.sendEmailForAccountVerification(sendTo)
+                  ,
+                  p:
+                    a(cls := "button", href := s"mailto:${sendTo}?subject=Confirm account $name"):
+                      trans.site.send()
                 )
               case Status.Confirmed(name) =>
                 frag(
@@ -203,7 +198,5 @@ final class AccountSecurity(helpers: Helpers)(
                 p(trans.site.accountClosed(strong(name)))
               case Status.NoEmail(name) =>
                 p(trans.site.accountRegisteredWithoutEmail(strong(name)))
-            }
-          )
         )
       )
