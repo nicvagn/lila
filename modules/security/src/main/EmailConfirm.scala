@@ -103,11 +103,10 @@ final class EmailConfirmByUserSend(
 )(using Executor, lila.core.config.RateLimit):
 
   case class Data(sender: EmailAddress, to: EmailAddress):
-    private def userAndMillis: Option[(UserStr, Int)] =
+    def userAndMillis: Option[(UserStr, Int)] =
       to.username.split('.') match
         case Array(u, m) => for user <- UserStr.read(u); millis <- m.toIntOption yield user -> millis
         case _ => none
-    def user: Option[UserStr] = userAndMillis.map(_._1)
 
   import play.api.data.*
   import play.api.data.Forms.*
@@ -120,7 +119,7 @@ final class EmailConfirmByUserSend(
     )(Data.apply)(unapply)
 
   enum Result:
-    case notFound, rateLimit, alreadyConfirmed, emailInUse
+    case invalid, notFound, rateLimit, milliMismatch, alreadyConfirmed, emailInUse
     case confirm(user: User, email: EmailAddress) extends Result
 
   def process(data: Data)(using Me): Fu[Option[(User, EmailAddress)]] =
@@ -148,19 +147,25 @@ final class EmailConfirmByUserSend(
         case _ => fuccess(none) // don't send an email
 
   private def resultOf(d: Data): Fu[Result] =
-    d.user
-      .so(userRepo.enabledById)
-      .flatMap:
-        _.fold(fuccess(Result.notFound)): user =>
-          rateLimitPerUser(user.id, fuccess(Result.rateLimit)):
-            rateLimitPerEmail(d.sender, fuccess(Result.rateLimit)):
-              if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
-              else
-                emailValidator
-                  .uniqueAsync(d.sender, user.some)
-                  .map: uniqueEmail =>
-                    if !uniqueEmail then Result.emailInUse
-                    else Result.confirm(user, d.sender)
+    d.userAndMillis.fold(fuccess(Result.invalid)): (userId, millis) =>
+      userRepo
+        .enabledById(userId)
+        .flatMap:
+          _.fold(fuccess(Result.notFound)): user =>
+            if creationMillis(user) != millis then fuccess(Result.milliMismatch)
+            else
+              rateLimitPerUser(user.id, fuccess(Result.rateLimit)):
+                rateLimitPerEmail(d.sender, fuccess(Result.rateLimit)):
+                  if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
+                  else
+                    emailValidator
+                      .uniqueAsync(d.sender, user.some)
+                      .map: uniqueEmail =>
+                        if !uniqueEmail then Result.emailInUse
+                        else Result.confirm(user, d.sender)
+
+  private def creationMillis(user: User) =
+    user.createdAt.atZone(java.time.ZoneOffset.UTC).getNano / 1_000_000
 
   private lazy val rateLimitPerUser = RateLimit[UserId](
     credits = 4,
