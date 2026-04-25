@@ -9,7 +9,6 @@ import lila.ui.*
 import ScalatagsTemplate.{ *, given }
 
 final class AccountSecurity(helpers: Helpers)(
-    contactEmail: EmailAddress,
     AccountPage: (String, String) => Context ?=> Page
 ):
   import helpers.{ *, given }
