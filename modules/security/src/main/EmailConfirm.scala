@@ -114,7 +114,7 @@ final class EmailConfirmByUserSend(
 
   def workerForm(using Me) = Form:
     mapping(
-      "sender" -> securityForm.fullyValidEmail, // player.email@example.com
+      "sender" -> securityForm.sendableEmail, // player.email@example.com
       "to" -> securityForm.anyEmail // username.millis@verify.lichess.org
     )(Data.apply)(unapply)
 
