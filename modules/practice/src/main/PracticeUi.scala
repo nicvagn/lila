@@ -44,9 +44,15 @@ final class PracticeUi(helpers: Helpers)(
       ):
         main(cls := "page-menu force-ltr")(
           st.aside(cls := "page-menu__menu practice-side")(
-            i(cls := "fat"),
-            h1("Practice"),
-            h2("makes your chess perfect"),
+            div(cls := "practice-side__header")(
+              img(
+                cls := "practice-side__decoration",
+                alt := "Decorative image of a robotic golem",
+                src := assetUrl("images/practice/robot-golem.svg")
+              ),
+              h1("Practice"),
+              h2("makes your chess perfect")
+            ),
             div(cls := "progress")(
               div(cls := "text")(trl.progressX(s"${data.progressPercent}%")),
               div(cls := "bar", style := s"width: ${data.progressPercent}%")

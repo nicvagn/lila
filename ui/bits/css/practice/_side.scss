@@ -32,16 +32,15 @@
     }
   }
 
-  .fat {
+  &__decoration {
     display: block;
     width: 160px;
-    height: 160px;
-    background: url('../images/practice/robot-golem.svg');
+    aspect-ratio: 1;
     margin: auto;
-    opacity: 0.8;
+    opacity: 0.7;
   }
 
-  &:hover i.fat {
+  &:hover .practice-side__decoration {
     animation: 1.5s fat-glide ease-in-out infinite;
   }
 
