@@ -100,7 +100,7 @@ final class EmailConfirmByUserSend(
     emailValidator: EmailAddressValidator,
     userRepo: UserRepo,
     mailer: lila.mailer.AutomaticEmail
-)(using Executor):
+)(using Executor, lila.core.config.RateLimit):
 
   case class Data(sender: EmailAddress, to: EmailAddress):
     private def userAndMillis: Option[(UserStr, Int)] =
@@ -111,6 +111,7 @@ final class EmailConfirmByUserSend(
 
   import play.api.data.*
   import play.api.data.Forms.*
+  import lila.memo.RateLimit
 
   def workerForm(using Me) = Form:
     mapping(
@@ -119,7 +120,7 @@ final class EmailConfirmByUserSend(
     )(Data.apply)(unapply)
 
   enum Result:
-    case notFound, alreadyConfirmed, emailInUse
+    case notFound, rateLimit, alreadyConfirmed, emailInUse
     case confirm(user: User, email: EmailAddress) extends Result
 
   def process(data: Data)(using Me): Fu[Option[(User, EmailAddress)]] =
@@ -144,20 +145,33 @@ final class EmailConfirmByUserSend(
         case Result.alreadyConfirmed =>
           for _ <- mailer.alreadyConfirmed(data.sender)
           yield none
-        case _ => fuccess(none)
+        case _ => fuccess(none) // don't send an email
 
   private def resultOf(d: Data): Fu[Result] =
     d.user
       .so(userRepo.enabledById)
       .flatMap:
         _.fold(fuccess(Result.notFound)): user =>
-          if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
-          else
-            emailValidator
-              .uniqueAsync(d.sender, user.some)
-              .map: uniqueEmail =>
-                if !uniqueEmail then Result.emailInUse
-                else Result.confirm(user, d.sender)
+          rateLimitPerUser(user.id, fuccess(Result.rateLimit)):
+            rateLimitPerEmail(d.sender, fuccess(Result.rateLimit)):
+              if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
+              else
+                emailValidator
+                  .uniqueAsync(d.sender, user.some)
+                  .map: uniqueEmail =>
+                    if !uniqueEmail then Result.emailInUse
+                    else Result.confirm(user, d.sender)
+
+  private lazy val rateLimitPerUser = RateLimit[UserId](
+    credits = 4,
+    duration = 1.hour,
+    key = "user.email.confirm.user"
+  )
+  private lazy val rateLimitPerEmail = RateLimit[EmailAddress](
+    credits = 4,
+    duration = 1.hour,
+    key = "user.email.confirm.email"
+  )
 
 object EmailConfirm:
 
