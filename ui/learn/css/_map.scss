@@ -99,8 +99,18 @@
       border-color: $m-secondary--fade-35;
       background: linear-gradient(0deg, $m-secondary--fade-60, $m-secondary--fade-80 100px);
 
+      img {
+        filter: brightness(0) saturate(100%) invert(81%) sepia(42%) saturate(529%) hue-rotate(38deg)
+          brightness(94%) contrast(90%);
+      }
+
       @include if-light {
         background: linear-gradient(180deg, $m-secondary--fade-60, $m-secondary--fade-80 100px);
+
+        img {
+          filter: brightness(0) saturate(100%) invert(41%) sepia(14%) saturate(1540%) hue-rotate(47deg)
+            brightness(97%) contrast(93%);
+        }
       }
     }
 
