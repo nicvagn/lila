@@ -47,15 +47,10 @@
     @extend %flex-between;
 
     display: none;
-    border-top: $border;
-    padding: 1em 2em;
+    padding: 0.5em 2em;
 
-    a {
+    .practice {
       color: $c-font;
-
-      &:hover {
-        color: $c-link;
-      }
     }
 
     @include mq-at-least-col2 {
