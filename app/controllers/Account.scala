@@ -87,7 +87,7 @@ final class Account(
           .add("kid" -> ctx.kid)
           .add("troll" -> me.marks.troll)
           .add("playban" -> playban)
-          .add("announce" -> AnnounceApi.get.map(_.json))
+          .add("announce" -> env.web.lichobileAnnounceApi.get.map(_.json))
       .headerCacheSeconds(15)
   }
 
