@@ -158,11 +158,8 @@ final class EmailConfirmByUserSend(
                 if EmailConfirm.creationMillis(user) != millis then fuccess(Result.milliMismatch)
                 else if user.everLoggedIn then fuccess(Result.alreadyConfirmed)
                 else
-                  emailValidator
-                    .uniqueAsync(d.sender, user.some)
-                    .map: uniqueEmail =>
-                      if !uniqueEmail then Result.emailInUse
-                      else Result.confirm(user, d.sender)
+                  for ok <- emailValidator.uniqueAsync(d.sender, user.some)
+                  yield if ok then Result.confirm(user, d.sender) else Result.emailInUse
 
   private lazy val rateLimitPerUser = RateLimit[UserId](
     credits = 4,
