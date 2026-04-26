@@ -1,4 +1,5 @@
 .practice-side {
+  @import '../learn/progress';
   @extend %box-radius, %flex-column;
   @include backdrop-blur-if-transparent;
 
