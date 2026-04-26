@@ -82,7 +82,7 @@
 
     flex: 1 1 100%;
     align-items: stretch;
-    text-align: center;
+    gap: 1ch;
   }
 
   .button {
@@ -90,6 +90,7 @@
 
     flex: 0 0 50%;
     color: $c-good;
+    padding: 0.8em 1.3em;
 
     &::before {
       @extend %data-icon;
