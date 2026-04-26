@@ -3355,8 +3355,6 @@ interface I18n {
     contribute: string;
     /** Copy main line PGN */
     copyMainLinePgn: string;
-    /** Copy and paste the above text and send it to %s */
-    copyTextToEmail: I18nFormat;
     /** Copy to clipboard */
     copyToClipboard: string;
     /** Copy variation PGN */
@@ -3489,8 +3487,6 @@ interface I18n {
     emailConfirmHelp: string;
     /** Didn't receive your confirmation email after signing up? */
     emailConfirmNotReceived: string;
-    /** If everything else fails, then send us this email: */
-    emailForSignupHelp: string;
     /** Email me a link */
     emailMeALink: string;
     /** We have sent an email to %s. */
@@ -4313,6 +4309,8 @@ interface I18n {
     seeBestMove: string;
     /** Send */
     send: string;
+    /** If you can't find your confirmation email, send an email to %s and we'll confirm your account for you. */
+    sendEmailForAccountVerification: I18nFormat;
     /** We've sent you an email with a link. */
     sentEmailWithLink: string;
     /** Sessions */
@@ -4653,8 +4651,6 @@ interface I18n {
     viewTournament: string;
     /** Visual motifs */
     visualMotifs: string;
-    /** We will respond shortly to help you complete your registration. */
-    waitForSignupHelp: string;
     /** Waiting */
     waiting: string;
     /** Waiting for analysis */
