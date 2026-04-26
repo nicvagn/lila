@@ -3,6 +3,7 @@ package lila.oauth
 import play.api.libs.json.*
 import reactivemongo.api.bson.*
 import reactivemongo.akkastream.cursorProducer
+import akka.stream.scaladsl.Source
 
 import lila.common.Json.given
 import lila.core.misc.oauth.{ AccessTokenId, TokenRevoke }
@@ -205,8 +206,12 @@ final class AccessTokenApi(
       .run()
       .void
 
-  def userIdsByClientOrigin(clientOrigin: Origin): Fu[Set[UserId]] =
-    coll.distinctEasy[UserId, Set]("userId", $doc(F.clientOrigin -> clientOrigin), _.sec)
+  def userIdsByClientOrigin(clientOrigin: Origin): Source[UserId, ?] =
+    coll
+      .find($doc(F.clientOrigin -> clientOrigin), $id(true).some)
+      .cursor[Bdoc](ReadPref.sec)
+      .documentSource()
+      .mapConcat(_.getAsOpt[UserId](F.id).toList)
 
   def revoke(bearer: Bearer) =
     val id = AccessToken.idFrom(bearer)

@@ -3,6 +3,7 @@ package lila.api
 import akka.stream.scaladsl.*
 import play.api.libs.json.*
 import play.api.mvc.RequestHeader
+import bloomfilter.mutable.BloomFilter
 
 import lila.common.{ Bus, HTTPRequest }
 import lila.core.game.{ FinishGame, Game, StartGame, WithInitialFen }
@@ -18,18 +19,31 @@ final class GameStreamByOauthOrigin(
 
   private val streamUserId = UserId.t3
   private val origin = Origin("https://auth.taketaketake.com")
+  private val estimatedCount = 200_000
+  private val falsePositiveRate = 0.00005 // 0.005% false positives
+  private var population = 0
 
   private def mon = lila.mon.game.streamByOauthOrigin
 
-  private type MutableUserSet = collection.mutable.Set[UserId]
+  private type MutableUserSet = BloomFilter[String]
   private val tokenUsersFu: Fu[MutableUserSet] =
-    tokenApi.userIdsByClientOrigin(origin).map(_.to(collection.mutable.Set))
+    val bloom = BloomFilter[String](estimatedCount, falsePositiveRate)
+    tokenApi
+      .userIdsByClientOrigin(origin)
+      .runWith:
+        Sink.fold[Int, UserId](0): (counter, userId) =>
+          bloom.add(userId.value)
+          counter + 1
+      .addEffect: nb =>
+        population = nb
+      .inject(bloom)
 
   Bus.sub[AccessToken.Create]: tc =>
     if tc.token.clientOrigin.has(origin) then
       tokenUsersFu.foreach: us =>
-        us.add(tc.token.userId)
-        mon.users("newToken").update(us.size)
+        us.add(tc.token.userId.value)
+        population = population + 1
+        mon.users("newToken").update(population)
 
   def apply(since: Option[Instant], extraUsers: Set[UserId])(using
       me: Me,
