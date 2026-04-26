@@ -470,7 +470,7 @@ final class Mod(
   }
 
   def permissions(username: UserStr) = Secure(_.LichessTeam) { _ ?=> me ?=>
-    Found(env.user.repo.byId(username)): user =>
+    Found(meOrFetch(username)): user =>
       if user.is(me) || isGranted(_.ChangePermission)
       then Ok.page(views.mod.permissions(user))
       else notFound
