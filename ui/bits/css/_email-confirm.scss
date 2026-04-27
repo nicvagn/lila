@@ -120,10 +120,17 @@ body:has(.email-confirm, .signup-confirm) .signin-or-signup {
 
   .replies {
     font-size: 1.2em;
-  }
 
-  .replies p {
-    margin-bottom: 1em;
+    ol {
+      li {
+        list-style: decimal;
+        margin-bottom: 2em;
+      }
+    }
+
+    p {
+      margin-bottom: 0.5em;
+    }
   }
 }
 
