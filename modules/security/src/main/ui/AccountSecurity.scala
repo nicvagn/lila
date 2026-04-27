@@ -171,7 +171,7 @@ final class AccountSecurity(helpers: Helpers)(
                   )
                 )
               case Status.EmailSent(name, email, sendTo) =>
-                val mailto = s"mailto:${email.value}?subject=Confirm+account+$name"
+                val mailto = s"mailto:$sendTo?subject=Confirm+account+$name"
                 ol(
                   li(
                     p(trans.site.emailSent(strong(email.conceal))),
