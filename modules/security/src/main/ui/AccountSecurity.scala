@@ -171,21 +171,22 @@ final class AccountSecurity(helpers: Helpers)(
                   )
                 )
               case Status.EmailSent(name, email, sendTo) =>
-                frag(
-                  p(trans.site.emailSent(email.conceal)),
-                  p(
-                    trans.site.emailCanTakeSomeTime(),
-                    br,
-                    strong(trans.site.refreshInboxAfterFiveMinutes())
+                val mailto = s"mailto:${email.value}?subject=Confirm+account+$name"
+                ol(
+                  li(
+                    p(trans.site.emailSent(strong(email.conceal))),
+                    p(
+                      trans.site.emailCanTakeSomeTime(),
+                      br,
+                      strong(trans.site.refreshInboxAfterFiveMinutes())
+                    )
                   ),
-                  p(trans.site.checkSpamFolder()),
-                  hr,
-                  p:
-                    trans.site.sendEmailForAccountVerification(sendTo)
-                  ,
-                  p:
-                    a(cls := "button", href := s"mailto:${sendTo}?subject=Confirm account $name"):
+                  li(trans.site.checkSpamFolder()),
+                  li(
+                    p(trans.site.sendEmailForAccountVerification(strong(a(href := mailto)(sendTo)))),
+                    a(cls := "button", href := mailto):
                       trans.site.send()
+                  )
                 )
               case Status.Confirmed(name) =>
                 frag(
