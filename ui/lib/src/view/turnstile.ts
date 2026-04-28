@@ -1,5 +1,7 @@
 import { requestIdleCallbackSafe } from '@/common';
 
+import { alert } from './dialogs';
+
 const selector = '.cf-turnstile';
 
 export default function turnstile($form: Cash): void {
@@ -29,6 +31,12 @@ export default function turnstile($form: Cash): void {
         },
         'timeout-callback': () => {
           showError('Captcha timed out');
+        },
+        'unsupported-callback': () => {
+          alert(
+            'Unfortunately, your browser does not support the captcha required to log in. Please use a different browser or device to access your account.',
+          );
+          showError('Captcha is not supported in this browser. Please use a different browser or device.');
         },
       });
     });
