@@ -130,6 +130,7 @@ export class ThreadedEngine implements CevalEngine {
   }
 
   stop(): void {
+    if (!this.protocol) return;
     this.protocol.compute(undefined);
   }
 
