@@ -115,3 +115,13 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    if: ${{ github.ref_name == github.event.repository.default_branch }}
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to preview site
+        env:
+          DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_PREVIEW_ASSETS_URL }}
+        run: curl -X POST $DEPLOY_WEBHOOK_URL
