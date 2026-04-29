@@ -348,3 +348,4 @@ db.puzzle2_path.createIndex({ min: 1, max: -1 });
 db.relay_delay.createIndex({ at: 1 }, { expireAfterSeconds: 7200 });
 db.ranking.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 db.ranking.createIndex({ perf: 1, rating: -1 }, { partialFilterExpression: { stable: true } });
+db.ranking.createIndex({ perf: 1, rating: -1, expiresAt: -1 }, { partialFilterExpression: { stable: true } });
