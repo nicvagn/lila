@@ -1,4 +1,5 @@
 .learn__side-home {
+  @import '../../bits/css/learn/progress';
   @extend %box-radius, %flex-column;
   @include backdrop-blur-if-transparent;
 

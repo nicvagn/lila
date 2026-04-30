@@ -543,9 +543,10 @@ export default class PuzzleCtrl implements CevalHandler {
     if (this.cevalEnabled()) this.doStartCeval();
   };
 
-  private readonly doStartCeval = throttle(800, () =>
-    this.ceval.start(this.path, this.nodeList, this.data.puzzle.id, this.threatMode()),
-  );
+  private readonly doStartCeval = throttle(800, () => {
+    this.ceval.resume();
+    this.ceval.start(this.path, this.nodeList, this.data.puzzle.id, this.threatMode());
+  });
 
   nextNodeBest = () => treeOps.withMainlineChild(this.node, n => n.eval?.best);
 
