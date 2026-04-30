@@ -274,10 +274,12 @@ const renderPiecesByColorAsVNodes = (pieces: Pieces, style: MoveStyle, color: Co
 };
 
 const keysWithPiece = (pieces: Pieces, role?: Role, color?: Color): Key[] =>
-  Array.from(pieces).reduce<Key[]>(
-    (keys, [key, p]) => (p.color === color && p.role === role ? keys.concat(key) : keys),
-    [],
-  );
+  Array.from(pieces)
+    .filter(([_, p]) => (!color || p.color === color) && (!role || p.role === role))
+    .map(([key, _]) => key)
+    .sort(
+      (a, b) => a.localeCompare(b), // Sort by file, then rank
+    );
 
 const augmentLichessComment = (comment: TreeComment, style: MoveStyle): string =>
   comment.by === 'lichess'
