@@ -95,6 +95,8 @@
   <string name="database">Database</string>
   <string name="whiteDrawBlack">White / Draw / Black</string>
   <string name="averageRatingX">Average rating: %s</string>
+  <string name="minRatingX">Minimum rating of %s</string>
+  <string name="maxRatingX">Maximum rating of %s</string>
   <string name="recentGames">Recent games</string>
   <string name="topGames">Top games</string>
   <string name="masterDbExplanation">OTB games of %1$s+ FIDE-rated players from %2$s to %3$s</string>
@@ -430,6 +432,7 @@
   <string name="averageElo">Average rating</string>
   <string name="location">Location</string>
   <string name="filterGames">Filter games</string>
+  <string name="closeFilters">Close filters</string>
   <string name="reset">Reset</string>
   <string name="apply">Submit</string>
   <string name="save">Save</string>

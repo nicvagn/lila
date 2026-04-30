@@ -3313,6 +3313,8 @@ interface I18n {
     clockInitialTime: string;
     /** Close */
     close: string;
+    /** Close filters */
+    closeFilters: string;
     /** Closing your account will withdraw your appeal */
     closingAccountWithdrawAppeal: string;
     /** Cloud analysis */
@@ -3823,6 +3825,8 @@ interface I18n {
     maximumNbCharacters: I18nPlural;
     /** Maximum weekly rating */
     maximumWeeklyRating: string;
+    /** Maximum rating of %s */
+    maxRatingX: I18nFormat;
     /** Maybe include more games from the preferences menu? */
     maybeIncludeMoreGamesFromThePreferencesMenu: string;
     /** Member since */
@@ -3843,6 +3847,8 @@ interface I18n {
     minimumRatedGames: string;
     /** Minimum rating */
     minimumRating: string;
+    /** Minimum rating of %s */
+    minRatingX: I18nFormat;
     /** Minutes per side */
     minutesPerSide: string;
     /** Mistake */
