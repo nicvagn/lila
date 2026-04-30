@@ -12,7 +12,6 @@ import lila.oauth.AccessToken
 
 final class GameStreamByOauthOrigin(
     gameRepo: lila.game.GameRepo,
-    userRepo: lila.user.UserRepo,
     tokenApi: lila.oauth.AccessTokenApi,
     lightUserGet: lila.core.LightUser.GetterSync
 )(using akka.stream.Materializer, Executor):
@@ -32,10 +31,10 @@ final class GameStreamByOauthOrigin(
       .userIdsByClientOrigin(origin)
       .runWith:
         Sink.fold[Int, UserId](0): (counter, userId) =>
-          bloom.add(userId.value)
+          bloom.add(userId.value.pp)
           counter + 1
       .addEffect: nb =>
-        population = nb
+        population = nb.pp
       .inject(bloom)
 
   Bus.sub[AccessToken.Create]: tc =>
@@ -64,8 +63,14 @@ final class GameStreamByOauthOrigin(
     yield Source.futureSource:
       for
         tokenUsers <- tokenUsersFu
-        _ = extraUsers.foreach(tokenUsers.add)
-        recentlySeenUsers <- userRepo.filterSeenSince((since | nowInstant).minusMinutes(20))(tokenUsers)
+        _ = extraUsers.foreach(u => tokenUsers.add(u.value))
+        recentlySeenUsers <- tokenApi
+          TODO use Token.used instead?
+          .recentlySeenUserIdsByClientOrigin(
+            origin,
+            (since | nowInstant).minusMinutes(20)
+          )
+          .thenPp
       yield run(since, ua, tokenUsers, recentlySeenUsers, logMsg)
 
   private def run(
@@ -81,11 +86,10 @@ final class GameStreamByOauthOrigin(
       Source.queue[Game](300, akka.stream.OverflowStrategy.dropHead).mapMaterializedValue { queue =>
         streams.open(ua)
         logger.branch("gameStream").info(s"OPEN  $logMsg")
-        mon.users("initial").update(tokenUsers.size)
         mon.users("recentlySeen").update(recentlySeenUsers.size)
 
         def matches(game: Game) = game.nonAi &&
-          game.players.exists(_.userId.exists(tokenUsers))
+          game.players.exists(_.userId.exists(id => tokenUsers.mightContain(id.value)))
 
         val subStart = Bus.sub[StartGame]: e =>
           if matches(e.game) then queue.offer(e.game)
