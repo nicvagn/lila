@@ -59,12 +59,12 @@ function initialize(ctrl: LobbyController, el: FilterNode) {
 
   const minValue = rangeValues[0] || $minInput.attr('min')!;
   $minInput
-    .attr({ step: '50', value: minValue, 'aria-label': `Max rating of ${minValue}` })
+    .attr({ step: '50', value: minValue, 'aria-label': `Minimum rating of ${minValue}` })
     .on('input', changeRatingRange);
 
   const maxValue = rangeValues[1] || $minInput.attr('max')!;
   $maxInput
-    .attr({ step: '50', value: maxValue, 'aria-label': `Max rating of ${maxValue}` })
+    .attr({ step: '50', value: maxValue, 'aria-label': `Maximum rating of ${maxValue}` })
     .on('input', changeRatingRange);
 
   changeRatingRange();
