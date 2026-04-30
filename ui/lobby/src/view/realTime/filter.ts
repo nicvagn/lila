@@ -41,12 +41,18 @@ function initialize(ctrl: LobbyController, el: FilterNode) {
     });
 
   function changeRatingRange(e?: Event) {
-    $minInput.attr('max', $maxInput.val() as string);
-    $maxInput.attr('min', $minInput.val() as string);
-    $rangeInput.val($minInput.val() + '-' + $maxInput.val());
-    $ratingRange
-      .siblings('.range')
-      .html(`<span>${$minInput.val()}</span><span>–</span><span>${$maxInput.val()}</span>`);
+    const minVal = $minInput.val() as string;
+    const maxVal = $maxInput.val() as string;
+
+    $minInput.attr('max', maxVal);
+    $maxInput.attr('min', minVal);
+    $rangeInput.val(minVal + '-' + maxVal);
+
+    const $range = $ratingRange.siblings('.range').empty();
+    $('<span>').text(minVal).appendTo($range);
+    $('<span>').text('–').appendTo($range);
+    $('<span>').text(maxVal).appendTo($range);
+
     if (e) save();
   }
   const rangeValues = $rangeInput.val() ? ($rangeInput.val() as string).split('-') : [];
