@@ -676,8 +676,6 @@ GET   /forum/redirect/post/:id         controllers.ForumPost.redirect(id: ForumP
 POST  /diagnostic                      controllers.ForumTopic.diagnostic
 POST  /diagnostic/clear/:slug          controllers.ForumTopic.clearDiagnostic(slug: ForumTopicSlug)
 
-# Msg compat
-POST  /inbox/new                       controllers.Msg.compatCreate
 # Msg
 GET   /inbox                           controllers.Msg.home(before: Option[Long] ?= None)
 GET   /inbox/search                    controllers.Msg.search(q)
