@@ -29,15 +29,10 @@ const lowTimeSound = () => site.sound.play('lowTime');
 export function renderNvui(ctx: RoundNvuiContext): VNode {
   const { ctrl, notify, moveStyle, pieceStyle, prefixStyle, positionStyle, boardStyle, pageStyle } = ctx;
 
-  const initial = ctrl.data.clock?.initial;
-  if (ctrl.data.pref.clockSound && initial) {
-    const emergMs =
-      1000 * Math.min(60, initial < 60 ? Math.max(2, initial * 0.2) : Math.max(10, initial * 0.125));
+  if (ctrl.clock && ctrl.data.pref.clockSound) {
     const playerColor = ctrl.data.player.color;
     const timeLeft = ctrl.clock?.millisOf(playerColor) || ctrl.corresClock?.millisOf(playerColor) || Infinity;
-    if (timeLeft < emergMs) {
-      lowTimeSound();
-    }
+    if (timeLeft < ctrl.clock.emergMs) lowTimeSound();
   }
 
   notify.redraw = ctrl.redraw;
