@@ -103,7 +103,7 @@ export function almostSanOf(board: Board, uci: string, legalUcis?: Set<Uci> | un
   // pawn moves
   if (pt === 'p') {
     let san: AlmostSan;
-    if (uci[0] === uci[2]) san = move[1];
+    if (uci.startsWith(uci[2])) san = move[1];
     else san = uci[0] + 'x' + move[1];
     if (move[2]) san += '=' + move[2].toUpperCase();
     return san;
