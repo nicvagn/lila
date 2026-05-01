@@ -13,8 +13,7 @@ import lila.db.dsl.{ *, given }
 final class AccessTokenApi(
     coll: Coll,
     cacheApi: lila.memo.CacheApi,
-    userApi: lila.core.user.UserApi,
-    userRepo: lila.core.user.UserRepo
+    userApi: lila.core.user.UserApi
 )(using Executor, akka.stream.Materializer):
 
   import OAuthScope.given
@@ -222,37 +221,14 @@ final class AccessTokenApi(
 
   def recentlySeenUserIdsByClientOrigin(clientOrigin: Origin, since: Instant): Fu[List[UserId]] =
     coll
-      .aggregateList(10_000, readPref = _.sec): framework =>
+      .aggregateOne(readPref = _.sec): framework =>
         import framework.*
-        Match($doc(F.clientOrigin -> clientOrigin)) -> List(
+        Match($doc(F.clientOrigin -> clientOrigin) ++ F.usedAt.$gt(since)) -> List(
           Group(BSONNull)("u" -> AddFieldToSet("userId")),
-          Project($doc("_id" -> 0)),
-          Unwind("u"),
-          PipelineOperator(
-            $lookup.pipelineFull(
-              from = userRepo.coll.name,
-              as = "user",
-              let = $doc("u" -> "$u"),
-              pipe = List(
-                $doc(
-                  "$match" -> $expr(
-                    $doc(
-                      "$and" -> $arr(
-                        $doc("$eq" -> $arr("$_id", "$$u")),
-                        $doc("$gt" -> $arr("seenAt", since))
-                      )
-                    )
-                  )
-                ),
-                $doc("$project" -> $doc("_id" -> true))
-              )
-            )
-          ),
-          Match($doc("user" -> $ne($arr()))),
-          Project($doc("u" -> true))
+          Project($doc("_id" -> 0))
         )
       .map:
-        _.flatMap(_.getAsOpt[UserId]("u"))
+        _.headOption.so(_.getAsOpt[List[UserId]]("u")).orZero
 
   def revoke(bearer: Bearer) =
     val id = AccessToken.idFrom(bearer)
@@ -287,7 +263,7 @@ final class AccessTokenApi(
   yield res.flatten
 
   private val accessTokenCache =
-    cacheApi[AccessTokenId, Option[AccessToken.ForAuth]](4096, "oauth.access_token"):
+    cacheApi[AccessTokenId, Option[AccessToken.ForAuth]](8_192, "oauth.access_token"):
       _.expireAfterWrite(5.minutes).buildAsyncFuture(fetchAccessToken)
 
   private def fetchAccessToken(id: AccessTokenId): Fu[Option[AccessToken.ForAuth]] =

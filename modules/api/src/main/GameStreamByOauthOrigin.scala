@@ -31,10 +31,10 @@ final class GameStreamByOauthOrigin(
       .userIdsByClientOrigin(origin)
       .runWith:
         Sink.fold[Int, UserId](0): (counter, userId) =>
-          bloom.add(userId.value.pp)
+          bloom.add(userId.value)
           counter + 1
       .addEffect: nb =>
-        population = nb.pp
+        population = nb
       .inject(bloom)
 
   Bus.sub[AccessToken.Create]: tc =>
@@ -65,12 +65,10 @@ final class GameStreamByOauthOrigin(
         tokenUsers <- tokenUsersFu
         _ = extraUsers.foreach(u => tokenUsers.add(u.value))
         recentlySeenUsers <- tokenApi
-          TODO use Token.used instead?
           .recentlySeenUserIdsByClientOrigin(
             origin,
             (since | nowInstant).minusMinutes(20)
           )
-          .thenPp
       yield run(since, ua, tokenUsers, recentlySeenUsers, logMsg)
 
   private def run(
