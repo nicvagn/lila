@@ -11,7 +11,6 @@ import lila.core.LightUser
 
 final class MsgCompat(
     api: MsgApi,
-    security: MsgSecurity,
     isOnline: lila.core.socket.IsOnline,
     lightUserApi: lila.core.user.LightUserApi
 )(using Executor):
@@ -56,27 +55,6 @@ final class MsgCompat(
         )
     )
 
-  def create(using play.api.mvc.Request[?], FormBinding)(using me: Me): Either[Form[?], Fu[UserId]] =
-    Form(
-      mapping(
-        "username" -> lila.common.Form.username.historicalField
-          .verifying("Unknown username", { blockingFetchUser(_).isDefined })
-          .verifying(
-            "Sorry, this player doesn't accept new messages",
-            name =>
-              security.may
-                .post(me, name.id, isNew = true)
-                .await(2.seconds, "pmAccept") // damn you blocking API
-          ),
-        "subject" -> text(minLength = 3, maxLength = 100),
-        "text" -> text(minLength = 3, maxLength = 8000)
-      )(ThreadData.apply)(unapply)
-    ).bindFromRequest()
-      .fold(
-        err => Left(err),
-        data => Right(api.post(me, data.user.id, s"${data.subject}\n${data.text}").inject(data.user.id))
-      )
-
   def reply(userId: UserId)(using
       play.api.mvc.Request[?],
       FormBinding
@@ -87,11 +65,6 @@ final class MsgCompat(
         err => Left(err),
         text => Right(api.post(me, userId, text).void)
       )
-
-  private def blockingFetchUser(username: UserStr) =
-    lightUserApi.async(username.id).await(500.millis, "pmUser")
-
-  private case class ThreadData(user: UserStr, subject: String, text: String)
 
   private def renderUser(user: LightUser) =
     Json.toJsObject(user) ++ Json.obj(

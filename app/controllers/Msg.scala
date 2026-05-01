@@ -64,19 +64,6 @@ final class Msg(env: Env) extends LilaController(env):
       JsonOk(inboxJson(none))
   }
 
-  def compatCreate = AuthBody { ctx ?=> me ?=>
-    ctx.kid.no
-      .so(ctx.noBot)
-      .so(
-        env.msg.compat.create
-          .fold(
-            doubleJsonFormError,
-            _.map: id =>
-              Ok(Json.obj("ok" -> true, "id" -> id))
-          )
-      )
-  }
-
   def apiPost(username: UserStr) = AuthOrScopedBody(_.Msg.Write) { ctx ?=> me ?=>
     val userId = username.id
     if ctx.isWebAuth then // compat: reply
