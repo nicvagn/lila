@@ -36,7 +36,6 @@ function loginStart() {
             requestAnimationFrame(() => $f.find('.two-factor input').val('')[0]!.focus());
             toggleSubmit($f.find('.submit'), true);
             if (text === 'InvalidTotpToken') $f.find('.two-factor .error').removeClass('none');
-            turnstile($f);
           } else if (res.ok) location.href = text.startsWith('ok:') ? text.slice(3) : '/';
           else {
             try {
