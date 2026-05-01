@@ -58,6 +58,7 @@ final class Env(
 
   lazy val authenticator = wire[Authenticator]
 
+  lazy val turnstileCookie = TurnstileCookie(lilaCookie, config.loginTokenSecret)
   val turnstilePublicConfig = config.turnstile.public
   lazy val turnstile: Turnstile =
     if config.turnstile.enabled then wire[TurnstileReal]

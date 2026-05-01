@@ -2,11 +2,12 @@ package lila.security
 
 import com.roundeights.hasher.Implicits.*
 
-import lila.core.email.NormalizedEmailAddress
+import lila.core.email.{ UserStrOrEmail, NormalizedEmailAddress }
 import lila.core.security.{ ClearPassword, HashedPassword }
 import lila.db.dsl.{ *, given }
 import lila.user.{ AuthData, BSONFields as F, TotpToken, UserRepo }
 
+case class LoginForm(username: UserStrOrEmail, password: ClearPassword)
 case class PasswordAndToken(password: ClearPassword, token: Option[TotpToken])
 type CredentialCheck = ClearPassword => Boolean
 case class LoginCandidate(user: User, check: CredentialCheck, isBlanked: Boolean, must2fa: Boolean = false):

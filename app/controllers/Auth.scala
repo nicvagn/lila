@@ -93,25 +93,27 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         val isLichobile = HTTPRequest.isLichobile(ctx.req)
         if isLichobile && !env.security.lichobileLogin.get() then
           BadRequest:
-            Json.obj("global" -> List("Please use our new mobile app! https://lichess.org/app"))
+            Json.obj("global" -> List("Please use our new mobile app! lichess.org/app"))
         else
-          val turnstileResult = if isLichobile then fuccess(true) else env.security.turnstile.verify()
-          turnstileResult.flatMap:
-            if _ then
-              bindForm(api.loginForm)(
-                err =>
-                  negotiate(
-                    Unauthorized.page(views.auth.login(err, isRemember)),
-                    Unauthorized(doubleJsonFormErrorBody(err))
-                  ),
-                (login, pass) =>
-                  LoginRateLimit(login.normalize, ctx.req): chargeLimiters =>
+          bindForm(api.loginForm)(
+            err =>
+              negotiate(
+                Unauthorized.page(views.auth.login(err, isRemember)),
+                Unauthorized(doubleJsonFormErrorBody(err))
+              ),
+            loginData =>
+              val turnstileResult = fuccess(isLichobile) >>|
+                env.security.turnstileCookie.test(loginData) >>|
+                env.security.turnstile.verify()
+              turnstileResult.flatMap:
+                if _ then
+                  LoginRateLimit(loginData.username.normalize, ctx.req): chargeLimiters =>
                     env.security.pwned
-                      .isPwned(pass)
+                      .isPwned(loginData.password)
                       .flatMap: pwned =>
                         if pwned.yes then chargeLimiters()
-                        val isEmail = EmailAddress.isValid(login.value)
-                        api.loadLoginForm(login, pwned).flatMap {
+                        val isEmail = EmailAddress.isValid(loginData.username.value)
+                        api.loadLoginForm(loginData.username, pwned).flatMap {
                           _.bindFromRequest()
                             .fold(
                               err =>
@@ -121,7 +123,9 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                                   .increment()
                                 negotiate(
                                   err.errors match
-                                    case List(FormError("", Seq(err), _)) if is2fa(err) => Ok(err)
+                                    case List(FormError("", Seq(err), _)) if is2fa(err) =>
+                                      for cookie <- env.security.turnstileCookie.create(loginData)
+                                      yield Ok(err).withCookies(cookie)
                                     case _ => Unauthorized.page(views.auth.login(err, isRemember))
                                   ,
                                   Unauthorized(doubleJsonFormErrorBody(err))
@@ -156,9 +160,11 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                                   authenticateUser(u, pwned, isRemember, redirectTo(ref).some)
                             )
                         }
-              )
-            else
-              BadRequest.page(views.auth.login(api.loginForm.withGlobalError("Invalid captcha"), isRemember))
+                else
+                  BadRequest.page:
+                    views.auth
+                      .login(api.loginForm.withGlobalError("Session timed out, please try again"), isRemember)
+          )
 
   private val clasLoginRateLimit =
     env.security.ipTrust.rateLimit(300, 1.hour, "clas.login")
