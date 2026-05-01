@@ -46,78 +46,62 @@ export function renderNvui(ctx: RoundNvuiContext): VNode {
       }),
     );
   }
+  const nvuiHook = {
+    hook: onInsert(_ => setTimeout(() => notify.set(gameText(ctrl)), 2000)),
+  };
+  const sharedSettings = [
+    hl('h2', i18n.site.advancedSettings),
+    hl('label', [noTrans('Move notation'), renderSetting(moveStyle, ctrl.redraw)]),
+    hl('label', [noTrans('Page layout'), renderSetting(pageStyle, ctrl.redraw)]),
+  ];
+  const keyboardInput = [
+    hl('h2', i18n.keyboardMove.keyboardInputCommands),
+    hl('p', [
+      i18n.nvui.inputFormCommandList,
+      hl('br'),
+      i18n.nvui.movePiece,
+      hl('br'),
+      i18n.nvui.promotion,
+      hl('br'),
+      inputCommands
+        .filter(c => !c.invalid?.(ctrl))
+        .flatMap(cmd => [`${cmd.cmd}${cmd.alt ? ` / ${cmd.alt}` : ''}: `, cmd.help, hl('br')]),
+    ]),
+  ];
   if (isTouchDevice() && pageStyle.get() === 'board-actions') {
     pieceStyle.set('name');
     prefixStyle.set('name');
     boardStyle.set('plain');
-    return hl(
-      'div.nvui',
-      {
-        hook: onInsert(_ => setTimeout(() => notify.set(gameText(ctrl)), 2000)),
-      },
-      [
-        pageStyle.get() === 'actions-board'
-          ? [ctrl.isPlaying() && inputForm(ctx), renderActions(ctx), renderBoard(ctx)]
-          : [
-              renderBoard(ctx),
-              renderTouchDeviceCommands(ctx),
-              renderActions(ctx),
-              ctrl.isPlaying() && inputForm(ctx),
-            ],
-        gameInfo(ctx),
-        hl('h2', i18n.site.advancedSettings),
-        hl('label', [noTrans('Move notation'), renderSetting(moveStyle, ctrl.redraw)]),
-        hl('label', [noTrans('Page layout'), renderSetting(pageStyle, ctrl.redraw)]),
-        hl('label', [noTrans('Show position'), renderSetting(positionStyle, ctrl.redraw)]),
-        hl('h2', i18n.keyboardMove.keyboardInputCommands),
-        hl('p', [
-          i18n.nvui.inputFormCommandList,
-          hl('br'),
-          i18n.nvui.movePiece,
-          hl('br'),
-          i18n.nvui.promotion,
-          hl('br'),
-          inputCommands
-            .filter(c => !c.invalid?.(ctrl))
-            .flatMap(cmd => [`${cmd.cmd}${cmd.alt ? ` / ${cmd.alt}` : ''}: `, cmd.help, hl('br')]),
-        ]),
-      ],
-    );
+    return hl('div.nvui', nvuiHook, [
+      pageStyle.get() === 'actions-board'
+        ? [ctrl.isPlaying() && inputForm(ctx), renderActions(ctx), renderBoard(ctx)]
+        : [
+            renderBoard(ctx),
+            renderTouchDeviceCommands(ctx),
+            renderActions(ctx),
+            ctrl.isPlaying() && inputForm(ctx),
+          ],
+      gameInfo(ctx),
+      ...sharedSettings,
+      hl('label', [noTrans('Show position'), renderSetting(positionStyle, ctrl.redraw)]),
+      ...keyboardInput,
+    ]);
   } else
-    return hl(
-      'div.nvui',
-      {
-        hook: onInsert(_ => setTimeout(() => notify.set(gameText(ctrl)), 2000)),
-      },
-      [
-        gameInfo(ctx),
-        ctrl.isPlaying() && inputForm(ctx),
-        pageStyle.get() === 'actions-board'
-          ? [renderActions(ctx), renderBoard(ctx)]
-          : [renderBoard(ctx), renderActions(ctx)],
-        hl('h2', i18n.site.advancedSettings),
-        hl('label', [noTrans('Move notation'), renderSetting(moveStyle, ctrl.redraw)]),
-        hl('label', [noTrans('Page layout'), renderSetting(pageStyle, ctrl.redraw)]),
-        hl('h3', noTrans('Board settings')),
-        hl('label', [noTrans('Piece style'), renderSetting(pieceStyle, ctrl.redraw)]),
-        hl('label', [noTrans('Piece prefix style'), renderSetting(prefixStyle, ctrl.redraw)]),
-        hl('label', [noTrans('Show position'), renderSetting(positionStyle, ctrl.redraw)]),
-        hl('label', [noTrans('Board layout'), renderSetting(boardStyle, ctrl.redraw)]),
-        hl('h2', i18n.keyboardMove.keyboardInputCommands),
-        hl('p', [
-          i18n.nvui.inputFormCommandList,
-          hl('br'),
-          i18n.nvui.movePiece,
-          hl('br'),
-          i18n.nvui.promotion,
-          hl('br'),
-          inputCommands
-            .filter(c => !c.invalid?.(ctrl))
-            .flatMap(cmd => [`${cmd.cmd}${cmd.alt ? ` / ${cmd.alt}` : ''}: `, cmd.help, hl('br')]),
-        ]),
-        boardCommands(),
-      ],
-    );
+    return hl('div.nvui', nvuiHook, [
+      gameInfo(ctx),
+      ctrl.isPlaying() && inputForm(ctx),
+      pageStyle.get() === 'actions-board'
+        ? [renderActions(ctx), renderBoard(ctx)]
+        : [renderBoard(ctx), renderActions(ctx)],
+      ...sharedSettings,
+      hl('h3', noTrans('Board settings')),
+      hl('label', [noTrans('Piece style'), renderSetting(pieceStyle, ctrl.redraw)]),
+      hl('label', [noTrans('Piece prefix style'), renderSetting(prefixStyle, ctrl.redraw)]),
+      hl('label', [noTrans('Show position'), renderSetting(positionStyle, ctrl.redraw)]),
+      hl('label', [noTrans('Board layout'), renderSetting(boardStyle, ctrl.redraw)]),
+      ...keyboardInput,
+      boardCommands(),
+    ]);
 }
 
 function inputForm(ctx: RoundNvuiContext): LooseVNodes {
