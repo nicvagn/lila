@@ -18,7 +18,7 @@ final class GameStreamByOauthOrigin(
 
   private val streamUserId = UserId.t3
   private val origin = Origin("https://auth.taketaketake.com")
-  private val estimatedCount = 200_000
+  private val estimatedCount = 100_000
   private val falsePositiveRate = 0.00005 // 0.005% false positives
   private var population = 0
 
@@ -80,30 +80,40 @@ final class GameStreamByOauthOrigin(
   ): Source[JsObject, ?] =
     var nbGames = 0
     val startedAt = nowInstant
-    val startStream =
-      Source.queue[Game](300, akka.stream.OverflowStrategy.dropHead).mapMaterializedValue { queue =>
-        streams.open(ua)
-        logger.branch("gameStream").info(s"OPEN  $logMsg")
-        mon.users("recentlySeen").update(recentlySeenUsers.size)
+    val startStream: Source[Game, ?] =
+      Source
+        .queue[Game](300, akka.stream.OverflowStrategy.dropHead)
+        .mapMaterializedValue { queue =>
+          streams.open(ua)
+          logger.branch("gameStream").info(s"OPEN  $logMsg")
+          mon.users("recentlySeen").update(recentlySeenUsers.size)
 
-        def matches(game: Game) = game.nonAi &&
-          game.players.exists(_.userId.exists(id => tokenUsers.mightContain(id.value)))
+          def matches(game: Game) = game.nonAi &&
+            game.players.exists(_.userId.exists(id => tokenUsers.mightContain(id.value)))
 
-        val subStart = Bus.sub[StartGame]: e =>
-          if matches(e.game) then queue.offer(e.game)
+          val subStart = Bus.sub[StartGame]: e =>
+            if matches(e.game) then queue.offer(e.game)
 
-        val subFinish = Bus.sub[FinishGame]: e =>
-          if matches(e.game) then queue.offer(e.game)
+          val subFinish = Bus.sub[FinishGame]: e =>
+            if matches(e.game) then queue.offer(e.game)
 
-        queue
-          .watchCompletion()
-          .addEffectAnyway:
-            Bus.unsub[StartGame](subStart)
-            Bus.unsub[FinishGame](subFinish)
-            streams.close(ua)
-            val seconds = nowSeconds - startedAt.toSeconds
-            logger.branch("gameStream").info(s"CLOSE $logMsg ($seconds seconds, $nbGames games)")
-      }
+          queue
+            .watchCompletion()
+            .addEffectAnyway:
+              Bus.unsub[StartGame](subStart)
+              Bus.unsub[FinishGame](subFinish)
+              streams.close(ua)
+              val seconds = nowSeconds - startedAt.toSeconds
+              logger.branch("gameStream").info(s"CLOSE $logMsg ($seconds seconds, $nbGames games)")
+        }
+        .mapAsyncUnordered(16): game =>
+          tokenApi.exists(origin, game.userIds).dmap(game -> _)
+        .mapConcat: (game, ok) =>
+          if ok then List(game)
+          else
+            mon.bloomFP.increment()
+            Nil
+
     pastGamesSource(recentlySeenUsers, since)
       .concat(currentGamesSource(recentlySeenUsers))
       .concat(startStream)
