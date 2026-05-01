@@ -68,11 +68,18 @@ export const pocketsStr = (pocket: CrazyPocket): string =>
     .map(([role, count]) => `${i18n.nvui[role as Role]}: ${count}`)
     .join(', ');
 
-export function renderPieceKeys(pieces: Pieces, p: string, style: MoveStyle): string {
+export function renderPieceKeys(
+  pieces: Pieces,
+  p: string,
+  style: MoveStyle,
+  blackPerspective?: boolean,
+): string {
   const color: Color = p === p.toUpperCase() ? 'white' : 'black';
   if (p.toLowerCase() === 'a') return renderPiecesByColorAsString(pieces, style, color);
   const role = charToRole(p)!;
-  const keys = keysWithPiece(pieces, role, color);
+
+  const keys = keysWithPiece(pieces, role, color, blackPerspective);
+
   let pieceStr = transPieceStr(role, color, i18n);
   if (!pieceStr) {
     console.error(`Missing piece name for ${color} ${role}`);
@@ -273,13 +280,12 @@ const renderPiecesByColorAsVNodes = (pieces: Pieces, style: MoveStyle, color: Co
   );
 };
 
-const keysWithPiece = (pieces: Pieces, role?: Role, color?: Color): Key[] =>
-  Array.from(pieces)
+const keysWithPiece = (pieces: Pieces, role?: Role, color?: Color, blackPerspective?: boolean): Key[] => {
+  return Array.from(pieces)
     .filter(([_, p]) => (!color || p.color === color) && (!role || p.role === role))
-    .map(([key, _]) => key)
-    .sort(
-      (a, b) => a.localeCompare(b), // Sort by file, then rank
-    );
+    .map(([key]) => key)
+    .sort((a, b) => (blackPerspective ? b.localeCompare(a) : a.localeCompare(b)));
+};
 
 const augmentLichessComment = (comment: TreeComment, style: MoveStyle): string =>
   comment.by === 'lichess'

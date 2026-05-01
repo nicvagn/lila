@@ -28,7 +28,6 @@ const lowTimeSound = () => site.sound.play('lowTime');
 
 export function renderNvui(ctx: RoundNvuiContext): VNode {
   const { ctrl, notify, moveStyle, pieceStyle, prefixStyle, positionStyle, boardStyle, pageStyle } = ctx;
-
   const initial = ctrl.data.clock?.initial;
   if (ctrl.data.pref.clockSound && initial) {
     const emergMs =
@@ -476,8 +475,12 @@ const inputCommands: InputCommand[] = [
     help: commands().piece.help,
     cb: (notify, ctrl, style, input) =>
       notify(
-        commands().piece.apply(input, ctrl.chessground.state.pieces, style) ??
-          `Bad input: ${input}. Expected format: ${commands().piece.help}`,
+        commands().piece.apply(
+          input,
+          ctrl.chessground.state.pieces,
+          style,
+          ctrl.data.player.color === 'black',
+        ) ?? `Bad input: ${input}. Expected format: ${commands().piece.help}`,
       ),
   },
   {
