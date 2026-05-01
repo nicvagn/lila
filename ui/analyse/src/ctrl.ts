@@ -446,8 +446,8 @@ export default class AnalyseCtrl implements CevalHandler {
       if (this.study) this.study.setPath(path, this.node);
       if (this.retro) this.retro.onJump();
       if (isForwardStep) {
-        const isAtomicCapture = this.data.game.variant.key === 'atomic' && !!this.node.san?.includes('x');
-        if (isAtomicCapture) site.sound.play('explosion');
+        if (this.data.game.variant.key === 'atomic' && this.node.san?.includes('x'))
+          site.sound.play('explosion');
         else site.sound.move(this.node);
       }
       this.threatMode(false);
