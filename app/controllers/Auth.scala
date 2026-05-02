@@ -92,8 +92,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         val isRemember = api.rememberForm.bindFromRequest().value | true
         val isLichobile = HTTPRequest.isLichobile(ctx.req)
         if isLichobile && !env.security.lichobileLogin.get() then
-          BadRequest:
-            Json.obj("global" -> List("Please use our new mobile app! lichess.org/app"))
+          BadRequest(Json.obj("global" -> List("Please use our new mobile app! lichess.org/app")))
         else
           bindForm(api.loginForm)(
             err =>
@@ -163,7 +162,10 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                 else
                   BadRequest.page:
                     views.auth
-                      .login(api.loginForm.withGlobalError("Session timed out, please try again"), isRemember)
+                      .login(
+                        api.loginForm.fill(loginData).withGlobalError("Session timed out, please try again"),
+                        isRemember
+                      )
           )
 
   private val clasLoginRateLimit =
