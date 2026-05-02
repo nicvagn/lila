@@ -1,9 +1,5 @@
 import { memoize } from './index';
 import * as licon from './licon';
-import { bind, type Hooks } from './view';
-
-export const hookMobileMousedown = (f: (e: Event) => any): Hooks =>
-  bind('ontouchstart' in window ? 'click' : 'mousedown', f);
 
 export const prefersLightThemeQuery = (): MediaQueryList =>
   window.matchMedia('(prefers-color-scheme: light)');
@@ -137,7 +133,7 @@ function sharedMemoryTest(): boolean {
   }
 }
 
-export function isVersionCompatible(version: string | undefined | false, vc?: VersionConstraint): boolean {
+export function isVersionCompatible(version?: string | false, vc?: VersionConstraint): boolean {
   if (!version) return false;
   if (!vc) return true;
 
