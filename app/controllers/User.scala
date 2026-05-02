@@ -370,7 +370,7 @@ final class User(
           env.pref.api
             .get(user)
             .map: prefs =>
-              ui.prefs(user, prefs.hasKeyboardMove, prefs.hasVoice, prefs.botCompatible)
+              ui.prefs(user, prefs.hasKeyboardMove, prefs.hasVoice)
 
         val appeal = isGranted(_.Appeals).so:
           env.appeal.api.byId(user).mapz(views.appeal.ui.modSection(lila.mod.ui.mzSection("appeal")))
