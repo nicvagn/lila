@@ -1,6 +1,7 @@
 package lila.security
 
 import com.roundeights.hasher.Implicits.*
+import play.api.data.{ Form, FormError }
 
 import lila.core.email.{ UserStrOrEmail, NormalizedEmailAddress }
 import lila.core.security.{ ClearPassword, HashedPassword }
@@ -35,6 +36,11 @@ object LoginCandidate:
     case WeakPassword extends Result(none)
     case MissingTotpToken extends Result(none)
     case InvalidTotpToken extends Result(none)
+
+  def totpError(form: Form[?]) = form.errors match
+    case List(FormError("", Seq(err), _)) =>
+      (err == "MissingTotpToken" || err == "InvalidTotpToken").option(err)
+    case _ => none
 
 final class Authenticator(
     passHasher: PasswordHasher,
