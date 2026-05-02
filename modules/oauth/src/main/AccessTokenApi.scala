@@ -231,7 +231,7 @@ final class AccessTokenApi(
         _.headOption.so(_.getAsOpt[List[UserId]]("u")).orZero
 
   def exists(clientOrigin: Origin, userIds: List[UserId]): Fu[Boolean] = userIds.nonEmpty.so:
-    coll.exists($doc(F.clientOrigin -> clientOrigin, F.userId.$in(userIds)))
+    coll.secondary.exists($doc(F.clientOrigin -> clientOrigin, F.userId.$in(userIds)))
 
   def revoke(bearer: Bearer) =
     val id = AccessToken.idFrom(bearer)

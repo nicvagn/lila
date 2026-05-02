@@ -1,5 +1,5 @@
 package controllers
-import play.api.data.{ Form, FormError }
+import play.api.data.Form
 import play.api.libs.json.*
 import play.api.mvc.*
 
@@ -83,8 +83,6 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         val form = api.loginFormFilled(prefillUsername)
         Ok.page(views.auth.login(form)).map(_.withCanonical(routes.Auth.login))
 
-  private val is2fa = Set("MissingTotpToken", "InvalidTotpToken")
-
   def authenticate = OpenBody:
     NoCrawlers:
       Firewall:
@@ -92,8 +90,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         val isRemember = api.rememberForm.bindFromRequest().value | true
         val isLichobile = HTTPRequest.isLichobile(ctx.req)
         if isLichobile && !env.security.lichobileLogin.get() then
-          BadRequest:
-            Json.obj("global" -> List("Please use our new mobile app! lichess.org/app"))
+          BadRequest(Json.obj("global" -> List("Please use our new mobile app! lichess.org/app")))
         else
           bindForm(api.loginForm)(
             err =>
@@ -122,12 +119,11 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                                   .attempt(isEmail, pwned = pwned.yes, result = false)
                                   .increment()
                                 negotiate(
-                                  err.errors match
-                                    case List(FormError("", Seq(err), _)) if is2fa(err) =>
+                                  lila.security.LoginCandidate
+                                    .totpError(err)
+                                    .fold(Unauthorized.page(views.auth.login(err, isRemember))): err =>
                                       for cookie <- env.security.turnstileCookie.create(loginData)
-                                      yield Ok(err).withCookies(cookie)
-                                    case _ => Unauthorized.page(views.auth.login(err, isRemember))
-                                  ,
+                                      yield Ok(err).withCookies(cookie),
                                   Unauthorized(doubleJsonFormErrorBody(err))
                                 )
                               ,
@@ -163,7 +159,10 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                 else
                   BadRequest.page:
                     views.auth
-                      .login(api.loginForm.withGlobalError("Session timed out, please try again"), isRemember)
+                      .login(
+                        api.loginForm.fill(loginData).withGlobalError("Session timed out, please try again"),
+                        isRemember
+                      )
           )
 
   private val clasLoginRateLimit =
