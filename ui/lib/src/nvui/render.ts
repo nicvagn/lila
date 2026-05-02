@@ -44,13 +44,13 @@ export const renderSan = (san: San | undefined, uci: Uci | undefined, style: Mov
             )
             .join(' ');
 
-export const renderPieces = (pieces: Pieces, style: MoveStyle): VNode =>
+export const renderPieces = (pieces: Pieces, style: MoveStyle, blackPerspective: boolean): VNode =>
   h(
     'div.pieces',
     COLORS.map(color =>
       h(`div.${color}-pieces`, [
         h('h3', i18n.site[color]),
-        ...renderPiecesByColorAsVNodes(pieces, style, color),
+        ...renderPiecesByColorAsVNodes(pieces, style, color, blackPerspective),
       ]),
     ),
   );
@@ -88,15 +88,25 @@ export function renderPieceKeys(
   return `${pieceStr}: ${keys.length ? keys.map(k => renderKey(k, style)).join(', ') : i18n.site.none}`;
 }
 
-export function renderPiecesOn(pieces: Pieces, rankOrFile: string, style: MoveStyle, blackPerspective?: boolean): string {
+export function renderPiecesOn(
+  pieces: Pieces,
+  rankOrFile: string,
+  style: MoveStyle,
+  blackPerspective?: boolean,
+): string {
   const renderedKeysWithPiece = Array.from(pieces)
-    .sort((blackPerspective) ? ([key1], [key2]) => key2.localeCompare(key1) : ([key1], [key2]) => key1.localeCompare(key2))
+    .sort(
+      blackPerspective
+        ? ([key1], [key2]) => key2.localeCompare(key1)
+        : ([key1], [key2]) => key1.localeCompare(key2),
+    )
     .reduce<string[]>(
       (acc, [key, p]) =>
         key.includes(rankOrFile)
           ? acc.concat(`${renderKey(key, style)} ${transPieceStr(p.role, p.color, i18n)}`)
           : acc,
-      []);
+      [],
+    );
   return renderedKeysWithPiece.length ? renderedKeysWithPiece.join(', ') : i18n.site.none;
 }
 
@@ -253,6 +263,7 @@ export const transPieceStr = (role: Role, color: Color, i18n: I18n): string =>
 const getPiecesByColor = (
   pieces: Pieces,
   color: Color,
+  blackPerspective?: boolean,
 ): { role: 'pawn' | 'knight' | 'bishop' | 'rook' | 'queen' | 'king'; keys: Key[] }[] => {
   return ROLES.slice()
     .reverse()
@@ -260,7 +271,7 @@ const getPiecesByColor = (
       (lists, role) =>
         lists.concat({
           role,
-          keys: keysWithPiece(pieces, role, color),
+          keys: keysWithPiece(pieces, role, color, blackPerspective),
         }),
       [],
     )
@@ -273,10 +284,18 @@ const renderPiecesByColorAsString = (pieces: Pieces, style: MoveStyle, color: Co
     .join(', ');
 };
 
-const renderPiecesByColorAsVNodes = (pieces: Pieces, style: MoveStyle, color: Color): VNode[] => {
-  return getPiecesByColor(pieces, color).map(l =>
-    h('p', `${transRole(l.role)}: ${l.keys.map(k => renderKey(k, style)).join(', ')}`),
-  );
+const renderPiecesByColorAsVNodes = (
+  pieces: Pieces,
+  style: MoveStyle,
+  color: Color,
+  blackPerspective: boolean,
+): VNode[] => {
+  return getPiecesByColor(pieces, color).map(l => {
+    const sortedKeys = blackPerspective
+      ? l.keys.sort((a, b) => b[0].localeCompare(a[0])) // Reverse file order for black
+      : l.keys.sort((a, b) => a[0].localeCompare(b[0])); // Normal file order for white
+    return h('p', `${transRole(l.role)}: ${sortedKeys.map(k => renderKey(k, style)).join(', ')}`);
+  });
 };
 
 const keysWithPiece = (pieces: Pieces, role?: Role, color?: Color, blackPerspective?: boolean): Key[] => {

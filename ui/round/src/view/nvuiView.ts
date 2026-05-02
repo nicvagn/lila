@@ -157,7 +157,7 @@ function gameInfo(ctx: RoundNvuiContext): LooseVNodes {
     hl('h2', i18n.nvui.moveList),
     hl('p.moves', { attrs: { role: 'log', 'aria-live': 'off' } }, renderMoves(d.steps.slice(1), style)),
     hl('h2', i18n.nvui.pieces),
-    nv.renderPieces(ctrl.chessground.state.pieces, style),
+    nv.renderPieces(ctrl.chessground.state.pieces, style, d.player.color === 'black'),
     pockets && hl('h2', i18n.nvui.pockets),
     pockets && nv.renderPockets(pockets),
     hl('h2', i18n.nvui.gameStatus),
