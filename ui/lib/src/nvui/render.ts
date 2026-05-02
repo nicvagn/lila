@@ -88,16 +88,15 @@ export function renderPieceKeys(
   return `${pieceStr}: ${keys.length ? keys.map(k => renderKey(k, style)).join(', ') : i18n.site.none}`;
 }
 
-export function renderPiecesOn(pieces: Pieces, rankOrFile: string, style: MoveStyle): string {
+export function renderPiecesOn(pieces: Pieces, rankOrFile: string, style: MoveStyle, blackPerspective?: boolean): string {
   const renderedKeysWithPiece = Array.from(pieces)
-    .sort(([key1], [key2]) => key1.localeCompare(key2))
+    .sort((blackPerspective) ? ([key1], [key2]) => key2.localeCompare(key1) : ([key1], [key2]) => key1.localeCompare(key2))
     .reduce<string[]>(
       (acc, [key, p]) =>
         key.includes(rankOrFile)
           ? acc.concat(`${renderKey(key, style)} ${transPieceStr(p.role, p.color, i18n)}`)
           : acc,
-      [],
-    );
+      []);
   return renderedKeysWithPiece.length ? renderedKeysWithPiece.join(', ') : i18n.site.none;
 }
 

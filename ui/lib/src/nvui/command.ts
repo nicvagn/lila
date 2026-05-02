@@ -20,8 +20,8 @@ export const commands: () => Commands = memoize(() => ({
   },
   scan: {
     help: i18n.nvui.announcePiecesOnRankOrFile,
-    apply(c: string, pieces: Pieces, style: MoveStyle) {
-      return tryC(c, /^\/?s ([a-h1-8])$/i, p => renderPiecesOn(pieces, p, style));
+    apply(c: string, pieces: Pieces, style: MoveStyle, blackPerspective?: boolean) {
+      return tryC(c, /^\/?s ([a-h1-8])$/i, p => renderPiecesOn(pieces, p, style, blackPerspective));
     },
   },
   board: {
