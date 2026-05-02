@@ -73,7 +73,7 @@ export function toggle({ filter, redraw }: LobbyController, nbFiltered: number) 
     hook: bind('click', filter.toggle, redraw),
     attrs: {
       'data-icon': filter.open ? licon.X : licon.Gear,
-      title: filter.open ? i18n.site.closeFilters : i18n.site.filterGames,
+      title: filter.open ? i18n.site.close : i18n.site.filterGames,
     },
   });
 }

@@ -3313,8 +3313,6 @@ interface I18n {
     clockInitialTime: string;
     /** Close */
     close: string;
-    /** Close filters */
-    closeFilters: string;
     /** Closing your account will withdraw your appeal */
     closingAccountWithdrawAppeal: string;
     /** Cloud analysis */

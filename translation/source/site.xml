@@ -432,7 +432,6 @@
   <string name="averageElo">Average rating</string>
   <string name="location">Location</string>
   <string name="filterGames">Filter games</string>
-  <string name="closeFilters">Close filters</string>
   <string name="reset">Reset</string>
   <string name="apply">Submit</string>
   <string name="save">Save</string>

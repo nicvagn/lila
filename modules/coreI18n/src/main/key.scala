@@ -1876,7 +1876,6 @@ object I18nKey:
     val `averageElo`: I18nKey = "averageElo"
     val `location`: I18nKey = "location"
     val `filterGames`: I18nKey = "filterGames"
-    val `closeFilters`: I18nKey = "closeFilters"
     val `reset`: I18nKey = "reset"
     val `apply`: I18nKey = "apply"
     val `save`: I18nKey = "save"
