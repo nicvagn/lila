@@ -15,6 +15,7 @@ import lila.core.user.KidMode
 import lila.core.LightUser
 import lila.core.id.ForumTopicSlug
 import lila.memo.PicfitImage
+import lila.core.study.Study
 
 final class ModlogApi(repo: ModlogRepo, userRepo: UserRepo, ircApi: IrcApi, presetsApi: ModPresetsApi)(using
     Executor
@@ -287,6 +288,9 @@ final class ModlogApi(repo: ModlogRepo, userRepo: UserRepo, ircApi: IrcApi, pres
       context = image.context.map(url => Modlog.Context(url = url.some)),
       details = image.automod.flatMap(_.flagged)
     )
+
+  def studyUnfeature(study: Study)(using myId: MyId) = add:
+    Modlog(myId.modId, study.ownerId.some, Modlog.studyUnfeature, details = study.name.value.some)
 
   def wasUnengined(sus: Suspect, after: Option[Instant] = None) = coll.exists:
     $doc(

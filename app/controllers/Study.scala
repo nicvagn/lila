@@ -7,7 +7,7 @@ import scalalib.paginator.Paginator
 
 import lila.analyse.Analysis
 import lila.app.{ *, given }
-import lila.common.{ Bus, HTTPRequest }
+import lila.common.HTTPRequest
 import lila.core.id.RelayRoundId
 import lila.core.misc.lpv.LpvEmbed
 import lila.core.socket.Sri
@@ -16,8 +16,7 @@ import lila.core.data.ErrorMsg
 import lila.study.JsonView.JsData
 import lila.study.PgnDump.WithFlags
 import lila.study.Study.WithChapter
-import lila.study.{ BecomeStudyAdmin, Who }
-import lila.study.{ Chapter, Orders, Settings, Study as StudyModel, StudyForm }
+import lila.study.{ Who, Chapter, Orders, Settings, Study as StudyModel, StudyForm }
 import lila.tree.Node.partitionTreeWriter
 import com.fasterxml.jackson.core.JsonParseException
 import lila.ui.Page
@@ -359,12 +358,20 @@ final class Study(
     )
   }
 
-  def admin(id: StudyId) = Secure(_.StudyAdmin) { ctx ?=> me ?=>
-    Bus.pub(BecomeStudyAdmin(id, me))
-    env.study.api
-      .becomeAdmin(id, me)
-      .inject:
-        if HTTPRequest.isXhr(ctx.req) then NoContent else Redirect(routes.Study.show(id))
+  def admin(id: StudyId) = Auth { ctx ?=> me ?=>
+    Found(env.study.api.byId(id)): study =>
+      getBoolOpt("unfeature") match
+        case Some(true) if lila.study.canUnfeature =>
+          for
+            _ <- env.study.studyRepo.unfeature(id, true)
+            _ <- env.mod.logApi.studyUnfeature(study)
+          yield Redirect(HTTPRequest.referer(ctx.req) | routes.Study.allDefault().url)
+        case None if isGranted(_.StudyAdmin) =>
+          for
+            _ <- env.study.api.becomeAdmin(id, me)
+            _ <- env.relay.api.becomeStudyAdmin(id, me)
+          yield if HTTPRequest.isXhr(ctx.req) then NoContent else Redirect(routes.Study.show(id))
+        case _ => authorizationFailed
   }
 
   def embed(studyId: StudyId, chapterId: StudyChapterId) = Anon:
