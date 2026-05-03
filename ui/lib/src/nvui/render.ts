@@ -276,10 +276,8 @@ const renderPiecesByColorAsString = (pieces: Pieces, style: MoveStyle, color: Co
 
 const renderPiecesByColorAsVNodes = (pieces: Pieces, style: MoveStyle, color: Color, pov: Color): VNode[] => {
   return getPiecesByColor(pieces, color).map(l => {
-    const sortedKeys =
-      pov === 'black'
-        ? l.keys.sort((a, b) => b[0].localeCompare(a[0])) // Reverse file order for black
-        : l.keys.sort((a, b) => a[0].localeCompare(b[0])); // Normal file order for white
+    const sortedKeys = l.keys.sort((a, b) => a[0].localeCompare(b[0]));
+    if (pov === 'black') sortedKeys.reverse(); // Reverse file order for black
     return h('p', `${transRole(l.role)}: ${sortedKeys.map(k => renderKey(k, style)).join(', ')}`);
   });
 };
