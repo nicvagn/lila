@@ -14,8 +14,8 @@ export class Mic implements Microphone {
   private vosk: VoskModule;
   private readonly deviceId = storedStringProp('voice.micDeviceId', 'default');
   private readonly recs = new Switch<string, RecNode>();
-  private ctrl: Listener = () => {};
-  private ctrlState: [string, MsgType] = ['', 'status'];
+  private ctrl?: Listener = () => {};
+  private ctrlState?: [string, MsgType];
   private download?: XMLHttpRequest;
   private broadcastTimeout?: number;
   private voskStatus = '';
@@ -55,7 +55,10 @@ export class Mic implements Microphone {
 
   setController(ctrl: Listener): void {
     this.ctrl = ctrl;
-    this.ctrl(...this.ctrlState); // hello
+    if (this.ctrlState) {
+      this.ctrl(...this.ctrlState);
+      this.ctrlState = undefined;
+    }
   }
 
   addListener(listener: Listener, also: { recId?: string; listenerId?: string } = {}): void {
@@ -196,8 +199,8 @@ export class Mic implements Microphone {
   }
 
   private broadcast(text: string, msgType: MsgType = 'status', forMs = 0) {
-    this.ctrlState = [text, msgType];
-    this.ctrl(text, msgType);
+    if (this.ctrl) this.ctrl(text, msgType);
+    else this.ctrlState = [text, msgType];
     if (msgType === 'status' || msgType === 'full') window.clearTimeout(this.broadcastTimeout);
     this.voskStatus = text;
     for (const li of this.recs.items.get(this.recId)?.listeners ?? []) {
