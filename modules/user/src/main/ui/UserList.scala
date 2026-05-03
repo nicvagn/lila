@@ -149,7 +149,7 @@ final class UserList(helpers: Helpers, bits: UserBits):
               h3("Try playing these innovative chess engines! These are our favourites."),
               div(cls := "bots__featured")(
                 botGrid(featured, bestPerfs)
-              ),
+              )
             ),
             div(cls := "box box-pad bots__categ")(
               boxTop(h1("Community bots"), aboutLink),
