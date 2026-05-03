@@ -34,7 +34,7 @@ final private class VerifyMail(
 
   private[security] def fetchAllBlocked: Source[String, ?] =
     cache.coll
-      .find($doc("_id".$regex(s"^$prefix:"), "v" -> false), $id(true).some)
+      .find($doc("_id".$startsWith(s"$prefix:"), "v" -> false), $id(true).some)
       .cursor[Bdoc](ReadPref.sec)
       .documentSource()
       .mapConcat(_.getAsOpt[String]("_id").toList)
