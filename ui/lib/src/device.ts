@@ -137,7 +137,7 @@ function sharedMemoryTest(): boolean {
   }
 }
 
-export function isVersionCompatible(version: string | undefined | false, vc?: VersionConstraint): boolean {
+export function isVersionCompatible(version?: string | false, vc?: VersionConstraint): boolean {
   if (!version) return false;
   if (!vc) return true;
 
