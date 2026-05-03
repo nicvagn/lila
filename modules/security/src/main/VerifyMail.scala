@@ -4,6 +4,8 @@ import play.api.libs.json.*
 import play.api.libs.ws.DefaultBodyReadables.*
 import play.api.libs.ws.JsonBodyReadables.*
 import play.api.libs.ws.StandaloneWSClient
+import akka.stream.scaladsl.*
+import reactivemongo.akkastream.cursorProducer
 
 import lila.core.net.Domain
 import lila.db.dsl.*
@@ -17,7 +19,7 @@ final private class VerifyMail(
     ws: StandaloneWSClient,
     config: SecurityConfig.VerifyMail,
     mongoCache: lila.memo.MongoCache.Api
-)(using Executor, Scheduler):
+)(using Executor, Scheduler, akka.stream.Materializer):
 
   def apply(domain: Domain.Lower): Fu[Boolean] =
     if config.key.value.isEmpty then fuccess(true)
@@ -30,20 +32,13 @@ final private class VerifyMail(
           true
         }
 
-  // expensive
-  private[security] def fetchAllBlocked: Fu[List[String]] =
+  private[security] def fetchAllBlocked: Source[String, ?] =
     cache.coll
-      .distinctEasy[String, List](
-        "_id",
-        $doc(
-          "_id".$regex(s"^$prefix:"),
-          "v" -> false
-        ),
-        _.sec
-      )
-      .map: ids =>
-        val dropSize = prefix.length + 1
-        ids.map(_.drop(dropSize))
+      .find($doc("_id".$regex(s"^$prefix:"), "v" -> false), $id(true).some)
+      .cursor[Bdoc](ReadPref.sec)
+      .documentSource()
+      .mapConcat(_.getAsOpt[String]("_id").toList)
+      .map(_.drop(prefix.length + 1))
 
   private val prefix = "security:check_mail"
 

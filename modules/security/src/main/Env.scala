@@ -32,9 +32,14 @@ final class Env(
     db: lila.db.Db,
     getFile: GetRelativeFile,
     routeUrl: RouteUrl
-)(using Executor, play.api.Mode, lila.core.i18n.Translator, lila.core.config.RateLimit)(using
-    scheduler: Scheduler
-):
+)(using
+    Executor,
+    play.api.Mode,
+    akka.stream.Materializer,
+    lila.core.i18n.Translator,
+    lila.core.config.RateLimit
+)(using scheduler: Scheduler):
+
   private def netDomain = net.domain
 
   private val config = appConfig.get[SecurityConfig]("security")
@@ -157,7 +162,7 @@ final class Env(
 
   if config.disposableEmail.enabled then
     scheduler.scheduleWithFixedDelay(42.seconds, 1.hour): () =>
-      disposableEmailDomain.refresh()
+      disposableEmailDomain.refresh().prefixFailure("DisposableEmailDomain.refresh").logFailure(logger)
 
   lazy val ipTrust: IpTrust = wire[IpTrust]
 
