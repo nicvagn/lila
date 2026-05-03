@@ -87,7 +87,7 @@ export function renderNvui(ctx: PuzzleNvuiContext): VNode {
         nv.renderMainline(ctrl.mainline, ctrl.path, moveStyle.get()),
       ),
       hl('h2', 'Pieces'),
-      nv.renderPieces(ground.state.pieces, moveStyle.get(), pov === 'black'),
+      nv.renderPieces(ground.state.pieces, moveStyle.get(), pov),
       hl('h2', 'Puzzle status'),
       hl(
         'div.status',

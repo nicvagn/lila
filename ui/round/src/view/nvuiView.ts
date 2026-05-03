@@ -157,7 +157,7 @@ function gameInfo(ctx: RoundNvuiContext): LooseVNodes {
     hl('h2', i18n.nvui.moveList),
     hl('p.moves', { attrs: { role: 'log', 'aria-live': 'off' } }, renderMoves(d.steps.slice(1), style)),
     hl('h2', i18n.nvui.pieces),
-    nv.renderPieces(ctrl.chessground.state.pieces, style, d.player.color === 'black'),
+    nv.renderPieces(ctrl.chessground.state.pieces, style, d.player.color),
     pockets && hl('h2', i18n.nvui.pockets),
     pockets && nv.renderPockets(pockets),
     hl('h2', i18n.nvui.gameStatus),
@@ -455,12 +455,8 @@ const inputCommands: InputCommand[] = [
     help: commands().piece.help,
     cb: (notify, ctrl, style, input) =>
       notify(
-        commands().piece.apply(
-          input,
-          ctrl.chessground.state.pieces,
-          style,
-          ctrl.data.player.color === 'black',
-        ) ?? `Bad input: ${input}. Expected format: ${commands().piece.help}`,
+        commands().piece.apply(input, ctrl.chessground.state.pieces, style, ctrl.data.player.color) ??
+          `Bad input: ${input}. Expected format: ${commands().piece.help}`,
       ),
   },
   {
