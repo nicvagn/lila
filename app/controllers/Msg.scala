@@ -12,7 +12,7 @@ final class Msg(env: Env) extends LilaController(env):
       case None =>
         negotiateApi(
           html = Ok.async(inboxJson(none).map(views.msg.home)).map(_.hasPersonalData),
-          api = _ => JsonOk(env.msg.compat.inbox(getInt("page")))
+          api = _ => JsonOk(inboxJson(none))
         )
       case Some(before) =>
         JsonOk:

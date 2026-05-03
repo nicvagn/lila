@@ -1,5 +1,9 @@
 import { memoize } from './index';
 import * as licon from './licon';
+import { bind, type Hooks } from './view/snabbdom';
+
+export const hookMobileMousedown = (f: (e: Event) => any): Hooks =>
+  bind('ontouchstart' in window ? 'click' : 'mousedown', f);
 
 export const prefersLightThemeQuery = (): MediaQueryList =>
   window.matchMedia('(prefers-color-scheme: light)');

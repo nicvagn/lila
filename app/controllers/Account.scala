@@ -105,7 +105,6 @@ final class Account(
           .extended(
             me.value,
             lila.api.UserApi.Opts(
-              withFollows = apiC.userWithFollows,
               withTrophies = false,
               withCanChallenge = false,
               withPlayban = getBool("playban"),
