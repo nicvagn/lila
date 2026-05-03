@@ -45,7 +45,7 @@ in
 
   tasks = {
     "lint:code" = {
-      exec = "oxlint --type-aware --tsconfig=ui/tsconfig.base.json";
+      exec = "oxlint --type-aware";
     };
     "lint:style" = {
       exec = ''stylelint "ui/**/*.scss"'';
