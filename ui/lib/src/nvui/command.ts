@@ -7,21 +7,21 @@ import { renderPieceKeys, renderPiecesOn, type MoveStyle } from './chess';
 
 interface Command {
   help: VNode | string;
-  apply(c: string, pieces: Pieces, style: MoveStyle, blackPerspective?: boolean): string | undefined;
+  apply(c: string, pieces: Pieces, style: MoveStyle, blackPov?: boolean): string | undefined;
 }
 type Commands = Record<string, Command>;
 
 export const commands: () => Commands = memoize(() => ({
   piece: {
     help: i18n.nvui.announcePieceLocations,
-    apply(c: string, pieces: Pieces, style: MoveStyle, blackPerspective?: boolean) {
-      return tryC(c, /^\/?p ([apnbrqk])$/i, p => renderPieceKeys(pieces, p, style, blackPerspective));
+    apply(c: string, pieces: Pieces, style: MoveStyle, blackPov?: boolean) {
+      return tryC(c, /^\/?p ([apnbrqk])$/i, p => renderPieceKeys(pieces, p, style, blackPov));
     },
   },
   scan: {
     help: i18n.nvui.announcePiecesOnRankOrFile,
-    apply(c: string, pieces: Pieces, style: MoveStyle, blackPerspective?: boolean) {
-      return tryC(c, /^\/?s ([a-h1-8])$/i, p => renderPiecesOn(pieces, p, style, blackPerspective));
+    apply(c: string, pieces: Pieces, style: MoveStyle, blackPov?: boolean) {
+      return tryC(c, /^\/?s ([a-h1-8])$/i, p => renderPiecesOn(pieces, p, style, blackPov));
     },
   },
   board: {

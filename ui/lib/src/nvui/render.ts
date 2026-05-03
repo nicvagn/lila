@@ -44,13 +44,13 @@ export const renderSan = (san: San | undefined, uci: Uci | undefined, style: Mov
             )
             .join(' ');
 
-export const renderPieces = (pieces: Pieces, style: MoveStyle, blackPerspective: boolean): VNode =>
+export const renderPieces = (pieces: Pieces, style: MoveStyle, blackPov: boolean): VNode =>
   h(
     'div.pieces',
     COLORS.map(color =>
       h(`div.${color}-pieces`, [
         h('h3', i18n.site[color]),
-        ...renderPiecesByColorAsVNodes(pieces, style, color, blackPerspective),
+        ...renderPiecesByColorAsVNodes(pieces, style, color, blackPov),
       ]),
     ),
   );
@@ -72,13 +72,13 @@ export function renderPieceKeys(
   pieces: Pieces,
   p: string,
   style: MoveStyle,
-  blackPerspective?: boolean,
+  blackPov?: boolean,
 ): string {
   const color: Color = p === p.toUpperCase() ? 'white' : 'black';
   if (p.toLowerCase() === 'a') return renderPiecesByColorAsString(pieces, style, color);
   const role = charToRole(p)!;
 
-  const keys = keysWithPiece(pieces, role, color, blackPerspective);
+  const keys = keysWithPiece(pieces, role, color, blackPov);
 
   let pieceStr = transPieceStr(role, color, i18n);
   if (!pieceStr) {
@@ -92,11 +92,11 @@ export function renderPiecesOn(
   pieces: Pieces,
   rankOrFile: string,
   style: MoveStyle,
-  blackPerspective?: boolean,
+  blackPov?: boolean,
 ): string {
   const renderedKeysWithPiece = Array.from(pieces)
     .sort(
-      blackPerspective
+      blackPov
         ? ([key1], [key2]) => key2.localeCompare(key1)
         : ([key1], [key2]) => key1.localeCompare(key2),
     )
@@ -263,7 +263,7 @@ export const transPieceStr = (role: Role, color: Color, i18n: I18n): string =>
 const getPiecesByColor = (
   pieces: Pieces,
   color: Color,
-  blackPerspective?: boolean,
+  blackPov?: boolean,
 ): { role: 'pawn' | 'knight' | 'bishop' | 'rook' | 'queen' | 'king'; keys: Key[] }[] => {
   return ROLES.slice()
     .reverse()
@@ -271,7 +271,7 @@ const getPiecesByColor = (
       (lists, role) =>
         lists.concat({
           role,
-          keys: keysWithPiece(pieces, role, color, blackPerspective),
+          keys: keysWithPiece(pieces, role, color, blackPov),
         }),
       [],
     )
@@ -288,21 +288,21 @@ const renderPiecesByColorAsVNodes = (
   pieces: Pieces,
   style: MoveStyle,
   color: Color,
-  blackPerspective: boolean,
+  blackPov: boolean,
 ): VNode[] => {
   return getPiecesByColor(pieces, color).map(l => {
-    const sortedKeys = blackPerspective
+    const sortedKeys = blackPov
       ? l.keys.sort((a, b) => b[0].localeCompare(a[0])) // Reverse file order for black
       : l.keys.sort((a, b) => a[0].localeCompare(b[0])); // Normal file order for white
     return h('p', `${transRole(l.role)}: ${sortedKeys.map(k => renderKey(k, style)).join(', ')}`);
   });
 };
 
-const keysWithPiece = (pieces: Pieces, role?: Role, color?: Color, blackPerspective?: boolean): Key[] => {
+const keysWithPiece = (pieces: Pieces, role?: Role, color?: Color, blackPov?: boolean): Key[] => {
   return Array.from(pieces)
     .filter(([_, p]) => (!color || p.color === color) && (!role || p.role === role))
     .map(([key]) => key)
-    .sort((a, b) => (blackPerspective ? b.localeCompare(a) : a.localeCompare(b)));
+    .sort((a, b) => (blackPov ? b.localeCompare(a) : a.localeCompare(b)));
 };
 
 const augmentLichessComment = (comment: TreeComment, style: MoveStyle): string =>
