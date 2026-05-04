@@ -1659,6 +1659,8 @@ object I18nKey:
     val `database`: I18nKey = "database"
     val `whiteDrawBlack`: I18nKey = "whiteDrawBlack"
     val `averageRatingX`: I18nKey = "averageRatingX"
+    val `minRatingX`: I18nKey = "minRatingX"
+    val `maxRatingX`: I18nKey = "maxRatingX"
     val `recentGames`: I18nKey = "recentGames"
     val `topGames`: I18nKey = "topGames"
     val `masterDbExplanation`: I18nKey = "masterDbExplanation"
