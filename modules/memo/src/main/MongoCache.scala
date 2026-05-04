@@ -23,25 +23,23 @@ final class MongoCache[K, V: BSONHandler] private (
 
   private val cache: AsyncLoadingCache[K, V] = build { loader => k =>
     val dbKey = makeDbKey(k)
-    coll
-      .one[Entry]($id(dbKey))
-      .flatMap:
-        case None =>
-          lila.mon.mongoCache.request(name, hit = false).increment()
-          loader(k)
-            .flatMap { v =>
-              coll.update
-                .one(
-                  $id(dbKey),
-                  Entry(dbKey, v, nowInstant.plus(dbTtl)),
-                  upsert = true
-                )
-                .inject(v)
-            }
-            .mon(_.mongoCache.compute(name))
-        case Some(entry) =>
-          lila.mon.mongoCache.request(name, hit = true).increment()
-          fuccess(entry.v)
+    dbEntry(k).flatMap:
+      case None =>
+        lila.mon.mongoCache.request(name, hit = false).increment()
+        loader(k)
+          .flatMap { v =>
+            coll.update
+              .one(
+                $id(dbKey),
+                Entry(dbKey, v, nowInstant.plus(dbTtl)),
+                upsert = true
+              )
+              .inject(v)
+          }
+          .mon(_.mongoCache.compute(name))
+      case Some(entry) =>
+        lila.mon.mongoCache.request(name, hit = true).increment()
+        fuccess(entry.v)
   }
 
   def get = cache.get
@@ -49,6 +47,10 @@ final class MongoCache[K, V: BSONHandler] private (
   def invalidate(key: K): Funit =
     for _ <- coll.delete.one($id(makeDbKey(key)))
     yield cache.invalidate(key)
+
+  def dbValue(key: K): Fu[Option[V]] = dbEntry(key).map2(_.v)
+
+  private def dbEntry(key: K) = coll.one[Entry]($id(makeDbKey(key)))
 
   private def makeDbKey(key: K) = s"$name:${keyToString(key)}"
 

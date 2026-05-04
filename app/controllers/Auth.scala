@@ -205,7 +205,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
   def signupLang = LangPage(routes.Auth.signup)(serveSignup)
 
   private def serveSignup(using Context) = NoTor:
-    val form = forms.signup.website(simpleSignup)
+    val form = forms.signup.full(simpleSignup)
     Ok.page(views.auth.signup(form.form, form.simple))
 
   private def simpleSignup(using Context) =
@@ -232,11 +232,11 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                 .flatMap:
                   case RateLimited | ForbiddenNetwork | SimpleSignupDuplicate => rateLimited
                   case TurnstileFail =>
-                    val f = forms.signup.website(simpleSignup)
+                    val f = forms.signup.full(simpleSignup)
                     val form = f.form.withGlobalError("Invalid captcha")
                     BadRequest.page(views.auth.signup(form, f.simple))
                   case FormInvalid(err) =>
-                    val f = forms.signup.website(simpleSignup)
+                    val f = forms.signup.full(simpleSignup)
                     BadRequest.page(views.auth.signup(err, f.simple))
                   case ConfirmEmail(user, email) =>
                     redirectWithReferrer(routes.Auth.checkYourEmail).withCookies:

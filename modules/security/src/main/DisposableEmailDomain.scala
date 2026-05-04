@@ -9,8 +9,7 @@ import lila.core.net.Domain.Lower
 
 final class DisposableEmailDomain(
     ws: StandaloneWSClient,
-    providerUrl: String,
-    verifyMailBlocked: () => Source[String, ?]
+    providerUrl: String
 )(using Executor, akka.stream.Materializer):
 
   import DisposableEmailDomain.*
@@ -33,7 +32,6 @@ final class DisposableEmailDomain(
           res.bodyAsSource
             .map(_.utf8String)
             .mapConcat(_.linesIterator)
-            .concat(verifyMailBlocked())
             .runWith:
               Sink.fold[Int, String](0): (nb, domain) =>
                 nextBloom.add(domain)

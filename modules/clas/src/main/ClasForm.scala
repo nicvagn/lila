@@ -49,7 +49,7 @@ final class ClasForm(
 
     val create: Form[CreateStudent] = Form:
       mapping(
-        "create-username" -> signupForm.username,
+        "create-username" -> signupForm.uniqueUsername,
         "create-realName" -> cleanNonEmptyText(maxLength = 100).into[RealName]
       )(CreateStudent.apply)(unapply)
 

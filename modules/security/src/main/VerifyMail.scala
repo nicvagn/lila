@@ -4,11 +4,8 @@ import play.api.libs.json.*
 import play.api.libs.ws.DefaultBodyReadables.*
 import play.api.libs.ws.JsonBodyReadables.*
 import play.api.libs.ws.StandaloneWSClient
-import akka.stream.scaladsl.*
-import reactivemongo.akkastream.cursorProducer
 
 import lila.core.net.Domain
-import lila.db.dsl.*
 
 /* An expensive API detecting disposable email.
  * Only hit after trying everything else (DnsApi)
@@ -19,7 +16,9 @@ final private class VerifyMail(
     ws: StandaloneWSClient,
     config: SecurityConfig.VerifyMail,
     mongoCache: lila.memo.MongoCache.Api
-)(using Executor, Scheduler, akka.stream.Materializer):
+)(using Executor, Scheduler):
+
+  export cache.invalidate
 
   def apply(domain: Domain.Lower): Fu[Boolean] =
     if config.key.value.isEmpty then fuccess(true)
@@ -32,20 +31,22 @@ final private class VerifyMail(
           true
         }
 
-  private[security] def fetchAllBlocked: Source[String, ?] =
-    cache.coll
-      .find($doc("_id".$startsWith(s"$prefix:"), "v" -> false), $id(true).some)
-      .cursor[Bdoc](ReadPref.sec)
-      .documentSource()
-      .mapConcat(_.getAsOpt[String]("_id").toList)
-      .map(_.drop(prefix.length + 1))
+  // if a positive value is cached, recompute it.
+  // email verification services can give false negatives at first
+  def refreshIfOk(domain: Domain.Lower): Funit =
+    cache
+      .dbValue(domain)
+      .map(_.orZero)
+      .flatMapz:
+        for
+          _ <- cache.invalidate(domain)
+          ok <- apply(domain)
+        yield logger.info(s"VerifyMail $domain refreshed -> $ok")
 
   private val prefix = "security:check_mail"
 
   private val cache = mongoCache[Domain.Lower, Boolean](512, prefix, 30.days, _.toString): loader =>
     _.maximumSize(512).buildAsyncFuture(loader(fetch))
-
-  export cache.invalidate
 
   private def fetch(domain: Domain.Lower): Fu[Boolean] =
     List(fetchFree(domain), fetchPaid(domain))

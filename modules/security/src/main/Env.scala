@@ -144,11 +144,8 @@ final class Env(
 
   lazy val emailAddressValidator = wire[EmailAddressValidator]
 
-  private lazy val disposableEmailDomain = DisposableEmailDomain(
-    ws = ws,
-    providerUrl = config.disposableEmail.providerUrl,
-    verifyMailBlocked = () => verifyMail.fetchAllBlocked
-  )
+  private lazy val disposableEmailDomain =
+    DisposableEmailDomain(ws, config.disposableEmail.providerUrl)
 
   lazy val spamKeywordsSetting = settingStore[Strings](
     "spamKeywords",
