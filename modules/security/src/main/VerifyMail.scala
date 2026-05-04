@@ -45,7 +45,7 @@ final private class VerifyMail(
 
   private val prefix = "security:check_mail"
 
-  private val cache = mongoCache[Domain.Lower, Boolean](512, prefix, 30.days, _.toString): loader =>
+  private val cache = mongoCache[Domain.Lower, Boolean](512, prefix, 3.days, _.toString): loader =>
     _.maximumSize(512).buildAsyncFuture(loader(fetch))
 
   private def fetch(domain: Domain.Lower): Fu[Boolean] =
