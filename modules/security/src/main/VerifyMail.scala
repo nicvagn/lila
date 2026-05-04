@@ -43,16 +43,12 @@ final private class VerifyMail(
           ok <- apply(domain)
         yield logger.info(s"VerifyMail $domain refreshed -> $ok")
 
-  private val prefix = "security:check_mail"
-
-  private val cache = mongoCache[Domain.Lower, Boolean](512, prefix, 3.days, _.toString): loader =>
-    _.maximumSize(512).buildAsyncFuture(loader(fetch))
-
-  private def fetch(domain: Domain.Lower): Fu[Boolean] =
-    List(fetchFree(domain), fetchPaid(domain))
-      .map(_.logFailure(logger).recover(_ => true)) // fetch fail = domain ok
-      .parallel
-      .map(_.forall(identity)) // ok if both say the domain is ok
+  private val cache =
+    mongoCache.noHeap[Domain.Lower, Boolean]("security:check_mail", 3.days, _.toString): domain =>
+      List(fetchFree(domain), fetchPaid(domain))
+        .map(_.logFailure(logger).recover(_ => true)) // fetch fail = domain ok
+        .parallel
+        .map(_.forall(identity)) // ok if both say the domain is ok
 
   object fetchFree:
     private var rateLimitedUntil = java.time.Instant.EPOCH
