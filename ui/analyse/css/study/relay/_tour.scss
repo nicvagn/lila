@@ -545,6 +545,7 @@
       width: 2em;
       padding: 0;
       padding-inline-start: 0.8em !important;
+
       img {
         height: 1.3em;
         aspect-ratio: 1;
@@ -597,14 +598,18 @@
         font-family: monospace;
         text-align: end;
       }
+
       &.pin {
         button {
-          @include transition();
+          @include transition;
+
           padding: 0.3em 0.6em;
           filter: saturate(0);
+
           &:hover {
             transform: rotate(-25deg);
           }
+
           &.is-pinned {
             filter: none;
             transform: rotate(-45deg) translate(-2px, 2px);
