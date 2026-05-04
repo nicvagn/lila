@@ -24,16 +24,9 @@ import { renderTableWatch, renderTablePlay, renderTableEnd } from './table';
 const selectSound = () => site.sound.play('select');
 const borderSound = () => site.sound.play('outOfBound');
 const errorSound = () => site.sound.play('error');
-const lowTimeSound = () => site.sound.play('lowTime');
 
 export function renderNvui(ctx: RoundNvuiContext): VNode {
   const { ctrl, notify, moveStyle, pieceStyle, prefixStyle, positionStyle, boardStyle, pageStyle } = ctx;
-
-  if (ctrl.clock && ctrl.data.pref.clockSound) {
-    const playerColor = ctrl.data.player.color;
-    const timeLeft = ctrl.clock?.millisOf(playerColor) || ctrl.corresClock?.millisOf(playerColor) || Infinity;
-    if (timeLeft < ctrl.clock.emergMs) lowTimeSound();
-  }
 
   notify.redraw = ctrl.redraw;
   if (!ctrl.chessground) {
