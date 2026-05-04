@@ -33,6 +33,7 @@ import {
 import { ChatCtrl } from 'lib/chat/chatCtrl';
 import { displayColumns } from 'lib/device';
 import { playable, playedTurns, fenToEpd, validUci } from 'lib/game';
+import { plyColor } from 'lib/game/chess';
 import { PromotionCtrl } from 'lib/game/promotion';
 import { pubsub } from 'lib/pubsub';
 import { storedBooleanProp, storedBooleanPropWithEffect } from 'lib/storage';
@@ -355,7 +356,7 @@ export default class AnalyseCtrl implements CevalHandler {
   }
 
   turnColor(): Color {
-    return this.node.ply % 2 === 0 ? 'white' : 'black';
+    return plyColor(this.node.ply);
   }
 
   togglePlay(delay: AutoplayDelay): void {

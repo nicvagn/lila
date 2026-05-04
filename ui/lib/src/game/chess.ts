@@ -17,6 +17,10 @@ export const fenToEpd = (fen: FEN): string => fen.split(' ').slice(0, 4).join(' 
 
 export const plyToTurn = (ply: number): number => Math.floor((ply - 1) / 2) + 1;
 
+export const plyColor = (ply: number): Color => (ply % 2 === 0 ? 'white' : 'black');
+
+export const plyOpponentColor = (ply: number): Color => (ply % 2 === 0 ? 'black' : 'white');
+
 export const pieceCount = (fen: FEN): number => fen.split(/\s/)[0].split(/[nbrqkp]/i).length - 1;
 
 export function fen960(): string {
