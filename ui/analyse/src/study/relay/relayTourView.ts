@@ -30,7 +30,7 @@ import type {
   RelayTourPreview,
 } from './interfaces';
 import RelayCtrl, { type RelayTab } from './relayCtrl';
-import { gamesList } from './relayGames';
+import { gamesLists } from './relayGames';
 import { playersView } from './relayPlayers';
 import { statsView } from './relayStats';
 import { teamsView } from './relayTeams';
@@ -102,7 +102,7 @@ export const tourSide = (ctx: RelayViewContext, kid: LooseVNode) => {
             ]),
           ],
       !ctrl.isEmbed && relay.showStreamerMenu() && renderStreamerMenu(relay),
-      !empty ? gamesList(study, relay) : hl('div.vertical-spacer'),
+      !empty ? gamesLists(study, relay) : hl('div.vertical-spacer'),
       !empty &&
         resizeId &&
         verticalResize({

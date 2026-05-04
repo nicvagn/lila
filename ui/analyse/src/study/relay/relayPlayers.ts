@@ -26,6 +26,8 @@ import type {
   RoundId,
   StatByFideTC,
 } from './interfaces';
+import { playerId } from './playerId';
+import RelayPlayerPin from './relayPlayerPin';
 
 export type RelayPlayerId = FideId | string;
 
@@ -75,12 +77,11 @@ interface PlayerToShow {
   player?: RelayPlayerWithGames;
 }
 
-export const playerId = (p: StudyPlayer) => p.fideId || p.name;
-
 export default class RelayPlayers {
   loading = false;
   players?: RelayPlayer[];
   show?: PlayerToShow;
+  readonly pins: RelayPlayerPin;
   private readonly table?: Tablesort;
 
   constructor(
@@ -91,6 +92,7 @@ export default class RelayPlayers {
     readonly fidePhoto: (id: FideId) => Photo | undefined,
     private readonly redraw: Redraw,
   ) {
+    this.pins = new RelayPlayerPin(tour.id, redraw);
     const locationPlayer = location.hash.startsWith('#players/') && location.hash.slice(9);
     if (locationPlayer) this.showPlayer(locationPlayer);
   }
@@ -272,6 +274,8 @@ const playersList = (ctrl: RelayPlayers): VNode =>
     ctrl.players ? renderPlayers(ctrl, ctrl.players) : [spinner()],
   );
 
+const pinIcon = hl('img', { attrs: { alt: '', src: site.asset.flairSrc('objects.pushpin') } });
+
 export const renderPlayers = (
   ctrl: RelayPlayers,
   players: RelayPlayer[],
@@ -301,6 +305,7 @@ export const renderPlayers = (
         hl(
           'thead',
           hl('tr', [
+            hl('th.pin'),
             withRank && hl('th.rank', { attrs: { ...defaultSort['attrs'], ...dataIcon(licon.Trophy) } }),
             hl('th.player-name', { attrs: { 'data-sort-reverse': true } }, i18n.site.player),
             withRating && hl('th', ((!withScores && !withRank) || forceEloSort) && defaultSort, 'Elo'),
@@ -317,8 +322,28 @@ export const renderPlayers = (
         ),
         hl(
           'tbody',
-          players.map(player =>
-            hl('tr', [
+          players.map(player => {
+            const id = playerId(player);
+            return hl('tr', [
+              hl(
+                'td.pin',
+                id &&
+                  hl(
+                    'button',
+                    {
+                      class: { 'is-pinned': ctrl.pins.isPinned(id) },
+                      attrs: {
+                        title: 'Pin player',
+                      },
+                      on: {
+                        click() {
+                          ctrl.pins.togglePin(id);
+                        },
+                      },
+                    },
+                    pinIcon,
+                  ),
+              ),
               withRank &&
                 hl('td.rank', { attrs: { 'data-sort': player.rank ? -player.rank : 0 } }, player.rank),
               playerTd(player, ctrl, true),
@@ -354,8 +379,8 @@ export const renderPlayers = (
                   `${tb.points}`,
                 ),
               ),
-            ]),
-          ),
+            ]);
+          }),
         ),
       ],
     ),
