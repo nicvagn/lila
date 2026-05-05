@@ -1,6 +1,6 @@
 // no side effects allowed due to re-export by index.ts
 
-import { type Chess, type NormalMove, parseUci, makeUci } from 'chessops';
+import { type Chess, type NormalMove, parseUci, makeUci, opposite } from 'chessops';
 import { normalizeMove } from 'chessops/chess';
 
 import { shuffle } from '@/algo';
@@ -19,7 +19,7 @@ export const plyToTurn = (ply: number): number => Math.floor((ply - 1) / 2) + 1;
 
 export const plyColor = (ply: number): Color => (ply % 2 === 0 ? 'white' : 'black');
 
-export const plyOpponentColor = (ply: number): Color => (ply % 2 === 0 ? 'black' : 'white');
+export const plyOpponentColor = (ply: number): Color => opposite(plyColor(ply));
 
 export const pieceCount = (fen: FEN): number => fen.split(/\s/)[0].split(/[nbrqkp]/i).length - 1;
 
