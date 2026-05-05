@@ -7,7 +7,7 @@ import { json as xhrJson } from 'lib/xhr';
 
 import { playerFedFlag } from '@/view/util';
 
-import { federations, localizedName } from '../fideFeds';
+import * as fideFeds from '../fideFeds';
 import type { Federation, StudyPlayerFromServer } from '../interfaces';
 import { convertPlayerFromServer } from '../studyChapters';
 import type {
@@ -214,14 +214,15 @@ export default class RelayTeamLeaderboard {
   };
 
   private readonly teamNameToFed = (teamName: RelayTeamName): Federation | undefined => {
-    const foundFed = Object.entries(federations).find(([_, [engName, _2]]) =>
-      teamName.toLowerCase().startsWith(engName.toLowerCase()),
+    const teamNameLower = teamName.toLowerCase();
+    const foundFed = Object.entries(fideFeds.federations).find(([_, [engName, _2]]) =>
+      teamNameLower.startsWith(engName.toLowerCase()),
     );
     return (
       foundFed && {
         id: foundFed[0],
         name: foundFed[1][0],
-        i18nName: foundFed[1][1] ? localizedName(foundFed[0]) : undefined,
+        i18nName: foundFed[1][1] ? fideFeds.localizedName(foundFed[0]) : undefined,
       }
     );
   };
