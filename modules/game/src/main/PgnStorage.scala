@@ -34,7 +34,7 @@ private object PgnStorage:
           try Encoder.decode(bytes.value, plies.value)
           catch
             case e: java.nio.BufferUnderflowException =>
-              logger.error(s"Can't decode game $id PGN", e)
+              logger.error(s"Can't decode game $id PGN")
               throw e
         Decoded(
           sans = SanStr.from(decoded.pgnMoves.toVector),
