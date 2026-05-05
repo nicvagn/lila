@@ -36,7 +36,7 @@ export default class RelayTeamLeaderboard {
   loadFromXhr = throttle(3 * 1000, async () => {
     this.standings = await xhrJson(`/broadcast/${this.tourId}/teams/standings`);
     const showFeds = this.looksLikeFederationTournament();
-    this.standings = this.standings?.map(t => this.converTeamFromServer(t, showFeds));
+    this.standings = this.standings?.map(t => this.convertTeamFromServer(t, showFeds));
     this.table?.refresh();
     this.redraw();
   });
@@ -197,7 +197,7 @@ export default class RelayTeamLeaderboard {
       ],
     );
 
-  private readonly converTeamFromServer = (
+  private readonly convertTeamFromServer = (
     team: RelayTeamStandingsFromServer,
     showFeds: boolean,
   ): RelayTeamStandingsEntry => ({
