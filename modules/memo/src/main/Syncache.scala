@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 import scala.util.Success
 
 import lila.common.Uptime
+import lila.mon.extensions.*
 
 /** A synchronous cache from asynchronous computations. It will attempt to serve cached responses
   * synchronously. If none is available, it starts an async computation, and either waits for the result or
@@ -37,7 +38,7 @@ final class Syncache[K, V](
         new CacheLoader[K, Fu[V]]:
           def load(k: K) =
             compute(k)
-              .mon(_ => recCompute) // monitoring: record async time
+              .mon(recCompute) // monitoring: record async time
               .recover { case e: Exception =>
                 logger.branch(s"syncache $name").warn(s"key=$k", e)
                 cache.invalidate(k)
@@ -79,15 +80,15 @@ final class Syncache[K, V](
 
   private def waitForResult(k: K, fu: Fu[V], duration: FiniteDuration): V =
     try
-      lila.common.Chronometer.syncMon(_ => recWait):
+      lila.mon.Chronometer.syncMon(recWait):
         fu.await(duration, s"syncache:$name")
     catch
       case _: java.util.concurrent.TimeoutException =>
         incTimeout()
         default(k)
 
-  private val incMiss = (() => lila.mon.syncache.miss(name).increment())
-  private val incTimeout = (() => lila.mon.syncache.timeout(name).increment())
+  private val incMiss = () => lila.mon.syncache.miss(name).increment()
+  private val incTimeout = () => lila.mon.syncache.timeout(name).increment()
   private val recWait = lila.mon.syncache.wait(name)
   private val recCompute = lila.mon.syncache.compute(name)
 

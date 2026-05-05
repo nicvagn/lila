@@ -98,6 +98,11 @@ lazy val coreI18n = module("coreI18n",
   Seq(scalatags) ++ scalalib.bundle
 )
 
+lazy val mon = module("mon",
+  Seq(core),
+  Seq(kamon.core, kamon.influxdb)
+)
+
 lazy val common = module("common",
   Seq(core),
   Seq(
@@ -111,7 +116,7 @@ lazy val db = module("db",
 )
 
 lazy val memo = module("memo",
-  Seq(db),
+  Seq(db, mon),
   Seq(scaffeine, bloomFilter) ++ playWs.bundle
 )
 
@@ -130,7 +135,7 @@ lazy val i18n = module("i18n",
 )
 
 lazy val rating = module("rating",
-  Seq(db, ui),
+  Seq(db, ui, mon),
   tests.bundle ++ Seq(apacheMath)
 ).dependsOn(common % "test->test")
 
@@ -346,7 +351,7 @@ lazy val security = module("security",
 )
 
 lazy val shutup = module("shutup",
-  Seq(db),
+  Seq(db, mon),
   tests.bundle
 )
 
@@ -401,17 +406,17 @@ lazy val playban = module("playban",
 )
 
 lazy val push = module("push",
-  Seq(db),
+  Seq(db, mon),
   playWs.bundle ++ Seq(googleOAuth)
 )
 
 lazy val irc = module("irc",
-  Seq(common),
+  Seq(common, mon),
   playWs.bundle
 )
 
 lazy val mailer = module("mailer",
-  Seq(memo, coreI18n, ui),
+  Seq(memo, ui),
   Seq(hasher, play.mailer)
 )
 

@@ -11,6 +11,7 @@ import scala.util.{ Failure, Success, Try }
 
 import lila.core.net.Crawler
 import lila.core.config.Secret
+import lila.mon.extensions.*
 
 final private class OpeningExplorer(
     ws: StandaloneWSClient,
@@ -47,7 +48,7 @@ final private class OpeningExplorer(
               err => fufail(s"Couldn't parse $err"),
               data => fuccess(data.some)
             )
-      .monSuccess(_.opening.explorer.stats)
+      .monSuccess(lila.mon.opening.explorer.stats)
       .map(Success(_))
       .recover:
         case e: Exception =>

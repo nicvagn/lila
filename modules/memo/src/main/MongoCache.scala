@@ -4,6 +4,7 @@ import com.github.blemale.scaffeine.AsyncLoadingCache
 import reactivemongo.api.bson.*
 
 import lila.db.dsl.{ *, given }
+import lila.mon.extensions.*
 
 import CacheApi.*
 
@@ -36,7 +37,7 @@ final class MongoCache[K, V: BSONHandler] private (
               )
               .inject(v)
           }
-          .mon(_.mongoCache.compute(name))
+          .mon(lila.mon.mongoCache.compute(name))
       case Some(entry) =>
         lila.mon.mongoCache.request(name, hit = true).increment()
         fuccess(entry.v)

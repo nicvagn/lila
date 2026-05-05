@@ -11,6 +11,7 @@ import lila.db.dsl.{ *, given }
 import lila.memo.CacheApi.*
 import lila.memo.SettingStore.Text.given
 import lila.report.Room.Scores
+import lila.mon.extensions.*
 
 final class ReportApi(
     val coll: Coll,
@@ -336,7 +337,7 @@ final class ReportApi(
           systemPrompt = commsPromptSetting.get(),
           model = commsModelSetting.get()
         )
-        .monSuccess(_.mod.report.automod.request)
+        .monSuccess(lila.mon.mod.report.automod.request)
       val candidate = for
         (images, textResponse) <- automodApi.markdownImages(Markdown(userText)).zip(assessText)
         flaggedImages = images.flatMap(_.automod).flatMap(_.flagged)
@@ -623,7 +624,7 @@ final class ReportApi(
       maxSize = Max(32),
       timeout = 20.seconds,
       name = "report.inquiries",
-      lila.log.asyncActorMonitor.full
+      lila.mon.asyncActorMonitor.full
     )
 
     def allBySuspect: Fu[Map[UserId, Report.Inquiry]] =

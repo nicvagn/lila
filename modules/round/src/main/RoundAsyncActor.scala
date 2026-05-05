@@ -11,6 +11,7 @@ import lila.game.GameExt.*
 import lila.game.{ Event, GameRepo, Player as GamePlayer, Progress }
 import lila.room.RoomSocket.{ Protocol as RP, * }
 import lila.round.RoundGame.*
+import lila.mon.extensions.*
 
 final private class RoundAsyncActor(
     dependencies: RoundAsyncActor.Dependencies,
@@ -195,7 +196,7 @@ final private class RoundAsyncActor(
     case RoundBus.FishnetPlay(uci, hash) =>
       handle: game =>
         player.fishnet(game, hash, uci)
-      .mon(_.round.move.time)
+      .mon(lila.mon.round.move.time)
 
     case RoundBus.Abort(playerId) =>
       handle(playerId): pov =>

@@ -15,6 +15,7 @@ import lila.core.net.IpAddress
 import lila.core.round.*
 import lila.core.socket.{ protocol as P, * }
 import lila.room.RoomSocket.{ Protocol as RP, * }
+import lila.mon.extensions.*
 
 final class RoundSocket(
     socketKit: ParallelSocketKit,

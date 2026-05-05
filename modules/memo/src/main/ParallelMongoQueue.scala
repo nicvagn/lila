@@ -50,7 +50,7 @@ final class ParallelMongoQueue[A: BSONHandler](
     maxSize = Max(256),
     timeout = 5.seconds,
     s"$name.workQueue",
-    lila.log.asyncActorMonitor.full
+    lila.mon.asyncActorMonitor.full
   )
 
   /* Read the oldest <parallelism()> entries from the queue

@@ -58,7 +58,7 @@ final class Env(
   lazy val passwordHasher = PasswordHasher(
     secret = config.passwordBPassSecret,
     logRounds = 10,
-    hashTimer = lila.common.Chronometer.syncMon(_.user.auth.hashTime)
+    hashTimer = lila.mon.Chronometer.syncMon(lila.mon.user.auth.hashTime)
   )
 
   lazy val authenticator = wire[Authenticator]

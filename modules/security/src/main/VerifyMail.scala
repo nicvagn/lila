@@ -6,6 +6,7 @@ import play.api.libs.ws.JsonBodyReadables.*
 import play.api.libs.ws.StandaloneWSClient
 
 import lila.core.net.Domain
+import lila.mon.extensions.*
 
 /* An expensive API detecting disposable email.
  * Only hit after trying everything else (DnsApi)
@@ -77,7 +78,7 @@ final private class VerifyMail(
                 ok
               ).getOrElse:
                 throw lila.core.lilaism.LilaException(s"$url ${res.status} ${res.body[String].take(200)}")
-          .monTry(res => _.security.mailcheckApi.fetch(res.isSuccess, res.getOrElse(true)))
+          .monTry(res => lila.mon.security.mailcheckApi.fetch(res.isSuccess, res.getOrElse(true)))
 
   private def fetchPaid(domain: Domain.Lower): Fu[Boolean] =
     val url = s"https://verifymail.io/api/$domain"
@@ -99,4 +100,4 @@ final private class VerifyMail(
           ok
         ).getOrElse:
           throw lila.core.lilaism.LilaException(s"$url ${res.status} ${res.body[String].take(200)}")
-      .monTry(res => _.security.verifyMailApi.fetch(res.isSuccess, res.getOrElse(true)))
+      .monTry(res => lila.mon.security.verifyMailApi.fetch(res.isSuccess, res.getOrElse(true)))

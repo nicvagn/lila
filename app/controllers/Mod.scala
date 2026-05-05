@@ -1,10 +1,10 @@
 package controllers
 
+import scala.annotation.nowarn
+
 import alleycats.Zero
 import play.api.libs.json.Json
 import play.api.mvc.*
-
-import scala.annotation.nowarn
 
 import lila.app.{ *, given }
 import lila.common.HTTPRequest
@@ -15,6 +15,7 @@ import lila.core.security.FingerHash
 import lila.core.userId.ModId
 import lila.mod.{ Modlog, ModUserSearch }
 import lila.report.{ Mod as AsMod, Suspect }
+import lila.mon.extensions.*
 
 final class Mod(
     env: Env,
@@ -253,26 +254,28 @@ final class Mod(
         given lila.mod.IpRender.RenderIp = env.mod.ipRender.apply
         env.game.gameRepo
           .recentPovsByUserFromSecondary(user, 80)
-          .mon(_.mod.comm.segment("recentPovs"))
+          .mon(lila.mon.mod.comm.segment("recentPovs"))
           .flatMap: povs =>
             (
-              env.api.modTimeline.load(user, withPlayBans = false).mon(_.mod.comm.segment("modTimeline")),
+              env.api.modTimeline
+                .load(user, withPlayBans = false)
+                .mon(lila.mon.mod.comm.segment("modTimeline")),
               priv.so:
                 env.chat.api.playerChat
                   .optionsByOrderedIds(povs.map(_.gameId.into(ChatId)))
-                  .mon(_.mod.comm.segment("playerChats"))
+                  .mon(lila.mon.mod.comm.segment("playerChats"))
               ,
               priv.so:
                 env.msg.api
                   .recentByForMod(user, 30)
-                  .mon(_.mod.comm.segment("pms"))
+                  .mon(lila.mon.mod.comm.segment("pms"))
               ,
               env.shutup.api
                 .getPublicLines(user.id)
-                .mon(_.mod.comm.segment("publicChats")),
+                .mon(lila.mon.mod.comm.segment("publicChats")),
               env.report.api.inquiries
                 .ofModId(me.id)
-                .mon(_.mod.comm.segment("inquiries")),
+                .mon(lila.mon.mod.comm.segment("inquiries")),
               env.security.userLogins(user, 100).flatMap {
                 userC.loginsTableData(user, _, 100)
               }

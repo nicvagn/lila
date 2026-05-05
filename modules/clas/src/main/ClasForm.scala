@@ -6,6 +6,7 @@ import play.api.i18n.Lang
 
 import lila.common.Form.{ cleanNonEmptyText, cleanText, into }
 import lila.clas.Student.RealName
+import lila.mon.extensions.*
 
 final class ClasForm(
     lightUserAsync: lila.core.LightUser.Getter,

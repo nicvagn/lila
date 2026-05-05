@@ -18,8 +18,8 @@ import lila.study.PgnDump.WithFlags
 import lila.study.Study.WithChapter
 import lila.study.{ Who, Chapter, Orders, Settings, Study as StudyModel, StudyForm }
 import lila.tree.Node.partitionTreeWriter
-import com.fasterxml.jackson.core.JsonParseException
 import lila.ui.Page
+import lila.mon.extensions.*
 
 final class Study(
     env: Env,
@@ -258,7 +258,7 @@ final class Study(
   }.optionFu:
     env.chat.api.userChat
       .findMine(study.id.into(ChatId))
-      .mon(_.chat.fetch("study"))
+      .mon(lila.mon.chat.fetch("study"))
 
   def createAs = AuthBody { ctx ?=> me ?=>
     bindForm(StudyForm.importGame.form)(
@@ -567,6 +567,7 @@ final class Study(
     bindForm(StudyForm.topicsForm)(
       _ => Redirect(routes.Study.topics),
       topics =>
+        import com.fasterxml.jackson.core.JsonParseException
         try env.study.topicApi.userTopics(me, topics).inject(Redirect(routes.Study.topics))
         catch case e: JsonParseException => BadRequest(e.getMessage)
     )

@@ -11,6 +11,7 @@ import lila.core.security.ClearPassword
 import lila.user.TotpSecret.{ base32, verify }
 import lila.user.{ TotpSecret, TotpToken }
 import lila.oauth.OAuthSignedClient.SimpleSignup
+import lila.mon.extensions.*
 
 final class SecurityForm(
     userRepo: lila.user.UserRepo,

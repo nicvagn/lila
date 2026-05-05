@@ -26,7 +26,7 @@ final class RelayPush(
     expiration = 1.minute,
     timeout = 10.seconds,
     name = "relay.push",
-    lila.log.asyncActorMonitor.full
+    lila.mon.asyncActorMonitor.full
   )
 
   def apply(rt: RelayRound.WithTour, pgn: PgnStr)(using Me, UserAgent): Fu[Results] =
