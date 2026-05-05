@@ -97,7 +97,7 @@ final class Signup(
           yield (u, domain.lower)
           for
             _ <- data.so: (username, emailDomain) =>
-              (disposableEmailAttempt.prevAttempts(username, ip).size > 1).so:
+              (disposableEmailAttempt.prevAttempts(username, ip).size > 0).so:
                 verifyMail.refreshIfOk(emailDomain)
             _ <- forms.preloadEmailDns()
             res <- forms.signup
