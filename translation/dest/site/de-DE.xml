@@ -95,6 +95,8 @@
   <string name="database">Datenbank</string>
   <string name="whiteDrawBlack">Weiß / Remis / Schwarz</string>
   <string name="averageRatingX">Durchschnittliche Wertungszahl: %s</string>
+  <string name="minRatingX">Minimale Wertungszahl von %s</string>
+  <string name="maxRatingX">Maximale Wertungszahl von %s</string>
   <string name="recentGames">Neueste Partien</string>
   <string name="topGames">Spitzenpartien</string>
   <string name="masterDbExplanation">Zwei Millionen OTB-Partien von Spielern mit einer Wertungszahl über %1$s FIDE aus den Jahren %2$s bis %3$s</string>
@@ -268,7 +270,7 @@
   <string name="emailCanTakeSomeTime">Es kann etwas dauern, bis sie ankommt.</string>
   <string name="refreshInboxAfterFiveMinutes">Warte 5 Minuten und aktualisiere dein E-Mail-Postfach.</string>
   <string name="checkSpamFolder">Überprüfe auch dein Spam-Verzeichnis, sie könnte darin gelandet sein. Falls dem so ist, markiere sie als kein Spam.</string>
-  <string name="sendEmailForAccountVerification" comment="%s is a unique email address in the format &lt;username&gt;.&lt;milliseconds&gt;@verify.lichess.org -- to help the person that just registered verify their user account in case they did not receive a verification email.">Wenn du deine Bestätigungs-Mail nicht finden kannst, sende eine E-Mail an %s und wir bestätigen deinen Account.</string>
+  <string name="sendEmailForAccountVerification">Wenn du deine Bestätigungs-Mail nicht finden kannst, sende eine E-Mail an %s und wir bestätigen deinen Account.</string>
   <string name="accountConfirmed">Der Benutzer %s ist erfolgreich bestätigt.</string>
   <string name="accountCanLogin">Du kannst dich ab sofort als %s einloggen.</string>
   <string name="accountConfirmationEmailNotNeeded">Du benötigst keine Bestätigungs-E-Mail.</string>
