@@ -9,7 +9,7 @@ import { makeSanAndPlay } from 'chessops/san';
 import { isNormal, type Move } from 'chessops/types';
 import { opposite, parseUci, makeSquare, roleToChar, makeUci, parseSquare } from 'chessops/util';
 import { normalizeMove } from 'chessops/variant';
-import { type ArrowKey, type KeyboardMove, ctrl as makeKeyboardMove } from 'keyboardMove';
+import { type ArrowKey, type KeyboardMove, ctrl as makeKeyboardMove } from 'keyboard-move';
 
 import {
   defined,

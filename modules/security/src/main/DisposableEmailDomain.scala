@@ -3,9 +3,7 @@ package lila.security
 import play.api.libs.ws.StandaloneWSClient
 import bloomfilter.mutable.BloomFilter
 import akka.stream.scaladsl.*
-
-import lila.core.net.Domain
-import lila.core.net.Domain.Lower
+import scalalib.net.Domain
 
 final class DisposableEmailDomain(
     ws: StandaloneWSClient,

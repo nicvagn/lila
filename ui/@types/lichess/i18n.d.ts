@@ -3543,8 +3543,6 @@ interface I18n {
     estimatedStart: string;
     /** Evaluating your move ... */
     evaluatingYourMove: string;
-    /** Evaluation gauge */
-    evaluationGauge: string;
     /** Playing now */
     eventInProgress: string;
     /** Everybody gets all features for free */
@@ -4125,6 +4123,8 @@ interface I18n {
     playX: I18nFormat;
     /** We aim to provide a pleasant chess experience for everyone. */
     pleasantChessExperience: string;
+    /** Please be nice in the forum. */
+    pleaseBeNiceInTheForum: string;
     /** Points */
     points: string;
     /** Popular openings */

@@ -3,9 +3,9 @@ package lila.security
 import play.api.libs.json.*
 import play.api.libs.ws.JsonBodyReadables.*
 import play.api.libs.ws.StandaloneWSClient
+import scalalib.net.Domain
 
 import lila.core.lilaism.LilaException
-import lila.core.net.Domain
 import lila.db.dsl.given
 import lila.mon.extensions.*
 

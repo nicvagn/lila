@@ -8,8 +8,8 @@ import play.api.libs.json.{ JsObject, JsValue, Json, Reads }
 import play.api.libs.ws.JsonBodyReadables.*
 import play.api.libs.ws.StandaloneWSClient
 import scala.util.{ Failure, Success, Try }
+import scalalib.net.Crawler
 
-import lila.core.net.Crawler
 import lila.core.config.Secret
 import lila.mon.extensions.*
 

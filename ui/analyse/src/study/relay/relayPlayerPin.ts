@@ -8,7 +8,7 @@ import { type RelayPlayerId } from './relayPlayers';
 
 export default class RelayPlayerPin {
   private readonly pins = new Set<RelayPlayerId>();
-  private readonly store = storedMap<RelayPlayerId[]>(`relay.players.pins.${myUserId()}`, 100, () => []);
+  private readonly store = storedMap<RelayPlayerId[]>(`relay.players.pins.${myUserId()}`, 50, () => []);
 
   constructor(
     private readonly tourId: TourId,
@@ -22,7 +22,9 @@ export default class RelayPlayerPin {
   isPlayerPinned: (p: StudyPlayer) => boolean = p => this.isPinned(playerId(p));
 
   isChapterPinned: (c: ChapterPreview) => boolean = c =>
-    !!c.players && (this.isPlayerPinned(c.players.white) || this.isPlayerPinned(c.players.black));
+    this.anyPinned() &&
+    !!c.players &&
+    (this.isPlayerPinned(c.players.white) || this.isPlayerPinned(c.players.black));
 
   anyPinned: () => boolean = () => this.pins.size > 0;
 

@@ -403,12 +403,12 @@ final class ModlogApi(repo: ModlogRepo, userRepo: UserRepo, ircApi: IrcApi, pres
             case u => u
 
   private def add(m: Modlog): Funit =
-    lila.mon.mod.log.create.increment()
+    lila.mon.mod.log.create(m.mod.userId, m.action).increment()
     lila.log("mod").info(m.toString)
     m.notable.so:
       coll.insert.one {
         bsonWriteObjTry[Modlog](m).get ++ (!m.isLichess).so($doc("human" -> true))
-      } >> (m.notableZulip.so(zulipMonitor(m)))
+      } >> m.notableZulip.so(zulipMonitor(m))
 
   private def zulipMonitor(m: Modlog): Funit =
     import lila.mod.Modlog as M

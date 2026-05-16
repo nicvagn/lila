@@ -128,7 +128,6 @@
   <string name="enable">Einschalten</string>
   <string name="bestMoveArrow">Pfeil für besten Zug</string>
   <string name="showVariationArrows">Varianten-Pfeile anzeigen</string>
-  <string name="evaluationGauge">Bewertungsanzeige</string>
   <string name="visualMotifs">Visuelle Motive</string>
   <string name="undefendedPieces">Nicht verteidigte Figuren</string>
   <string name="pinnedPieces">Gefesselte Figuren</string>
@@ -943,6 +942,7 @@
   <string name="tryTheContactPage">probiere die Kontaktseite aus</string>
   <string name="makeSureToRead">Bitte lies unbedingt: %1$s</string>
   <string name="theForumEtiquette">Die Forums-Etikette</string>
+  <string name="pleaseBeNiceInTheForum" comment="Placeholder text that appears before starting to compose a topic or reply in the forum.">Bitte sei freundlich im Forum.</string>
   <string name="thisTopicIsArchived">Dieses Thema wurde archiviert und kann nicht mehr beantwortet werden.</string>
   <string name="joinTheTeamXToPost">Tritt %1$s bei, um in diesem Forum schreiben zu können</string>
   <string name="teamNamedX">%1$s Team</string>

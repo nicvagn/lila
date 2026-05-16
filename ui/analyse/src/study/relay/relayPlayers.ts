@@ -14,6 +14,7 @@ import { json as xhrJson } from 'lib/xhr';
 import { playerFedFlag } from '@/view/util';
 
 import type { ChapterId, FideId, PointsStr, StudyPlayer, StudyPlayerFromServer } from '../interfaces';
+import { pinIcon } from '../multiBoard';
 import { convertPlayerFromServer } from '../studyChapters';
 import { playerColoredResult } from './customScoreStatus';
 import { teamLinkData } from './deepLink';
@@ -274,8 +275,6 @@ const playersList = (ctrl: RelayPlayers): VNode =>
     ctrl.players ? renderPlayers(ctrl, ctrl.players) : [spinner()],
   );
 
-const pinIcon = hl('img', { attrs: { alt: '', src: site.asset.flairSrc('objects.pushpin') } });
-
 export const renderPlayers = (
   ctrl: RelayPlayers,
   players: RelayPlayer[],
@@ -305,7 +304,7 @@ export const renderPlayers = (
         hl(
           'thead',
           hl('tr', [
-            hl('th.pin'),
+            hl('th.pin', defaultSort),
             withRank && hl('th.rank', { attrs: { ...defaultSort['attrs'], ...dataIcon(licon.Trophy) } }),
             hl('th.player-name', { attrs: { 'data-sort-reverse': true } }, i18n.site.player),
             withRating && hl('th', ((!withScores && !withRank) || forceEloSort) && defaultSort, 'Elo'),
@@ -324,14 +323,16 @@ export const renderPlayers = (
           'tbody',
           players.map(player => {
             const id = playerId(player);
+            const pinned = ctrl.pins.isPinned(id);
             return hl('tr', [
               hl(
                 'td.pin',
+                { attrs: { 'data-sort': pinned ? 1 : 0 } },
                 id &&
                   hl(
                     'button',
                     {
-                      class: { 'is-pinned': ctrl.pins.isPinned(id) },
+                      class: { pinned },
                       attrs: {
                         title: 'Pin player',
                       },
@@ -341,7 +342,7 @@ export const renderPlayers = (
                         },
                       },
                     },
-                    pinIcon,
+                    pinIcon(),
                   ),
               ),
               withRank &&

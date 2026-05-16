@@ -128,7 +128,6 @@
   <string name="enable">Activar</string>
   <string name="bestMoveArrow">Frecha coa mellor xogada</string>
   <string name="showVariationArrows">Amosar as frechas das variantes</string>
-  <string name="evaluationGauge">Indicador de avaliación</string>
   <string name="visualMotifs">Motivos visuais</string>
   <string name="undefendedPieces">Pezas non defendidas</string>
   <string name="pinnedPieces">Pezas cravadas</string>
@@ -943,6 +942,7 @@
   <string name="tryTheContactPage">proba a páxina de contacto</string>
   <string name="makeSureToRead">Asegúrate de ler %1$s</string>
   <string name="theForumEtiquette">a etiqueta do foro</string>
+  <string name="pleaseBeNiceInTheForum" comment="Placeholder text that appears before starting to compose a topic or reply in the forum.">Por favor, sé amable no foro.</string>
   <string name="thisTopicIsArchived">Este tema foi arquivado e non admite respostas.</string>
   <string name="joinTheTeamXToPost">Únete a %1$s para publicar neste foro</string>
   <string name="teamNamedX">equipo %1$s</string>

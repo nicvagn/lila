@@ -5,9 +5,9 @@ import kamon.metric.Timer
 import kamon.tag.TagSet
 import kamon.Kamon.{ timer, gauge, counter, histogram }
 import chess.variant.Variant
+import scalalib.net.UserAgent
 
 import lila.core.id.*
-import lila.core.net.*
 import lila.core.userId.{ UserId, UserName }
 import lila.core.perf.PerfKey
 
@@ -256,9 +256,13 @@ object user:
 object actor:
   def queueSize(name: String) = gauge("trouper.queueSize").withTag("name", name)
 object mod:
+  def queueStatus(room: String, score: Int) =
+    gauge("mod.queueStatus").withTags:
+      tags("room" -> room, "threshold" -> score.toString)
   object report:
     val highest = gauge("mod.report.highest").withoutTags()
-    val close = counter("mod.report.close").withoutTags()
+    def close(mod: UserId, room: String) = counter("mod.report.close").withTags:
+      tags("mod" -> mod, "room" -> room)
     def create(reason: String, score: Int) =
       counter("mod.report.create").withTags:
         tags("reason" -> reason, "score" -> score)
@@ -268,7 +272,8 @@ object mod:
       val imageRequest = future("mod.report.automod.image.request")
       def imageFlagged(v: Boolean) = counter("mod.report.automod.image.flagged").withTag("flagged", v)
   object log:
-    val create = counter("mod.log.create").withoutTags()
+    def create(mod: UserId, action: String) = counter("mod.log.create").withTags:
+      tags("mod" -> mod, "action" -> action)
   object irwin:
     val report = counter("mod.report.irwin.report").withoutTags()
     val mark = counter("mod.report.irwin.mark").withoutTags()

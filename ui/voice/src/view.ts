@@ -1,6 +1,6 @@
 import { onClickAway } from 'lib';
 import * as licon from 'lib/licon';
-import { onInsert, bind, hl, type VNode, snabDialog, type Dialog } from 'lib/view';
+import { onInsert, bind, hl, type VNode, snabDialog, type Dialog, dataIcon } from 'lib/view';
 import { cmnToggleProp } from 'lib/view/cmn-toggle';
 import { jsonSimple } from 'lib/xhr';
 
@@ -17,11 +17,11 @@ export function renderVoiceBar(ctrl: VoiceCtrl, redraw: () => void, cls?: string
         hook: onInsert(el => ctrl.mic.setController(voiceBarUpdater(ctrl, el))),
       }),
       hl('button#voice-help-button', {
-        attrs: { 'data-icon': licon.InfoCircle, title: 'Voice help' },
+        attrs: { ...dataIcon(licon.InfoCircle), title: 'Voice help' },
         hook: bind('click', () => ctrl.showHelp(true), undefined, false),
       }),
       hl('button#voice-settings-button', {
-        attrs: { 'data-icon': licon.Gear, title: 'Voice settings' },
+        attrs: { ...dataIcon(licon.Gear), title: 'Voice settings' },
         class: { active: ctrl.showPrefs() },
         hook: bind('click', () => ctrl.showPrefs.toggle(), redraw, false),
       }),

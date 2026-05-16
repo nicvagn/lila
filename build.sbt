@@ -73,8 +73,8 @@ lazy val modules = Seq(
   insight, evaluation, storm,
   // level 7
   // everything else is free from deps; do the big ones first
-  relay, security, tournament, plan, round,
-  swiss, insight, fishnet, tutor, mod, challenge, web,
+  relay, tutor, security, tournament, plan, round,
+  swiss, insight, fishnet, mod, challenge, web,
   team, forum, streamer, simul, activity, msg, ublog,
   notifyModule, clas, perfStat, opening, timeline,
   setup, video, fide, title, push,
@@ -376,7 +376,7 @@ lazy val study = module("study",
 ).dependsOn(common % "test->test")
 
 lazy val relay = module("relay",
-  Seq(study, game, report),
+  Seq(study, game),
   Seq(chess.tiebreak) ++ tests.bundle
 ).dependsOn(coreI18n % "test->test")
 

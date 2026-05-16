@@ -13,6 +13,7 @@ import {
   type LooseVNode,
   hl,
   onInsert,
+  dataIcon,
 } from 'lib/view';
 
 import type RoundController from '../ctrl';
@@ -189,7 +190,7 @@ function initMessage(ctrl: RoundController) {
     playable(d) &&
     d.game.turns === 0 &&
     !d.player.spectator &&
-    hl('div.message', util.justIcon(licon.InfoCircle), [
+    hl('div.message', { attrs: dataIcon(licon.InfoCircle) }, [
       hl('div', [
         i18n.site[d.player.color === 'white' ? 'youPlayTheWhitePieces' : 'youPlayTheBlackPieces'],
         d.player.color === 'white' && [hl('br'), hl('strong', i18n.site.itsYourTurn)],

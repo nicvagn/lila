@@ -4,8 +4,8 @@ import play.api.libs.json.*
 import play.api.libs.ws.DefaultBodyReadables.*
 import play.api.libs.ws.JsonBodyReadables.*
 import play.api.libs.ws.StandaloneWSClient
+import scalalib.net.Domain
 
-import lila.core.net.Domain
 import lila.mon.extensions.*
 
 /* An expensive API detecting disposable email.
@@ -37,12 +37,12 @@ final private class VerifyMail(
   def refreshIfOk(domain: Domain.Lower): Funit =
     cache
       .dbValue(domain)
-      .map(_.orZero)
-      .flatMapz:
-        for
-          _ <- cache.invalidate(domain)
-          ok <- apply(domain)
-        yield logger.info(s"VerifyMail $domain refreshed -> $ok")
+      .flatMapz: (v, age) =>
+        (v && age.toMinutes > 20).so:
+          for
+            _ <- cache.invalidate(domain)
+            ok <- apply(domain)
+          yield logger.info(s"VerifyMail $domain refreshed -> $ok")
 
   private val cache =
     mongoCache.noHeap[Domain.Lower, Boolean]("security:check_mail", 3.days, _.toString): domain =>

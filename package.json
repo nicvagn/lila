@@ -14,7 +14,7 @@
       "@toast-ui/editor": "ui/bits/patches/@toast-ui__editor.patch"
     }
   },
-  "dependencies": {
+  "devDependencies": {
     "@lichess-org/chessground": "^10.1.1",
     "@lichess-org/pgn-viewer": "^2.6.0",
     "@types/lichess": "workspace:*",
@@ -32,7 +32,7 @@
     "stylelint-scss": "^7.0.0",
     "svgo": "^4.0.1",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "//": [
     "snabbdom pinned to 3.5.1 until https://github.com/snabbdom/snabbdom/issues/1114 is resolved",
@@ -52,7 +52,9 @@
     "metals": "tail -F .metals/metals.log",
     "serverlog": "journalctl --user -fu lila -o cat & tail -F .metals/metals.log",
     "i18n-file-gen": "pnpx tsx bin/i18n-file-gen.ts",
+    "icon-files-gen": "python3 bin/gen/licon.py",
     "multilog": "pnpm serverlog & ui/build -w",
+    "workspace-check": "pnpx @manypnk/cli check",
     "add-hooks": "git config get --all core.hooksPath | grep -Fxq bin/git-hooks || git config set --append core.hooksPath bin/git-hooks",
     "remove-hooks": "git config unset --value=bin/git-hooks core.hooksPath || true"
   },

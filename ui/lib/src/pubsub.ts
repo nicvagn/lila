@@ -6,7 +6,7 @@ import type { TreePath } from './tree/types';
 export type PubsubEventKey = keyof PubsubEvents;
 
 export interface PubsubEvents {
-  'ab.rep': (data: 'kbc') => void;
+  'ab.rep': (data: string) => void;
   'analysis.closeAll': () => void;
   'analysis.change': (fen: FEN, path: TreePath) => void;
   'analysis.chart.click': (index: number) => void;

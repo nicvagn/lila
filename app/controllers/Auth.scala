@@ -39,21 +39,25 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
           _ <- env.msg.systemMsg.lichobileDeprecationMessage(u)
         yield Ok:
           env.user.jsonView.full(u, perfs, withProfile = true) ++ Json.obj(
-            "nowPlaying" -> JsArray(povs.take(20).map(env.api.lobbyApi.nowPlaying)),
+            "nowPlaying" -> JsArray(povs.value.take(20).map(env.api.lobbyApi.nowPlaying)),
             "sessionId" -> sessionId
           )
       ).map(authenticateCookie(sessionId, remember))
     yield res
   }.recoverWith(authRecovery)
 
-  private def authenticateAppealUser(u: UserModel, redirect: String => Result, url: String)(using
+  private def authenticateAppealUser(
+      u: UserModel,
+      redirect: String => Result,
+      url: Call = routes.Appeal.landing
+  )(using
       ctx: Context
   ): Fu[Result] =
     api.appeal
       .saveAuthentication(u.id)
       .flatMap: sessionId =>
         authenticateCookie(sessionId, remember = false):
-          redirect(url)
+          redirect(url.url)
       .recoverWith(authRecovery)
 
   private def authenticateCookie(sessionId: SessionId, remember: Boolean)(
@@ -133,15 +137,10 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                                   negotiate(
                                     env.mod.logApi.closedByTeacher(u).flatMap {
                                       if _ then
-                                        authenticateAppealUser(
-                                          u,
-                                          redirectTo,
-                                          routes.Appeal.closedByTeacher.url
-                                        )
+                                        authenticateAppealUser(u, redirectTo, routes.Appeal.closedByTeacher)
                                       else
                                         env.mod.logApi.closedByMod(u).flatMap {
-                                          if _ then
-                                            authenticateAppealUser(u, redirectTo, routes.Appeal.landing.url)
+                                          if _ then authenticateAppealUser(u, redirectTo)
                                           else redirectTo(routes.Account.reopen.url)
                                         }
                                     },
@@ -375,7 +374,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
                 data =>
                   env.security.passwordReset
                     .limiter(data.email -> req.ipAddress, badRequest("Too many requests")):
-                      env.user.repo.enabledWithEmail(data.email.normalize).flatMap {
+                      env.user.repo.notClosedForeverWithEmail(data.email.normalize).flatMap {
                         case Some(user, storedEmail) =>
                           lila.mon.user.auth.passwordResetRequest("success").increment()
                           for _ <- env.security.passwordReset.send(user, storedEmail)
@@ -397,9 +396,10 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         case None =>
           lila.mon.user.auth.passwordResetConfirm("tokenFail").increment()
           notFound
-        case Some(me) =>
-          given Me = me
-          authLog(me.username, none, "Reset password")
+        case Some(user) if user.enabled.no => authenticateAppealUser(user, Redirect(_))
+        case Some(user) =>
+          given Me = Me(user)
+          authLog(user.username, none, "Reset password")
           lila.mon.user.auth.passwordResetConfirm("tokenOk").increment()
           Ok.page:
             views.auth.passwordResetConfirm(token, forms.passwdResetForMe, none)
@@ -411,9 +411,9 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
         case None =>
           lila.mon.user.auth.passwordResetConfirm("tokenPostFail").increment()
           notFound
-        case Some(me) =>
-          given Me = me
-          val user = me.value
+        case Some(user) if user.enabled.no => authenticateAppealUser(user, Redirect(_))
+        case Some(user) =>
+          given Me = Me(user)
           FormFuResult(forms.passwdResetForMe) { err =>
             renderPage(views.auth.passwordResetConfirm(token, err, false.some))
           } { data =>
@@ -453,7 +453,7 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
             .fold(
               err => BadRequest.async(renderMagicLink(err.some, fail = true)),
               data =>
-                env.user.repo.enabledWithEmail(data.email.normalize).flatMap {
+                env.user.repo.notClosedForeverWithEmail(data.email.normalize).flatMap {
                   case Some(user, storedEmail) =>
                     env.security.loginToken.rateLimit[Result](user, storedEmail, ctx.req, rateLimited):
                       for _ <- env.security.loginToken.send(user, storedEmail)
@@ -493,7 +493,9 @@ final class Auth(env: Env, accountC: => Account) extends LilaController(env):
       if ctx.isAuth then Redirect(referrerOr(routes.Lobby.home))
       else
         Firewall:
-          consumingToken(token) { authenticateUser(_, remember = true, pwned = IsPwned.No) }
+          consumingToken(token): user =>
+            if user.enabled.yes then authenticateUser(user, remember = true, pwned = IsPwned.No)
+            else authenticateAppealUser(user, Redirect(_))
 
   def check = OpenOrScoped() { ctx ?=>
     ctx.me match

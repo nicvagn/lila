@@ -48,7 +48,7 @@ in
       exec = "oxlint --type-aware";
     };
     "lint:style" = {
-      exec = ''stylelint "ui/**/*.scss"'';
+      exec = ''stylelint "ui/**/*.scss" --fix'';
     };
     "format:ui" = {
       exec = "oxfmt";

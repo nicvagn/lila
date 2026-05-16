@@ -4,10 +4,11 @@ import play.api.libs.json.*
 import reactivemongo.api.bson.*
 import reactivemongo.akkastream.cursorProducer
 import akka.stream.scaladsl.Source
+import scalalib.net.{ Bearer, UserAgent }
 
 import lila.common.Json.given
 import lila.core.misc.oauth.{ AccessTokenId, TokenRevoke }
-import lila.core.net.{ Bearer, UserAgent, Origin }
+import lila.core.net.Origin
 import lila.db.dsl.{ *, given }
 
 final class AccessTokenApi(

@@ -4,10 +4,10 @@ import chess.format.pgn.{ PgnStr, San, Std, Tags }
 import chess.{ ErrorStr, Replay, Square, TournamentClock }
 import scalalib.actor.AsyncActorSequencers
 import com.github.blemale.scaffeine.LoadingCache
+import scalalib.net.UserAgent
 
 import lila.tree.{ ImportResult, ParseImport }
 import lila.study.{ ChapterPreviewApi, MultiPgn, StudyPgnImport }
-import lila.core.net.UserAgent
 import lila.core.fide.Federation
 import lila.relay.RelayPush.*
 import lila.memo.CacheApi

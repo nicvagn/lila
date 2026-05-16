@@ -314,16 +314,16 @@ final class ReportApi(
     deletedAppeal <- deleteIfAppealInquiry(report)
     _ <- (!deletedAppeal).so:
       doProcessReport($id(report.id), unsetInquiry = true)
-  yield onReportClose()
+  yield onReportClose(report.room)
 
   def autoProcess(sus: Suspect, rooms: Set[Room])(using MyId): Funit =
-    val selector = $doc(
-      "user" -> sus.user.id,
-      "room".$in(rooms),
-      "open" -> true
-    )
-    for _ <- doProcessReport(selector, unsetInquiry = true)
-    yield onReportClose()
+    val selector = $doc("user" -> sus.user.id, "room".$in(rooms), "open" -> true)
+    for
+      reports <- coll.list[Report](selector)
+      _ <- reports.sequentiallyVoid: report =>
+        onReportClose(report.room)
+        doProcessReport($id(report.id), unsetInquiry = true)
+    yield ()
 
   def automodComms(
       userText: String,
@@ -373,9 +373,9 @@ final class ReportApi(
           logger.warn(s"Comms automod failed for ${me.username} on $url: ${e.getMessage}", e)
           funit
 
-  private def onReportClose() =
+  private def onReportClose(room: Room)(using me: MyId) =
     maxScoreCache.invalidateUnit()
-    lila.mon.mod.report.close.increment()
+    lila.mon.mod.report.close(me, room.key).increment()
 
   private def deleteIfAppealInquiry(report: Report)(using me: MyId): Fu[Boolean] =
     if report.isAppealInquiryByMe

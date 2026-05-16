@@ -49,7 +49,9 @@ final class MongoCache[K, V: BSONHandler] private (
     for _ <- coll.delete.one($id(makeDbKey(key)))
     yield cache.invalidate(key)
 
-  def dbValue(key: K): Fu[Option[V]] = dbEntry(key).map2(_.v)
+  // time since insertion
+  def dbValue(key: K): Fu[Option[(V, java.time.Duration)]] =
+    dbEntry(key).map2(entry => (entry.v, entry.e.minus(dbTtl).toNow))
 
   private def dbEntry(key: K) = coll.one[Entry]($id(makeDbKey(key)))
 

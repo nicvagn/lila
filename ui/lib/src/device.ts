@@ -65,7 +65,7 @@ const webkitVersion = memoize<string | false>(
     false,
 );
 
-export const shareIcon: () => string = () => (isApple() ? licon.ShareIos : licon.ShareAndroid);
+export const shareIcon: () => LiconType = () => (isApple() ? licon.ShareIos : licon.ShareAndroid);
 
 export type Feature =
   | 'wasm'

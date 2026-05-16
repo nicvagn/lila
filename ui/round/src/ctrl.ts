@@ -3,7 +3,7 @@
 import type { DrawShape } from '@lichess-org/chessground/draw';
 import { opposite, uciToMove } from '@lichess-org/chessground/util';
 import * as ab from 'ab/round';
-import { ctrl as makeKeyboardMove, type KeyboardMove } from 'keyboardMove';
+import { ctrl as makeKeyboardMove, type KeyboardMove } from 'keyboard-move';
 import { makeVoiceMove, type VoiceMove } from 'voice';
 
 import { defined, type Toggle, type Prop, toggle, requestIdleCallbackSafe, memoize } from 'lib';
@@ -745,7 +745,7 @@ export default class RoundController implements MoveRootCtrl {
     this.goneBerserk[color] = true;
     if (color !== this.data.player.color) site.sound.play('berserk');
     this.redraw();
-    $(`<i data-icon="${licon.Berserk}">`).appendTo($(`.game__meta .player.${color} .user-link`));
+    $(`<icon data-icon="${licon.Berserk}">`).appendTo($(`.game__meta .player.${color} .user-link`));
   };
 
   setLoading = (v: boolean, duration = 1500): void => {

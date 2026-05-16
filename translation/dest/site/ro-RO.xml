@@ -130,7 +130,6 @@
   <string name="enable">Activează</string>
   <string name="bestMoveArrow">Săgeată pentru cea mai bună mutare</string>
   <string name="showVariationArrows">Afișează săgețile variației</string>
-  <string name="evaluationGauge">Indicator de evaluare</string>
   <string name="visualMotifs">Motive vizuale</string>
   <string name="undefendedPieces">Piese neapărate</string>
   <string name="pinnedPieces">Piese țintuite</string>
@@ -987,6 +986,7 @@
   <string name="tryTheContactPage">încercați pagina de contact</string>
   <string name="makeSureToRead">Asigură-te că ai citit %1$s</string>
   <string name="theForumEtiquette">normele de comportare în forum</string>
+  <string name="pleaseBeNiceInTheForum" comment="Placeholder text that appears before starting to compose a topic or reply in the forum.">Te rugăm să fii cu bun simț pe forum.</string>
   <string name="thisTopicIsArchived">Acest subiect a fost arhivat și nu mai acceptă răspunsuri.</string>
   <string name="joinTheTeamXToPost">Alăturați-vă echipei %1$s, pentru a posta pe acest forum</string>
   <string name="teamNamedX">echipa %1$s</string>
