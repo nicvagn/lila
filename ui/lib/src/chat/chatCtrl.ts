@@ -95,8 +95,9 @@ export class ChatCtrl {
   }
 
   get isOptional(): boolean {
+    const isBroadcast = this.data.resourceType === 'relay';
     const tabs = this.visibleTabs;
-    return tabs.length === 1 && tabs[0].key === 'discussion';
+    return tabs.length === 1 && tabs[0].key === 'discussion' && !isBroadcast;
   }
 
   get visibleTabs(): Tab[] {
