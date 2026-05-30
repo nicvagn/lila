@@ -25,9 +25,9 @@ object Dependencies {
   val googleOAuth = "com.google.auth" % "google-auth-library-oauth2-http" % "1.47.0"
   val galimatias = "io.mola.galimatias" % "galimatias" % "0.2.2-NF"
   val scalatags = "com.lihaoyi" %% "scalatags" % "0.13.1"
-  val lettuce = "io.lettuce" % "lettuce-core" % "7.5.1.RELEASE"
+  val lettuce = "io.lettuce" % "lettuce-core" % "7.5.2.RELEASE"
   val nettyTransport =
-    ("io.netty" % s"netty-transport-native-$notifier" % "4.2.13.Final").classifier(s"$os-$arch")
+    ("io.netty" % s"netty-transport-native-$notifier" % "4.2.14.Final").classifier(s"$os-$arch")
   val lilaSearch = "com.github.lichess-org.lila-search" %% "client" % "3.4.6"
   val munit = "org.scalameta" %% "munit" % "1.3.0" % Test
   val uaparser = "org.uaparser" %% "uap-scala" % "0.21.0"
@@ -56,7 +56,7 @@ object Dependencies {
   }
 
   object scalalib {
-    val version = "11.10.5"
+    val version = "11.10.6"
     val org = "com.github.lichess-org.scalalib"
     // val org = "org.lichess" // for publishLocal
     val core = org %% "scalalib-core" % version

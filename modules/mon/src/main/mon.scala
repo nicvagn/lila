@@ -590,7 +590,6 @@ object game:
     def event(tpe: String) = counter("game.streamByOauthOrigin.event").withTag("type", tpe)
     def users(sel: String) = gauge("game.streamByOauthOrigin.users").withTag("selector", sel)
     def streams(ua: UserAgent) = gauge("game.streamByOauthOrigin.streams").withTag("ua", ua.value)
-    val bloomFP = counter("game.streamByOauthOrigin.bloomFP").withoutTags()
 object chat:
   private val msgCounter = counter("chat.message")
   def message(parent: String, troll: Boolean) =
@@ -727,6 +726,16 @@ object fideSync:
 object recap:
   val games = future("recap.build.games.time")
   val puzzles = future("recap.build.puzzles.time")
+object signedClient:
+  final class AuthPage(name: String):
+    def load(client: String) = counter(s"signedClient.$name.load").withTag("client", client)
+    def success(client: String) = counter(s"signedClient.$name.success").withTag("client", client)
+    def step(s: String)(client: String) =
+      counter(s"signedClient.$name.step").withTags(tags("client" -> client, "step" -> s))
+    def failure(reason: String)(client: String) =
+      counter(s"signedClient.$name.failure").withTags(tags("client" -> client, "reason" -> reason))
+  val login = AuthPage("login")
+  val signup = AuthPage("signup")
 
 object jvm:
   def threads() =
