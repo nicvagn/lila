@@ -130,7 +130,7 @@ export function compute(ctrl: AnalyseCtrl): DrawShape[] {
   if (hovering?.fen === nFen) shapes = shapes.concat(makeShapesFromUci(color, hovering.uci, 'paleBlue'));
   ctrl.fork.hover(hovering?.uci);
 
-  if (ctrl.showBestMoveArrows() && ctrl.showAnalysis()) {
+  if (ctrl.showBestMoveArrows() && ctrl.showEvaluation()) {
     if (isUci(nEval.best)) shapes = shapes.concat(makeShapesFromUci(rcolor, nEval.best, 'paleGreen'));
     if (!hovering && ctrl.ceval.search.multiPv) {
       const bestPvMoves = ctrl.isCevalAllowed() && nCeval ? nCeval.pvs[0]?.moves : undefined;
@@ -176,7 +176,13 @@ export function compute(ctrl: AnalyseCtrl): DrawShape[] {
       }
     });
   }
-  if (ctrl.showMoveAnnotationsOnBoard()) shapes = shapes.concat(annotationShapes(ctrl.node));
+  if (ctrl.showMoveAnnotationsOnBoard()) {
+    const liveGlyph = ctrl.liveAnnotate?.get(ctrl.path);
+    shapes = shapes.concat(
+      // Override server analysis glyphs as local eval also overrides the eval score
+      annotationShapes(liveGlyph ? { ...ctrl.node, glyphs: [liveGlyph] } : ctrl.node),
+    );
+  }
   if (ctrl.showVariationArrows()) hiliteVariations(ctrl, shapes);
 
   if (ctrl.isCevalAllowed()) {

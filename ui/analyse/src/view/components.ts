@@ -8,11 +8,11 @@ import { isMobile } from 'lib/device';
 import { playable } from 'lib/game';
 import { fixCrazySan, plyToTurn } from 'lib/game/chess';
 import statusView from 'lib/game/view/status';
-import * as licon from 'lib/licon';
+import { licon } from 'lib/licon';
 import * as Prefs from 'lib/prefs';
 import { storage } from 'lib/storage';
 import { path as treePath } from 'lib/tree/tree';
-import type { ClientEval, ServerEval, TreeNode, TreePath } from 'lib/tree/types';
+import type { ClientEval, Glyph, ServerEval, TreeNode, TreePath } from 'lib/tree/types';
 import {
   type VNode,
   type LooseVNodes,
@@ -107,7 +107,7 @@ export function renderMain(ctx: ViewContext, ...kids: LooseVNodes[]): VNode {
         },
       },
       class: {
-        'comp-off': !ctrl.showFishnetAnalysis(),
+        'comp-off': !ctrl.showStaticAnalysis(),
         'gauge-on': gaugeOn,
         'has-players': !!playerBars,
         'gamebook-play': !!gamebookPlayView,
@@ -276,6 +276,7 @@ export function renderMoveNodes(
   withEval: boolean,
   withGlyphs: boolean,
   ev?: ClientEval | ServerEval | false,
+  glyphs?: Glyph[],
 ): VNode[] {
   ev ??= node.ceval ?? node.eval; // ev = false will override withEval
   const evalText = !ev
@@ -286,8 +287,9 @@ export function renderMoveNodes(
         ? `#${ev.mate}`
         : '';
   const nodes = [h('san', fixCrazySan(node.san!))];
-  if (withGlyphs && node.glyphs)
-    node.glyphs.forEach(g => nodes.push(h('glyph', { attrs: { title: g.name } }, g.symbol)));
+  const relevantGlyphs = glyphs ?? node.glyphs;
+  if (withGlyphs && relevantGlyphs)
+    relevantGlyphs.forEach(g => nodes.push(h('glyph', { attrs: { title: g.name } }, g.symbol)));
   if (withEval && node.shapes?.length) nodes.push(h('shapes'));
   if (withEval && evalText) nodes.push(h('eval', evalText.replace('-', '−')));
   return nodes;

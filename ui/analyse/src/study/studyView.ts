@@ -4,7 +4,7 @@ import { blurIfPrimaryClick } from 'lib';
 import { view as cevalView } from 'lib/ceval';
 import { renderChat } from 'lib/chat/renderChat';
 import { displayColumns, shareIcon } from 'lib/device';
-import * as licon from 'lib/licon';
+import { licon } from 'lib/licon';
 import type { TreeNode, TreePath } from 'lib/tree/types';
 import { type VNode, iconTag, bind, dataIcon, type LooseVNodes, onInsert, hl } from 'lib/view';
 import { verticalResize } from 'lib/view/verticalResize';
@@ -343,7 +343,7 @@ function metadata(ctrl: StudyCtrl): VNode {
           class: { liked: d.liked },
           attrs: {
             ...dataIcon(d.liked ? licon.Heart : licon.HeartOutline),
-            title: d.liked ? i18n.study.unlike : i18n.study.like,
+            title: d.liked ? i18n.site.liked : i18n.site.like,
           },
           hook: bind('click', ctrl.toggleLike),
         },

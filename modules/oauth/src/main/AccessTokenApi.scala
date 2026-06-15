@@ -105,6 +105,21 @@ final class AccessTokenApi(
         .map(user.id -> _)
   yield tokens.toMap
 
+  def clasStudentToken(clasName: String, student: UserId)(using UserAgent): Fu[AccessToken] =
+    given MyId = student.into(MyId)
+    val scopes = OAuthScopes(List(OAuthScope.Team.Read, OAuthScope.Team.Write))
+    findCompatiblePersonal(scopes).flatMap:
+      _.filter(_.description.contains(clasName)) match
+        case Some(token) => fuccess(token)
+        case None =>
+          create(
+            OAuthTokenForm.Data(
+              description = clasName,
+              scopes = scopes.value.map(_.key)
+            ),
+            isStudent = true
+          )
+
   def listPersonal(using me: MyId): Fu[List[AccessToken]] =
     coll
       .find:
@@ -230,9 +245,6 @@ final class AccessTokenApi(
         )
       .map:
         _.headOption.so(_.getAsOpt[List[UserId]]("u")).orZero
-
-  def exists(clientOrigin: Origin, userIds: List[UserId]): Fu[Boolean] = userIds.nonEmpty.so:
-    coll.secondary.exists($doc(F.clientOrigin -> clientOrigin, F.userId.$in(userIds)))
 
   def revoke(bearer: Bearer) =
     val id = AccessToken.idFrom(bearer)
